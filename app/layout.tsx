@@ -1,7 +1,7 @@
 import type React from "react";
 import type { Metadata } from "next";
 import "./globals.css";
-import { SidebarNavigation } from "@/components/sidebar-navigation";
+import { SidebarNavigation } from "@/components/layout/sidebar-navigation";
 import { Toaster } from "@/components/ui/sonner";
 import { Web3Provider } from "@/components/providers/web3-provider";
 
