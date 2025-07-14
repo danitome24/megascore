@@ -1,6 +1,5 @@
 "use client";
 
-import { TrendingUp, Flame, Star, Zap } from "lucide-react";
 import { PageContainer } from "@/components/layout/page-container";
 import { MyScoreHeader } from "@/components/my-score/header";
 import { ScoreDisplay } from "@/components/my-score/score-display";

@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Wallet } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { SidebarConnectButton } from "@/components/layout/sidebar-connect-button";
 
 const navItems = [
   { href: "/", label: "HOME" },
@@ -167,42 +166,10 @@ export function SidebarNavigation() {
           }}
           transition={{ duration: 0.2 }}
         >
-          <Button
-            className="w-full bg-mega-coral hover:bg-mega-coral/90 text-foreground border-0 
-                     transition-all duration-300 font-medium text-xs tracking-wide uppercase h-10"
-          >
-            <Wallet className="w-4 h-4" />
-            <AnimatePresence>
-              {isExpanded && (
-                <motion.span
-                  initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: "auto" }}
-                  exit={{ opacity: 0, width: 0 }}
-                  transition={{ duration: 0.2, delay: 0.1 }}
-                  className="ml-2 overflow-hidden"
-                >
-                  Connect
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </Button>
+          <div className={`w-full ${isExpanded ? "" : "flex justify-center"}`}>
+            <SidebarConnectButton isExpanded={isExpanded} />
+          </div>
         </motion.div>
-
-        {/* Decorative elements when expanded */}
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.div
-              className="absolute right-4 bottom-20 text-background/20 text-xs tracking-widest"
-              initial={{ opacity: 0, rotate: 90 }}
-              animate={{ opacity: 1, rotate: 90 }}
-              exit={{ opacity: 0, rotate: 90 }}
-              transition={{ duration: 0.3, delay: 0.2 }}
-              style={{ transformOrigin: "center" }}
-            >
-              <span>MEGAETH</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </motion.div>
 
       {/* Main content spacer */}
