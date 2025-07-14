@@ -1,7 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Hash } from "lucide-react";
 
-export function PersistenceProgress({ isPersisting }) {
+interface PersistenceProgressProps {
+  isPersisting: boolean;
+}
+
+export function PersistenceProgress({
+  isPersisting,
+}: PersistenceProgressProps) {
   if (!isPersisting) return null;
   return (
     <Card className="bg-background border-2 border-mega-blue shadow-xl overflow-hidden relative mb-6">

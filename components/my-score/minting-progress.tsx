@@ -1,7 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Wallet } from "lucide-react";
 
-export function MintingProgress({ isMinting }) {
+interface MintingProgressProps {
+  isMinting: boolean;
+}
+
+export function MintingProgress({ isMinting }: MintingProgressProps) {
   if (!isMinting) return null;
   return (
     <Card className="bg-background border-2 border-mega-coral shadow-xl overflow-hidden relative mb-6">

@@ -2,13 +2,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Trophy } from "lucide-react";
+import type { Score } from "@/types/common";
+
+interface ScoreDisplayProps {
+  userScore: Score;
+  scoreIncreased: boolean;
+  scoreIncrease: number;
+  isScoreAnimating: boolean;
+}
 
 export function ScoreDisplay({
   userScore,
   scoreIncreased,
   scoreIncrease,
   isScoreAnimating,
-}) {
+}: ScoreDisplayProps) {
   return (
     <Card className="bg-background border-2 border-foreground/20 shadow-xl overflow-hidden relative mb-6">
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-mega-coral via-mega-pink to-mega-blue"></div>

@@ -1,7 +1,12 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { BarChart3 } from "lucide-react";
+import { Metrics } from "@/types/common";
 
-export function DataGatheredSection({ scoreData }) {
+interface DataGatheredSectionProps {
+  scoreData: Metrics;
+}
+
+export function DataGatheredSection({ scoreData }: DataGatheredSectionProps) {
   return (
     <Card className="bg-background border-2 border-foreground/20 shadow-xl">
       <CardHeader className="border-b border-foreground/10 p-4">
