@@ -6,7 +6,13 @@ export function NetworkStatsSection() {
       <div className="absolute inset-0 bg-gradient-to-r from-mega-green/2 via-transparent to-mega-coral/2" />
       <div className="container mx-auto px-8 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
-          <motion.div className="space-y-12" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
+          <motion.div
+            className="space-y-12"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
             <h2 className="text-3xl md:text-4xl font-bold text-foreground uppercase tracking-[0.1em]">
               MegaETH <span className="text-mega-blue">Testnet</span>
             </h2>
