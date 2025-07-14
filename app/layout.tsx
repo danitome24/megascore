@@ -6,9 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "MegaScore - MegaETH Reputation System",
-  description:
-    "Track your on-chain reputation and testnet engagement on MegaETH",
-  generator: "v0.dev",
+  description: "Track your on-chain reputation and engagement on MegaETH",
 };
 
 export default function RootLayout({
