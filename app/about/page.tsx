@@ -9,6 +9,7 @@ import {
   Target,
   BarChart3,
 } from "lucide-react";
+import { PageContainer } from "@/components/layout/page-container";
 
 export default function AboutPage() {
   const features = [
@@ -76,7 +77,7 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen pt-16 pb-8">
+    <PageContainer>
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
@@ -234,6 +235,6 @@ export default function AboutPage() {
           </Card>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

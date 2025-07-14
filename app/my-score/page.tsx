@@ -26,6 +26,7 @@ import {
   Zap,
   X,
 } from "lucide-react";
+import { PageContainer } from "@/components/layout/page-container";
 
 export default function MyScorePage() {
   // Animation state for update button
@@ -34,13 +35,13 @@ export default function MyScorePage() {
   const [displayScore, setDisplayScore] = useState(847);
   const [scoreIncreased, setScoreIncreased] = useState(false);
   const [scoreIncrease, setScoreIncrease] = useState(0);
-  
+
   // SBT state
   const [isMinting, setIsMinting] = useState(false);
   const [isPersisting, setIsPersisting] = useState(false);
   const [showMintOption, setShowMintOption] = useState(false);
   const [showPersistOption, setShowPersistOption] = useState(false);
-  
+
   // Demo mode for testing SBT functionality
   const [demoMode, setDemoMode] = useState(false);
 
@@ -138,49 +139,49 @@ export default function MyScorePage() {
   const handleUpdateScore = async () => {
     setIsUpdating(true);
     setScoreIncreased(false);
-    
+
     // Show updating toast immediately
     toast.loading("Updating reputation...", {
       description: "Analyzing network activity",
       duration: 2000,
     });
-    
+
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 2000));
-    
+
     setIsUpdating(false);
-    
+
     // Start score animation after update completes
     const oldScore = displayScore;
     const newScore = oldScore + Math.floor(Math.random() * 50) + 10; // Random increase between 10-60
     const increase = newScore - oldScore;
-    
+
     setScoreIncrease(increase);
     setIsScoreAnimating(true);
     setScoreIncreased(true);
-    
+
     // Show score increase toast
     toast.success("Score updated", {
       description: `MegaReputation increased by +${increase} points`,
       duration: 4000,
     });
-    
+
     // Animate score counting up
     const duration = 1500; // 1.5 seconds
     const steps = 60;
     const increment = (newScore - oldScore) / steps;
     let currentStep = 0;
-    
+
     const interval = setInterval(() => {
       currentStep++;
-      const currentScore = Math.floor(oldScore + (increment * currentStep));
+      const currentScore = Math.floor(oldScore + increment * currentStep);
       setDisplayScore(currentScore);
-      
+
       if (currentStep >= steps) {
         clearInterval(interval);
         setDisplayScore(newScore);
         setIsScoreAnimating(false);
-        
+
         // Show appropriate action based on NFT ownership
         if (hasNFT) {
           setShowPersistOption(true);
@@ -195,14 +196,14 @@ export default function MyScorePage() {
   const handleMintSBT = async () => {
     setIsMinting(true);
     setShowMintOption(false);
-    
+
     // Simulate minting transaction
     await new Promise((resolve) => setTimeout(resolve, 3000));
-    
+
     setIsMinting(false);
     setScoreIncreased(false);
     setScoreIncrease(0);
-    
+
     // Show success toast
     toast.success("SBT minted successfully", {
       description: `Token ID #${displayScore} created`,
@@ -214,14 +215,14 @@ export default function MyScorePage() {
   const handlePersistScore = async () => {
     setIsPersisting(true);
     setShowPersistOption(false);
-    
+
     // Simulate persistence transaction
     await new Promise((resolve) => setTimeout(resolve, 2500));
-    
+
     setIsPersisting(false);
     setScoreIncreased(false);
     setScoreIncrease(0);
-    
+
     // Show success toast
     toast.success("SBT updated successfully", {
       description: `Your score of ${displayScore} has been saved`,
@@ -230,7 +231,7 @@ export default function MyScorePage() {
   };
 
   return (
-    <div className="min-h-screen pt-16 pb-8">
+    <PageContainer>
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
@@ -249,13 +250,15 @@ export default function MyScorePage() {
                 onClick={() => setDemoMode(!demoMode)}
                 variant="outline"
                 className={`border-foreground/20 text-foreground/70 hover:bg-foreground/5 ${
-                  demoMode ? 'bg-mega-green/10 border-mega-green text-mega-green' : ''
+                  demoMode
+                    ? "bg-mega-green/10 border-mega-green text-mega-green"
+                    : ""
                 }`}
                 size="sm"
               >
-                Demo {demoMode ? 'ON' : 'OFF'}
+                Demo {demoMode ? "ON" : "OFF"}
               </Button>
-              
+
               <Button
                 onClick={handleUpdateScore}
                 disabled={isUpdating}
@@ -284,15 +287,19 @@ export default function MyScorePage() {
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-mega-coral via-mega-pink to-mega-blue"></div>
             <CardContent className="p-8">
               <div className="text-center">
-                <div className={`
+                <div
+                  className={`
                   flex items-center justify-center gap-3 mb-4
                   transition-all duration-300 relative
-                  ${isScoreAnimating ? 'scale-110' : 'scale-100'}
-                `}>
-                  <div className={`
+                  ${isScoreAnimating ? "scale-110" : "scale-100"}
+                `}
+                >
+                  <div
+                    className={`
                     text-6xl font-bold font-mono tracking-tight
-                    ${scoreIncreased ? 'text-mega-green' : 'text-foreground'}
-                  `}>
+                    ${scoreIncreased ? "text-mega-green" : "text-foreground"}
+                  `}
+                  >
                     {userScore.total}
                   </div>
                   {scoreIncreased && (
@@ -400,12 +407,12 @@ export default function MyScorePage() {
                             Score +{scoreIncrease}!
                           </div>
                           <div className="text-xs text-foreground/70">
-                            {hasNFT ? 'Update SBT' : 'Mint first SBT'}
+                            {hasNFT ? "Update SBT" : "Mint first SBT"}
                           </div>
                         </div>
                       </div>
                     )}
-                    
+
                     {/* Mint Button */}
                     {showMintOption && (
                       <Button
@@ -426,7 +433,7 @@ export default function MyScorePage() {
                         )}
                       </Button>
                     )}
-                    
+
                     {/* Update Button */}
                     {showPersistOption && (
                       <Button
@@ -447,24 +454,25 @@ export default function MyScorePage() {
                         )}
                       </Button>
                     )}
-                    
+
                     {/* Disabled Update Button */}
-                    {!showPersistOption && !showMintOption && !isMinting && !isPersisting && (
-                      <Button
-                        disabled={true}
-                        className="w-full bg-foreground/10 text-foreground/50 border-0 uppercase tracking-wide font-medium cursor-not-allowed"
-                      >
-                        <Hash className="w-4 h-4 mr-2" />
-                        Update SBT
-                      </Button>
-                    )}
-                    
-                    <div className="text-xs text-foreground/60 text-center px-2">
-                      {!scoreIncreased ? (
-                        "Update score to enable SBT actions"
-                      ) : (
-                        "Ready to update SBT"
+                    {!showPersistOption &&
+                      !showMintOption &&
+                      !isMinting &&
+                      !isPersisting && (
+                        <Button
+                          disabled={true}
+                          className="w-full bg-foreground/10 text-foreground/50 border-0 uppercase tracking-wide font-medium cursor-not-allowed"
+                        >
+                          <Hash className="w-4 h-4 mr-2" />
+                          Update SBT
+                        </Button>
                       )}
+
+                    <div className="text-xs text-foreground/60 text-center px-2">
+                      {!scoreIncreased
+                        ? "Update score to enable SBT actions"
+                        : "Ready to update SBT"}
                     </div>
 
                     {/* Secondary Actions */}
@@ -548,12 +556,17 @@ export default function MyScorePage() {
                       setShowMintOption(true);
                     }}
                     className="bg-mega-coral hover:bg-mega-coral/90 text-white border-0 uppercase tracking-wide"
-                    disabled={showMintOption || showPersistOption || isMinting || isPersisting}
+                    disabled={
+                      showMintOption ||
+                      showPersistOption ||
+                      isMinting ||
+                      isPersisting
+                    }
                   >
                     <Trophy className="w-4 h-4 mr-2" />
                     Test Mint SBT
                   </Button>
-                  
+
                   <Button
                     onClick={() => {
                       setScoreIncrease(15);
@@ -561,12 +574,17 @@ export default function MyScorePage() {
                       setShowPersistOption(true);
                     }}
                     className="bg-mega-blue hover:bg-mega-blue/90 text-white border-0 uppercase tracking-wide"
-                    disabled={showMintOption || showPersistOption || isMinting || isPersisting}
+                    disabled={
+                      showMintOption ||
+                      showPersistOption ||
+                      isMinting ||
+                      isPersisting
+                    }
                   >
                     <Hash className="w-4 h-4 mr-2" />
                     Test Persist Score
                   </Button>
-                  
+
                   <Button
                     onClick={() => {
                       setShowMintOption(false);
@@ -582,7 +600,7 @@ export default function MyScorePage() {
                     <X className="w-4 h-4 mr-2" />
                     Reset State
                   </Button>
-                  
+
                   <div className="text-sm text-foreground/60 flex items-center">
                     <Eye className="w-4 h-4 mr-2" />
                     Demo mode for testing SBT flows
@@ -605,7 +623,8 @@ export default function MyScorePage() {
                     Minting Your SBT
                   </h3>
                   <p className="text-foreground/70 mb-6">
-                    Please wait while we mint your Soulbound Token on the MegaETH network...
+                    Please wait while we mint your Soulbound Token on the
+                    MegaETH network...
                   </p>
                   <div className="space-y-4">
                     <div className="flex items-center justify-center space-x-2">
@@ -635,7 +654,8 @@ export default function MyScorePage() {
                     Updating Your SBT
                   </h3>
                   <p className="text-foreground/70 mb-6">
-                    Please wait while we update your Soulbound Token with your new score...
+                    Please wait while we update your Soulbound Token with your
+                    new score...
                   </p>
                   <div className="space-y-4">
                     <div className="flex items-center justify-center space-x-2">
@@ -743,6 +763,6 @@ export default function MyScorePage() {
           </Card>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

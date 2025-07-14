@@ -1,5 +1,6 @@
 "use client";
 
+import { PageContainer } from "@/components/layout/page-container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Medal, Crown } from "lucide-react";
 
@@ -106,7 +107,7 @@ export default function LeaderboardPage() {
   };
 
   return (
-    <div className="min-h-screen pt-16 pb-8">
+    <PageContainer>
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
@@ -174,6 +175,6 @@ export default function LeaderboardPage() {
           </Card>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }
