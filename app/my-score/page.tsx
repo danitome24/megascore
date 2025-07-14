@@ -1,6 +1,7 @@
 "use client";
 
 import { PageContainer } from "@/components/layout/page-container";
+import { ConnectOverlay } from "@/components/layout/connect-overlay";
 import { MyScoreHeader } from "@/components/my-score/header";
 import { ScoreDisplay } from "@/components/my-score/score-display";
 import { NFTDisplay } from "@/components/my-score/nft-display";
@@ -66,26 +67,28 @@ export default function MyScorePage() {
 
   return (
     <PageContainer>
-      <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto">
-          <MyScoreHeader
-            isUpdating={isUpdating}
-            handleUpdateScore={handleUpdateScore}
-          />
-          <ScoreDisplay
-            userScore={userScore}
-            scoreIncreased={scoreIncreased}
-            scoreIncrease={scoreIncrease}
-            isScoreAnimating={isScoreAnimating}
-          />
-          <NFTDisplay
-            hasNFT={hasNFT}
-            nftData={nftData}
-            displayScore={displayScore}
-          />
-          <DataGatheredSection scoreData={scoreData} />
+      <ConnectOverlay>
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <MyScoreHeader
+              isUpdating={isUpdating}
+              handleUpdateScore={handleUpdateScore}
+            />
+            <ScoreDisplay
+              userScore={userScore}
+              scoreIncreased={scoreIncreased}
+              scoreIncrease={scoreIncrease}
+              isScoreAnimating={isScoreAnimating}
+            />
+            <NFTDisplay
+              hasNFT={hasNFT}
+              nftData={nftData}
+              displayScore={displayScore}
+            />
+            <DataGatheredSection scoreData={scoreData} />
+          </div>
         </div>
-      </div>
+      </ConnectOverlay>
     </PageContainer>
   );
 }
