@@ -1,0 +1,123 @@
+@font-face {
+  font-family: 'Sofia Pro Soft';
+  src: url('/fonts/sofia/SofiaProSoftReg.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Sofia Pro Soft';
+  src: url('/fonts/sofia/SofiaProSoftMed.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Sofia Pro Soft';
+  src: url('/fonts/sofia/SofiaProSoftBold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 223 217 217;
+    --foreground: 25 25 26;
+    --card: 236 232 232;
+    --card-foreground: 25 25 26;
+    --popover: 236 232 232;
+    --popover-foreground: 25 25 26;
+    --primary: 25 25 26;
+    --primary-foreground: 223 217 217;
+    --secondary: 236 232 232;
+    --secondary-foreground: 25 25 26;
+    --muted: 236 232 232;
+    --muted-foreground: 107 114 128;
+    --accent: 245 175 148;
+    --accent-foreground: 25 25 26;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 209 213 219;
+    --input: 209 213 219;
+    --ring: 25 25 26;
+    --radius: 0px;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Sofia Pro Soft', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 1.1875rem; /* 19px - larger base size */
+    line-height: 1.6;
+  }
+
+  .geometric-pattern {
+    background-image: linear-gradient(
+        45deg,
+        transparent 40%,
+        rgba(25, 25, 26, 0.02) 40%,
+        rgba(25, 25, 26, 0.02) 60%,
+        transparent 60%
+      ),
+      linear-gradient(-45deg, transparent 40%, rgba(25, 25, 26, 0.02) 40%, rgba(25, 25, 26, 0.02) 60%, transparent 60%);
+    background-size: 20px 20px;
+  }
+
+  .accent-line {
+    position: relative;
+  }
+
+  .accent-line::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(to bottom, #f5af94, #ff8aa8, #90d79f, #7eaad4);
+  }
+
+  .tech-grid {
+    background-image: linear-gradient(rgba(25, 25, 26, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(25, 25, 26, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ece8e8;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #19191a;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2d2d2e;
+}
+
+@layer utilities {
+  .animation-delay-300 {
+    animation-delay: 0.3s;
+  }
+  .animation-delay-500 {
+    animation-delay: 0.5s;
+  }
+  .animation-delay-700 {
+    animation-delay: 0.7s;
+  }
+}
