@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Square, Wallet, TrendingUp, Award, Activity } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { ConnectButton } from "@/components/home/connect-button";
 
 export function HeroSection() {
   return (
@@ -59,15 +60,7 @@ export function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8, duration: 0.6 }}
             >
-              <Link href="/my-score">
-                <Button
-                  size="lg"
-                  className="bg-mega-coral hover:bg-mega-coral/90 text-white border-0 px-12 py-6 uppercase tracking-[0.2em] font-medium text-sm h-auto transition-all duration-300 hover:scale-105 shadow-lg"
-                >
-                  <Wallet className="w-5 h-5 mr-4" />
-                  Connect & View Score
-                </Button>
-              </Link>
+              <ConnectButton />
               <Link href="/leaderboard">
                 <Button
                   size="lg"
