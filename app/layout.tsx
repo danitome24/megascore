@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { SidebarNavigation } from "@/components/sidebar-navigation";
 import { Toaster } from "@/components/ui/sonner";
+import { Web3Provider } from "@/components/providers/web3-provider";
 
 export const metadata: Metadata = {
   title: "MegaScore - MegaETH Reputation System",
@@ -17,9 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-mono bg-background text-foreground min-h-screen`}>
-        <SidebarNavigation />
-        <main className="ml-16">{children}</main>
-        <Toaster />
+        <Web3Provider>
+          <SidebarNavigation />
+          <main className="ml-16">{children}</main>
+          <Toaster />
+        </Web3Provider>
       </body>
     </html>
   );
