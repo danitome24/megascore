@@ -4,8 +4,11 @@ import { Square, Wallet, TrendingUp, Award, Activity } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ConnectButton } from "@/components/home/connect-button";
+import { useAccount } from "wagmi";
 
 export function HeroSection() {
+  const account = useAccount();
+
   return (
     <section className="relative min-h-screen flex items-center">
       <div className="absolute inset-0 bg-gradient-to-br from-mega-coral/5 via-transparent to-mega-blue/5" />
@@ -60,7 +63,22 @@ export function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8, duration: 0.6 }}
             >
-              <ConnectButton />
+              {account.isConnected ? (
+                <Link href="/my-score">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="px-12 py-6 bg-mega-pink hover:bg-mega-pink
+                  text-white uppercase tracking-[0.2em] font-medium text-sm h-auto transition-all duration-300 hover:scale-105"
+                  >
+                    <TrendingUp className="w-5 h-5 mr-4" />
+                    View Your Score
+                  </Button>
+                </Link>
+              ) : (
+                <ConnectButton />
+              )}
+
               <Link href="/leaderboard">
                 <Button
                   size="lg"
