@@ -1,3 +1,5 @@
+export type Address = `0x${string}`;
+
 export type Score = {
   total: number;
   rank: number;
