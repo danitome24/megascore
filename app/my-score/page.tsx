@@ -13,18 +13,13 @@ import type {
   Metrics,
   ScoreHistory,
   AchievedGoal,
+  Rank,
 } from "@/types/common";
 
 export default function MyScorePage() {
   // Mock data - in real app this would come from blockchain/API
-  const userScore: Score = {
+  const score: Score = {
     total: 847,
-    rank: 156,
-    percentile: 85,
-    level: 8,
-    nextLevelAt: 1000,
-    daysActive: 24,
-    weeklyGrowth: 12,
   };
 
   // NFT data - show if user owns one
@@ -44,15 +39,24 @@ export default function MyScorePage() {
   };
 
   // Simplified score breakdown - just data gathered
-  const scoreData: Metrics = {
-    transactions: 45,
-    contractsInteracted: 12,
-    protocolsTested: 8,
-    activeDays: 24,
-    totalVolume: "127.5 ETH",
-    lastActivity: "2 hours ago",
-    weeklyGrowth: 12,
-    monthlyGrowth: 45,
+  const metrics: Metrics = {
+    transactions: 43,
+    weeksActive: 2,
+    uniqueContractsInteractedWith: 5,
+    txTypesUsed: 3,
+    hasDeployedContract: true,
+    contractsDeployedCount: 2,
+    nftMintedCount: 4,
+    maxConsecutiveActiveWeeks: 1,
+    weeksSinceFirstTransaction: 10,
+    lastActiveDate: new Date("2024-12-01"),
+  };
+
+  const rank: Rank = {
+    rank: 156,
+    level: 8,
+    percentile: 85,
+    nextLevelAt: 1000,
   };
 
   // Use custom hook for score update logic
@@ -75,7 +79,8 @@ export default function MyScorePage() {
               handleUpdateScore={handleUpdateScore}
             />
             <ScoreDisplay
-              userScore={userScore}
+              userScore={score}
+              rank={rank}
               scoreIncreased={scoreIncreased}
               scoreIncrease={scoreIncrease}
               isScoreAnimating={isScoreAnimating}
@@ -85,7 +90,7 @@ export default function MyScorePage() {
               nftData={nftData}
               displayScore={displayScore}
             />
-            <DataGatheredSection scoreData={scoreData} />
+            <DataGatheredSection scoreData={metrics} />
           </div>
         </div>
       </ConnectOverlay>

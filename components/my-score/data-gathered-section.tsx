@@ -27,7 +27,7 @@ export function DataGatheredSection({ scoreData }: DataGatheredSectionProps) {
           </div>
           <div className="text-center p-4 border border-foreground/10 rounded-lg hover:bg-mega-blue/5 transition-colors">
             <div className="text-2xl font-bold text-mega-blue mb-2">
-              {scoreData.contractsInteracted}
+              {scoreData.uniqueContractsInteractedWith}
             </div>
             <div className="text-sm text-foreground/70 uppercase tracking-wide">
               Contracts
@@ -35,18 +35,18 @@ export function DataGatheredSection({ scoreData }: DataGatheredSectionProps) {
           </div>
           <div className="text-center p-4 border border-foreground/10 rounded-lg hover:bg-mega-green/5 transition-colors">
             <div className="text-2xl font-bold text-mega-green mb-2">
-              {scoreData.protocolsTested}
+              {scoreData.maxConsecutiveActiveWeeks}
             </div>
             <div className="text-sm text-foreground/70 uppercase tracking-wide">
-              Protocols
+              Consecutive Active Weeks
             </div>
           </div>
           <div className="text-center p-4 border border-foreground/10 rounded-lg hover:bg-mega-pink/5 transition-colors">
             <div className="text-2xl font-bold text-mega-pink mb-2">
-              {scoreData.activeDays}
+              {scoreData.weeksSinceFirstTransaction}
             </div>
             <div className="text-sm text-foreground/70 uppercase tracking-wide">
-              Active Days
+              Age of Wallet
             </div>
           </div>
         </div>
@@ -54,10 +54,10 @@ export function DataGatheredSection({ scoreData }: DataGatheredSectionProps) {
           <div className="p-4 bg-foreground/5 rounded-lg">
             <div className="flex justify-between items-center">
               <span className="text-sm text-foreground/70 uppercase tracking-wide">
-                Total Volume
+                Total Transactions
               </span>
               <span className="text-lg font-bold text-foreground">
-                {scoreData.totalVolume}
+                {scoreData.transactions}
               </span>
             </div>
           </div>
@@ -67,12 +67,12 @@ export function DataGatheredSection({ scoreData }: DataGatheredSectionProps) {
                 Last Activity
               </span>
               <span className="text-lg font-bold text-foreground">
-                {scoreData.lastActivity}
+                {scoreData.lastActiveDate.toLocaleDateString()}
               </span>
             </div>
           </div>
         </div>
-        <div className="mt-6 p-4 border border-foreground/20 rounded-lg bg-gradient-to-r from-mega-coral/5 to-mega-blue/5">
+        {/* <div className="mt-6 p-4 border border-foreground/20 rounded-lg bg-gradient-to-r from-mega-coral/5 to-mega-blue/5">
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center">
               <div className="text-xl font-bold text-mega-coral mb-1">
@@ -91,7 +91,7 @@ export function DataGatheredSection({ scoreData }: DataGatheredSectionProps) {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   );

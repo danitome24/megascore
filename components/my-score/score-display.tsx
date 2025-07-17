@@ -2,10 +2,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Trophy } from "lucide-react";
-import type { Score } from "@/types/common";
+import type { Rank, Score } from "@/types/common";
 
 interface ScoreDisplayProps {
   userScore: Score;
+  rank: Rank;
   scoreIncreased: boolean;
   scoreIncrease: number;
   isScoreAnimating: boolean;
@@ -13,6 +14,7 @@ interface ScoreDisplayProps {
 
 export function ScoreDisplay({
   userScore,
+  rank,
   scoreIncreased,
   scoreIncrease,
   isScoreAnimating,
@@ -58,28 +60,28 @@ export function ScoreDisplay({
           <div className="flex flex-wrap justify-center gap-3 mb-6">
             <Badge className="bg-mega-coral text-white px-4 py-2 text-base">
               <Trophy className="w-5 h-5 mr-2" />
-              Rank #{userScore.rank}
+              Rank #{rank.rank}
             </Badge>
             <Badge className="bg-mega-blue text-white px-4 py-2 text-base">
-              Level {userScore.level}
+              Level {rank.level}
             </Badge>
             <Badge className="bg-mega-green text-white px-4 py-2 text-base">
-              {userScore.percentile}th Percentile
+              {rank.percentile}th Percentile
             </Badge>
           </div>
           <div className="max-w-md mx-auto space-y-3">
             <div className="flex justify-between text-base text-foreground/70">
-              <span>Progress to Level {userScore.level + 1}</span>
+              <span>Progress to Level {rank.level + 1}</span>
               <span>
-                {Math.round((userScore.total / userScore.nextLevelAt) * 100)}%
+                {Math.round((userScore.total / rank.nextLevelAt) * 100)}%
               </span>
             </div>
             <Progress
-              value={(userScore.total / userScore.nextLevelAt) * 100}
+              value={(userScore.total / rank.nextLevelAt) * 100}
               className="h-4 bg-foreground/10"
             />
             <div className="text-sm text-foreground/60">
-              {userScore.nextLevelAt - userScore.total} points to next level
+              {rank.nextLevelAt - userScore.total} points to next level
             </div>
           </div>
         </div>

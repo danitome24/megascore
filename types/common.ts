@@ -1,15 +1,30 @@
 export type Address = `0x${string}`;
 
+// Score
 export type Score = {
   total: number;
-  rank: number;
-  percentile: number;
-  level: number;
-  nextLevelAt: number;
-  daysActive: number;
-  weeklyGrowth: number;
 };
 
+export type ScoreHistory = {
+  date: string;
+  score: number;
+};
+
+// Metrics
+export type Metrics = {
+  transactions: number;
+  weeksActive: number;
+  uniqueContractsInteractedWith: number;
+  txTypesUsed: number;
+  hasDeployedContract: boolean;
+  contractsDeployedCount: number;
+  nftMintedCount: number;
+  maxConsecutiveActiveWeeks: number;
+  weeksSinceFirstTransaction: number;
+  lastActiveDate: Date;
+};
+
+// NFT
 export type NFTData = {
   tokenId: string;
   score: number;
@@ -23,22 +38,7 @@ export type NFTData = {
   }>;
 };
 
-export type Metrics = {
-  transactions: number;
-  contractsInteracted: number;
-  protocolsTested: number;
-  activeDays: number;
-  totalVolume: string;
-  lastActivity: string;
-  weeklyGrowth: number;
-  monthlyGrowth: number;
-};
-
-export type ScoreHistory = {
-  date: string;
-  score: number;
-};
-
+// Achieved Goals
 export type AchievedGoal = {
   id: number;
   title: string;
@@ -47,4 +47,12 @@ export type AchievedGoal = {
   icon: any;
   color: string;
   rarity: string;
+};
+
+// Ranks
+export type Rank = {
+  rank: number;
+  level: number;
+  percentile: number;
+  nextLevelAt: number;
 };
