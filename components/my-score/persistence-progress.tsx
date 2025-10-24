@@ -5,34 +5,27 @@ interface PersistenceProgressProps {
   isPersisting: boolean;
 }
 
-export function PersistenceProgress({
-  isPersisting,
-}: PersistenceProgressProps) {
+export function PersistenceProgress({ isPersisting }: PersistenceProgressProps) {
   if (!isPersisting) return null;
   return (
-    <Card className="bg-background border-2 border-mega-blue shadow-xl overflow-hidden relative mb-6">
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-mega-blue to-mega-green animate-pulse"></div>
+    <Card className="relative mb-6 overflow-hidden border-2 border-mega-blue bg-background shadow-xl">
+      <div className="absolute left-0 top-0 h-1 w-full animate-pulse bg-gradient-to-r from-mega-blue to-mega-green"></div>
       <CardContent className="p-6">
         <div className="text-center">
-          <div className="w-16 h-16 bg-mega-blue rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <Hash className="w-8 h-8 text-white" />
+          <div className="mx-auto mb-4 flex h-16 w-16 animate-pulse items-center justify-center rounded-full bg-mega-blue">
+            <Hash className="h-8 w-8 text-white" />
           </div>
-          <h3 className="text-xl font-bold text-foreground uppercase tracking-wide mb-2">
-            Updating Your SBT
-          </h3>
-          <p className="text-foreground/70 mb-6">
-            Please wait while we update your Soulbound Token with your new
-            score...
+          <h3 className="mb-2 text-xl font-bold uppercase tracking-wide text-foreground">Updating Your SBT</h3>
+          <p className="mb-6 text-foreground/70">
+            Please wait while we update your Soulbound Token with your new score...
           </p>
           <div className="space-y-4">
             <div className="flex items-center justify-center space-x-2">
-              <div className="w-3 h-3 bg-mega-blue rounded-full animate-bounce"></div>
-              <div className="w-3 h-3 bg-mega-blue rounded-full animate-bounce animation-delay-200"></div>
-              <div className="w-3 h-3 bg-mega-blue rounded-full animate-bounce animation-delay-400"></div>
+              <div className="h-3 w-3 animate-bounce rounded-full bg-mega-blue"></div>
+              <div className="animation-delay-200 h-3 w-3 animate-bounce rounded-full bg-mega-blue"></div>
+              <div className="animation-delay-400 h-3 w-3 animate-bounce rounded-full bg-mega-blue"></div>
             </div>
-            <p className="text-sm text-foreground/60">
-              Persisting your new achievement to the blockchain.
-            </p>
+            <p className="text-sm text-foreground/60">Persisting your new achievement to the blockchain.</p>
           </div>
         </div>
       </CardContent>

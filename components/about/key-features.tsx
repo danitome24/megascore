@@ -1,67 +1,56 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Zap, Activity, TestTube, Shield } from "lucide-react";
 import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Activity, Shield, TestTube, Zap } from "lucide-react";
 
 const features = [
   {
-    icon: <Activity className="w-6 h-6" />,
+    icon: <Activity className="h-6 w-6" />,
     title: "On-Chain Activity Tracking",
     description:
       "Your transactions, contract interactions, and network participation are automatically tracked and scored.",
     color: "text-mega-blue",
   },
   {
-    icon: <TestTube className="w-6 h-6" />,
+    icon: <TestTube className="h-6 w-6" />,
     title: "Testnet Pioneer Rewards",
-    description:
-      "Early participation in MegaETH testnet activities provides bonus points and special recognition.",
+    description: "Early participation in MegaETH testnet activities provides bonus points and special recognition.",
     color: "text-mega-green",
   },
   {
-    icon: <Shield className="w-6 h-6" />,
+    icon: <Shield className="h-6 w-6" />,
     title: "Soulbound NFT",
-    description:
-      "Your reputation is minted as a non-transferable NFT that evolves with your on-chain journey.",
+    description: "Your reputation is minted as a non-transferable NFT that evolves with your on-chain journey.",
     color: "text-mega-pink",
   },
   {
-    icon: <Zap className="w-6 h-6" />,
+    icon: <Zap className="h-6 w-6" />,
     title: "Real-Time Updates",
-    description:
-      "Your score updates automatically as you interact with the MegaETH network.",
+    description: "Your score updates automatically as you interact with the MegaETH network.",
     color: "text-mega-coral",
   },
 ];
 
 export function KeyFeatures() {
   return (
-    <Card className="bg-background border-2 border-foreground/20 shadow-xl overflow-hidden relative mb-6">
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-mega-blue via-mega-green to-mega-coral"></div>
+    <Card className="relative mb-6 overflow-hidden border-2 border-foreground/20 bg-background shadow-xl">
+      <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-mega-blue via-mega-green to-mega-coral"></div>
       <CardHeader className="border-b border-foreground/10 p-6">
         <CardTitle className="flex items-center text-xl uppercase tracking-wide">
-          <Zap className="w-6 h-6 mr-3 text-mega-blue" />
+          <Zap className="mr-3 h-6 w-6 text-mega-blue" />
           Key Features
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid gap-4 md:grid-cols-2">
           {features.map((feature, index) => (
             <div
               key={index}
-              className="flex items-start space-x-4 p-4 border border-foreground/10 rounded-lg hover:bg-foreground/5 transition-colors"
+              className="flex items-start space-x-4 rounded-lg border border-foreground/10 p-4 transition-colors hover:bg-foreground/5"
             >
-              <div
-                className={`${feature.color} p-3 bg-foreground/5 rounded-lg`}
-              >
-                {feature.icon}
-              </div>
+              <div className={`${feature.color} rounded-lg bg-foreground/5 p-3`}>{feature.icon}</div>
               <div>
-                <h3 className="font-bold mb-2 text-foreground uppercase tracking-wide text-sm">
-                  {feature.title}
-                </h3>
-                <p className="text-sm text-foreground/70">
-                  {feature.description}
-                </p>
+                <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-foreground">{feature.title}</h3>
+                <p className="text-sm text-foreground/70">{feature.description}</p>
               </div>
             </div>
           ))}

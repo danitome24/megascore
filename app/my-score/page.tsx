@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { PageContainer } from "@/components/layout/page-container";
 import { ConnectOverlay } from "@/components/layout/connect-overlay";
-import { MyScoreHeader } from "@/components/my-score/header";
-import { ScoreDisplaySection } from "@/components/my-score/score-display-section";
-import { NFTDisplaySection } from "@/components/my-score/nft-display-section";
+import { PageContainer } from "@/components/layout/page-container";
 import { DataGatheredSection } from "@/components/my-score/data-gathered-section";
+import { MyScoreHeader } from "@/components/my-score/header";
+import { NFTDisplaySection } from "@/components/my-score/nft-display-section";
+import { ScoreDisplaySection } from "@/components/my-score/score-display-section";
 import { useScoreStore } from "@/lib/store/score-store";
 
 export default function MyScorePage() {
@@ -23,7 +23,7 @@ export default function MyScorePage() {
     <PageContainer>
       <ConnectOverlay>
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
+          <div className="mx-auto max-w-6xl">
             <MyScoreHeader />
             <ScoreDisplaySection />
             <NFTDisplaySection />

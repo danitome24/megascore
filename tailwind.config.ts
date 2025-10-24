@@ -63,48 +63,24 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: [
-          "Sofia Pro Soft",
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "Segoe UI",
-          "Roboto",
-          "Arial",
-          "sans-serif",
-        ],
-        mono: [
-          "Sofia Pro Soft",
-          "SFMono-Regular",
-          "Monaco",
-          "Consolas",
-          "Liberation Mono",
-          "Courier New",
-          "monospace",
-        ],
-        display: [
-          "Sofia Pro Soft",
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "Segoe UI",
-          "Roboto",
-          "Arial",
-          "sans-serif",
-        ],
+        sans: ["Sofia Pro Soft", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Arial", "sans-serif"],
+        mono: ["Sofia Pro Soft", "SFMono-Regular", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"],
+        display: ["Sofia Pro Soft", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Arial", "sans-serif"],
       },
       fontSize: {
-        xs: ["0.9375rem", { lineHeight: "1.4" }],   // 15px - even larger
-        sm: ["1.0625rem", { lineHeight: "1.5" }],   // 17px - even larger  
+        xs: ["0.9375rem", { lineHeight: "1.4" }], // 15px - even larger
+        sm: ["1.0625rem", { lineHeight: "1.5" }], // 17px - even larger
         base: ["1.1875rem", { lineHeight: "1.6" }], // 19px - even larger
-        lg: ["1.3125rem", { lineHeight: "1.7" }],   // 21px - even larger
-        xl: ["1.4375rem", { lineHeight: "1.7" }],   // 23px - even larger
-        "2xl": ["1.75rem", { lineHeight: "2" }],    // 28px - even larger
-        "3xl": ["2.125rem", { lineHeight: "2.25" }],// 34px - even larger
+        lg: ["1.3125rem", { lineHeight: "1.7" }], // 21px - even larger
+        xl: ["1.4375rem", { lineHeight: "1.7" }], // 23px - even larger
+        "2xl": ["1.75rem", { lineHeight: "2" }], // 28px - even larger
+        "3xl": ["2.125rem", { lineHeight: "2.25" }], // 34px - even larger
         "4xl": ["2.625rem", { lineHeight: "2.5" }], // 42px - even larger
-        "5xl": ["3.375rem", { lineHeight: "1" }],   // 54px - even larger
-        "6xl": ["4.125rem", { lineHeight: "1" }],   // 66px - even larger
-        "7xl": ["4.875rem", { lineHeight: "1" }],   // 78px - even larger
-        "8xl": ["6.625rem", { lineHeight: "1" }],   // 106px - even larger
-        "9xl": ["8.625rem", { lineHeight: "1" }],   // 138px - even larger
+        "5xl": ["3.375rem", { lineHeight: "1" }], // 54px - even larger
+        "6xl": ["4.125rem", { lineHeight: "1" }], // 66px - even larger
+        "7xl": ["4.875rem", { lineHeight: "1" }], // 78px - even larger
+        "8xl": ["6.625rem", { lineHeight: "1" }], // 106px - even larger
+        "9xl": ["8.625rem", { lineHeight: "1" }], // 138px - even larger
       },
       borderRadius: {
         lg: "0px",
@@ -140,10 +116,8 @@ const config: Config = {
       },
       boxShadow: {
         soft: "0 1px 3px 0 rgba(25, 25, 26, 0.1), 0 1px 2px 0 rgba(25, 25, 26, 0.06)",
-        medium:
-          "0 4px 6px -1px rgba(25, 25, 26, 0.1), 0 2px 4px -1px rgba(25, 25, 26, 0.06)",
-        large:
-          "0 10px 15px -3px rgba(25, 25, 26, 0.1), 0 4px 6px -2px rgba(25, 25, 26, 0.05)",
+        medium: "0 4px 6px -1px rgba(25, 25, 26, 0.1), 0 2px 4px -1px rgba(25, 25, 26, 0.06)",
+        large: "0 10px 15px -3px rgba(25, 25, 26, 0.1), 0 4px 6px -2px rgba(25, 25, 26, 0.05)",
       },
     },
   },

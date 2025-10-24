@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
 export function useMintSBT(displayScore: number) {
@@ -10,7 +10,7 @@ export function useMintSBT(displayScore: number) {
   const handleMintSBT = useCallback(async () => {
     setIsMinting(true);
     setShowMintOption(false);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 3000));
     setIsMinting(false);
     setScoreIncreased(false);
     setScoreIncrease(0);

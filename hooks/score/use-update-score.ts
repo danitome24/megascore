@@ -1,18 +1,11 @@
-import { useState, useCallback } from "react";
-import { useAccount } from "wagmi";
-import { toast } from "sonner";
+import { useCallback, useState } from "react";
 import { useScoreStore } from "@/lib/store/score-store";
+import { toast } from "sonner";
+import { useAccount } from "wagmi";
 
 export function useUpdateScore() {
   const { address } = useAccount();
-  const {
-    currentScore,
-    updatedScore,
-    scoreIncrease,
-    hasNFT,
-    setUpdatedScore,
-    persistScoreToNFT,
-  } = useScoreStore();
+  const { currentScore, updatedScore, scoreIncrease, hasNFT, setUpdatedScore, persistScoreToNFT } = useScoreStore();
 
   const [isUpdating, setIsUpdating] = useState(false);
   const [isScoreAnimating, setIsScoreAnimating] = useState(false);
@@ -84,8 +77,7 @@ export function useUpdateScore() {
       }, duration / steps);
     } catch (error) {
       setIsUpdating(false);
-      const errorMsg =
-        error instanceof Error ? error.message : "Unknown error occurred";
+      const errorMsg = error instanceof Error ? error.message : "Unknown error occurred";
       toast.error("Failed to update score", {
         description: errorMsg,
         id: toastId,

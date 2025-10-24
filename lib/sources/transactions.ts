@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export type TransactionParty = {
   ens_domain_name: string | null;
   hash: string;
@@ -64,12 +66,9 @@ export type TransactionApiResponse = {
   next_page_params: any;
 };
 
-import axios from "axios";
 const API_URL = "https://megaeth-testnet.blockscout.com/api/v2";
 
-export async function fetchTransactions(
-  address: string
-): Promise<TransactionApiResponse> {
+export async function fetchTransactions(address: string): Promise<TransactionApiResponse> {
   if (!address) throw new Error("Address is required");
   const url = `${API_URL}/addresses/${address}/transactions`;
   const response = await axios.get(url, {

@@ -7,12 +7,7 @@ import { useEffect, useState } from "react";
  * @param duration Duration in milliseconds
  * @param isAnimating Whether to trigger the animation
  */
-export function useCounterAnimation(
-  start: number,
-  end: number,
-  duration: number = 1500,
-  isAnimating: boolean = false
-) {
+export function useCounterAnimation(start: number, end: number, duration: number = 1500, isAnimating: boolean = false) {
   const [displayValue, setDisplayValue] = useState(start);
 
   useEffect(() => {

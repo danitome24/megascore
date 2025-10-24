@@ -1,4 +1,4 @@
-import { Address, Metrics, Score } from "@/types/common";
+import { Metrics, Score } from "@/types/common";
 
 export const calculate = async (metrics: Metrics): Promise<Score> => {
   // Weighted score using all metrics fields
@@ -15,10 +15,7 @@ export const calculate = async (metrics: Metrics): Promise<Score> => {
   const contractBonus = metrics.hasDeployedContract ? 200 : 0;
   // Recent activity bonus (last 4 weeks)
   const now = new Date();
-  const weeksSinceActive = Math.floor(
-    (now.getTime() - metrics.lastActiveDate.getTime()) /
-      (1000 * 60 * 60 * 24 * 7)
-  );
+  const weeksSinceActive = Math.floor((now.getTime() - metrics.lastActiveDate.getTime()) / (1000 * 60 * 60 * 24 * 7));
   const recentActivityBonus = weeksSinceActive <= 4 ? 150 : 0;
 
   return {

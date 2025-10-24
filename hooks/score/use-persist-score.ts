@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
 export function usePersistScore(displayScore: number) {
@@ -10,7 +10,7 @@ export function usePersistScore(displayScore: number) {
   const handlePersistScore = useCallback(async () => {
     setIsPersisting(true);
     setShowPersistOption(false);
-    await new Promise((resolve) => setTimeout(resolve, 2500));
+    await new Promise(resolve => setTimeout(resolve, 2500));
     setIsPersisting(false);
     setScoreIncreased(false);
     setScoreIncrease(0);

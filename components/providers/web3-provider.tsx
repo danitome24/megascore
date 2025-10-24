@@ -1,9 +1,9 @@
 "use client";
 
-import { WagmiProvider, createConfig, http } from "wagmi";
-import { mainnet, megaethTestnet } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
+import { WagmiProvider, createConfig, http } from "wagmi";
+import { megaethTestnet } from "wagmi/chains";
 
 const config = createConfig(
   getDefaultConfig({
@@ -15,9 +15,7 @@ const config = createConfig(
     },
 
     // Required API Keys
-    walletConnectProjectId:
-      process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ||
-      "3a8170812b534d0ff9d794f19a901d64",
+    walletConnectProjectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || "3a8170812b534d0ff9d794f19a901d64",
 
     // Required App Info
     appName: "MegaReputation",
@@ -26,7 +24,7 @@ const config = createConfig(
     appDescription: "Track your on-chain reputation and engagement on MegaETH",
     appUrl: "https://mega-reputation.vercel.app/",
     appIcon: "https://mega-reputation.vercel.app/logo.png",
-  })
+  }),
 );
 
 const queryClient = new QueryClient();

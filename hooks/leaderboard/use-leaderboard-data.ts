@@ -55,22 +55,16 @@ export function useLeaderboardData(): User[] {
   ];
   const data: User[] = [];
 
-  const scoreVariations = [
-    5, -3, 8, 2, -1, 12, 7, -5, 15, 3, -2, 9, 4, -7, 11, 6, -4, 13, 1, -6,
-  ];
+  const scoreVariations = [5, -3, 8, 2, -1, 12, 7, -5, 15, 3, -2, 9, 4, -7, 11, 6, -4, 13, 1, -6];
 
   for (let i = 1; i <= 50; i++) {
-    const baseScore =
-      3000 - (i - 1) * 45 + scoreVariations[i % scoreVariations.length];
+    const baseScore = 3000 - (i - 1) * 45 + scoreVariations[i % scoreVariations.length];
     const level = Math.max(1, Math.floor(baseScore / 250));
 
     data.push({
       rank: i,
       address:
-        addresses[i % addresses.length] ||
-        `0x${i.toString(16).padStart(4, "0")}...${(i * 123)
-          .toString(16)
-          .slice(-4)}`,
+        addresses[i % addresses.length] || `0x${i.toString(16).padStart(4, "0")}...${(i * 123).toString(16).slice(-4)}`,
       score: baseScore,
       level,
     });

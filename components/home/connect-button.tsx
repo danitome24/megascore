@@ -1,4 +1,3 @@
-import { useAccount } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { Wallet } from "lucide-react";
 
@@ -14,8 +13,7 @@ export function ConnectButton() {
     borderRadius: 0,
     cursor: "pointer",
     outline: "none",
-    fontFamily:
-      "Sofia Pro Soft, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif",
+    fontFamily: "Sofia Pro Soft, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif",
     transition: "all 0.3s cubic-bezier(.4,0,.2,1)",
     display: "flex",
     alignItems: "center",
@@ -50,29 +48,25 @@ export function ConnectButton() {
   };
 
   return (
-    <ConnectKitButton.Custom >
+    <ConnectKitButton.Custom>
       {({ isConnected, isConnecting, show, address, ensName }) => {
         const displayText = isConnected
           ? ensName || `${address?.slice(0, 6)}...${address?.slice(-4)}`
           : isConnecting
-          ? "Connecting..."
-          : "Connect & View Score";
+            ? "Connecting..."
+            : "Connect & View Score";
 
-        const buttonStyle = isConnected
-          ? connectedButtonStyle
-          : disconnectedButtonStyle;
-        const hoverStyle = isConnected
-          ? connectedHoverStyle
-          : disconnectedHoverStyle;
+        const buttonStyle = isConnected ? connectedButtonStyle : disconnectedButtonStyle;
+        const hoverStyle = isConnected ? connectedHoverStyle : disconnectedHoverStyle;
 
         return (
           <button
             onClick={show}
             style={buttonStyle}
-            onMouseEnter={(e) => {
+            onMouseEnter={e => {
               Object.assign(e.currentTarget.style, hoverStyle);
             }}
-            onMouseLeave={(e) => {
+            onMouseLeave={e => {
               Object.assign(e.currentTarget.style, buttonStyle);
             }}
           >

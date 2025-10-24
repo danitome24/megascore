@@ -1,10 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { SidebarConnectButton } from "@/components/layout/sidebar-connect-button";
+import { AnimatePresence, motion } from "framer-motion";
 
 const navItems = [
   { href: "/", label: "HOME" },
@@ -21,7 +21,7 @@ export function SidebarNavigation() {
     <>
       {/* Sidebar */}
       <motion.div
-        className="fixed left-0 top-0 h-screen bg-foreground z-50"
+        className="fixed left-0 top-0 z-50 h-screen bg-foreground"
         initial={{ width: 64 }}
         animate={{ width: isExpanded ? 280 : 64 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
@@ -29,9 +29,9 @@ export function SidebarNavigation() {
         onMouseLeave={() => setIsExpanded(false)}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center justify-center border-b border-background/20">
+        <div className="flex h-16 items-center justify-center border-b border-background/20">
           <motion.div
-            className="text-background font-bold"
+            className="font-bold text-background"
             animate={{
               fontSize: isExpanded ? "1.25rem" : "0.875rem",
               letterSpacing: isExpanded ? "0.1em" : "0",
@@ -58,7 +58,7 @@ export function SidebarNavigation() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Link href={item.href}>
-                  <div className="relative w-full h-16 flex items-center justify-center cursor-pointer group">
+                  <div className="group relative flex h-16 w-full cursor-pointer items-center justify-center">
                     {/* Collapsed state - Vertical text */}
                     <AnimatePresence>
                       {!isExpanded && (
@@ -68,19 +68,11 @@ export function SidebarNavigation() {
                           animate={{ opacity: 1, rotate: -90 }}
                           exit={{ opacity: 0, rotate: -90 }}
                           transition={{ duration: 0.2 }}
-                          className={`
-                            absolute font-medium text-xs tracking-widest select-none whitespace-nowrap
-                            transition-colors duration-200
-                            ${
-                              isActive
-                                ? "text-mega-coral"
-                                : "text-background/60 group-hover:text-background/90"
-                            }
-                          `}
+                          className={`absolute select-none whitespace-nowrap text-xs font-medium tracking-widest transition-colors duration-200 ${
+                            isActive ? "text-mega-coral" : "text-background/60 group-hover:text-background/90"
+                          } `}
                         >
-                          {item.label.length > 8
-                            ? item.label.substring(0, 6) + "..."
-                            : item.label}
+                          {item.label.length > 8 ? item.label.substring(0, 6) + "..." : item.label}
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -97,15 +89,9 @@ export function SidebarNavigation() {
                           className="absolute left-0 w-full px-4"
                         >
                           <motion.div
-                            className={`
-                              font-medium text-sm tracking-widest select-none
-                              transition-all duration-200 relative
-                              ${
-                                isActive
-                                  ? "text-mega-coral"
-                                  : "text-background/70 group-hover:text-background"
-                              }
-                            `}
+                            className={`relative select-none text-sm font-medium tracking-widest transition-all duration-200 ${
+                              isActive ? "text-mega-coral" : "text-background/70 group-hover:text-background"
+                            } `}
                             whileHover={{
                               scale: 1.05,
                               x: 8,
@@ -130,14 +116,14 @@ export function SidebarNavigation() {
                     <AnimatePresence>
                       {isActive && (
                         <motion.div
-                          className="absolute right-0 top-1/2 transform -translate-y-1/2"
+                          className="absolute right-0 top-1/2 -translate-y-1/2 transform"
                           initial={{ opacity: 0, scale: 0 }}
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0 }}
                           transition={{ duration: 0.2 }}
                         >
                           <motion.div
-                            className="w-1 bg-mega-coral rounded-l-full"
+                            className="w-1 rounded-l-full bg-mega-coral"
                             animate={{
                               height: isExpanded ? 32 : 24,
                               opacity: [0.7, 1, 0.7],

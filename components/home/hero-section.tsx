@@ -1,19 +1,19 @@
+import Link from "next/link";
+import { ConnectButton } from "@/components/home/connect-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Square, Wallet, TrendingUp, Award, Activity } from "lucide-react";
-import Link from "next/link";
 import { motion } from "framer-motion";
-import { ConnectButton } from "@/components/home/connect-button";
+import { Activity, Award, Square, TrendingUp, Wallet } from "lucide-react";
 import { useAccount } from "wagmi";
 
 export function HeroSection() {
   const account = useAccount();
 
   return (
-    <section className="relative min-h-screen flex items-center">
+    <section className="relative flex min-h-screen items-center">
       <div className="absolute inset-0 bg-gradient-to-br from-mega-coral/5 via-transparent to-mega-blue/5" />
-      <div className="container mx-auto px-8 relative z-10">
-        <div className="max-w-6xl mx-auto text-center">
+      <div className="container relative z-10 mx-auto px-8">
+        <div className="mx-auto max-w-6xl text-center">
           <motion.div
             className="space-y-10"
             initial={{ opacity: 0, y: 50 }}
@@ -22,15 +22,13 @@ export function HeroSection() {
           >
             {/* Badge */}
             <motion.div
-              className="inline-flex items-center px-8 py-4 bg-background border-2 border-mega-coral/30 shadow-lg"
+              className="inline-flex items-center border-2 border-mega-coral/30 bg-background px-8 py-4 shadow-lg"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.6 }}
             >
-              <Square className="w-4 h-4 mr-4 text-mega-coral fill-mega-coral" />
-              <span className="text-sm font-medium text-foreground uppercase tracking-[0.2em]">
-                MegaETH Testnet
-              </span>
+              <Square className="mr-4 h-4 w-4 fill-mega-coral text-mega-coral" />
+              <span className="text-sm font-medium uppercase tracking-[0.2em] text-foreground">MegaETH Testnet</span>
             </motion.div>
             {/* Main Heading */}
             <motion.div
@@ -39,7 +37,7 @@ export function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.8 }}
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-foreground tracking-tight">
+              <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl">
                 Build Your
                 <br />
                 <span className="text-mega-coral">MegaReputation</span>
@@ -47,18 +45,17 @@ export function HeroSection() {
             </motion.div>
             {/* Description */}
             <motion.p
-              className="text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed font-light"
+              className="mx-auto max-w-3xl text-lg font-light leading-relaxed text-foreground/70 md:text-xl"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.6 }}
             >
-              Your on-chain activity in the MegaETH ecosystem becomes your
-              verifiable reputation. Connect your wallet to start tracking your
-              testnet participation and network contributions.
+              Your on-chain activity in the MegaETH ecosystem becomes your verifiable reputation. Connect your wallet to
+              start tracking your testnet participation and network contributions.
             </motion.p>
             {/* CTA Buttons */}
             <motion.div
-              className="flex flex-col sm:flex-row gap-6 justify-center pt-6"
+              className="flex flex-col justify-center gap-6 pt-6 sm:flex-row"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8, duration: 0.6 }}
@@ -68,10 +65,9 @@ export function HeroSection() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="px-12 py-6 bg-mega-pink hover:bg-mega-pink
-                  text-white uppercase tracking-[0.2em] font-medium text-sm h-auto transition-all duration-300 hover:scale-105"
+                    className="h-auto bg-mega-pink px-12 py-6 text-sm font-medium uppercase tracking-[0.2em] text-white transition-all duration-300 hover:scale-105 hover:bg-mega-pink"
                   >
-                    <TrendingUp className="w-5 h-5 mr-4" />
+                    <TrendingUp className="mr-4 h-5 w-5" />
                     View Your Score
                   </Button>
                 </Link>
@@ -83,16 +79,16 @@ export function HeroSection() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-2 border-foreground/30 hover:border-mega-blue hover:bg-mega-blue hover:text-white px-12 py-6 bg-transparent uppercase tracking-[0.2em] font-medium text-sm h-auto transition-all duration-300 hover:scale-105"
+                  className="h-auto border-2 border-foreground/30 bg-transparent px-12 py-6 text-sm font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:scale-105 hover:border-mega-blue hover:bg-mega-blue hover:text-white"
                 >
-                  <TrendingUp className="w-5 h-5 mr-4" />
+                  <TrendingUp className="mr-4 h-5 w-5" />
                   View Leaderboard
                 </Button>
               </Link>
             </motion.div>
             {/* How it Works Cards */}
             <motion.div
-              className="grid md:grid-cols-3 gap-8 pt-16 max-w-5xl mx-auto"
+              className="mx-auto grid max-w-5xl gap-8 pt-16 md:grid-cols-3"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.0, duration: 0.6 }}
@@ -101,22 +97,19 @@ export function HeroSection() {
                 {
                   icon: Wallet,
                   title: "Connect Wallet",
-                  description:
-                    "Link your wallet to start tracking your MegaETH activity",
+                  description: "Link your wallet to start tracking your MegaETH activity",
                   color: "mega-coral",
                 },
                 {
                   icon: Activity,
                   title: "Participate & Earn",
-                  description:
-                    "Use testnet apps, make transactions, and contribute to the ecosystem",
+                  description: "Use testnet apps, make transactions, and contribute to the ecosystem",
                   color: "mega-blue",
                 },
                 {
                   icon: Award,
                   title: "Build Reputation",
-                  description:
-                    "Watch your reputation score grow as you engage with the network",
+                  description: "Watch your reputation score grow as you engage with the network",
                   color: "mega-green",
                 },
               ].map((step, index) => (
@@ -127,19 +120,15 @@ export function HeroSection() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.2 + index * 0.2, duration: 0.6 }}
                 >
-                  <Card className="bg-background border-2 border-foreground/20 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 h-full">
-                    <CardContent className="p-8 text-center space-y-6">
+                  <Card className="h-full border-2 border-foreground/20 bg-background shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+                    <CardContent className="space-y-6 p-8 text-center">
                       <div
-                        className={`w-16 h-16 bg-${step.color} mx-auto flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
+                        className={`h-16 w-16 bg-${step.color} mx-auto flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}
                       >
-                        <step.icon className="w-8 h-8 text-white" />
+                        <step.icon className="h-8 w-8 text-white" />
                       </div>
-                      <h3 className="text-lg font-bold text-foreground uppercase tracking-[0.1em]">
-                        {step.title}
-                      </h3>
-                      <p className="text-foreground/70 leading-relaxed font-light">
-                        {step.description}
-                      </p>
+                      <h3 className="text-lg font-bold uppercase tracking-[0.1em] text-foreground">{step.title}</h3>
+                      <p className="font-light leading-relaxed text-foreground/70">{step.description}</p>
                     </CardContent>
                   </Card>
                 </motion.div>

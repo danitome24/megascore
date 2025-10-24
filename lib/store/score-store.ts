@@ -21,7 +21,7 @@ export type ScoreState = {
   reset: () => void;
 };
 
-export const useScoreStore = create<ScoreState>((set) => ({
+export const useScoreStore = create<ScoreState>(set => ({
   // Initial state
   currentScore: 0,
   lastFetchedAt: null,
@@ -39,7 +39,7 @@ export const useScoreStore = create<ScoreState>((set) => ({
 
   // Set the updated score after recalculation
   setUpdatedScore: (newScore: number) =>
-    set((state) => ({
+    set(state => ({
       updatedScore: newScore,
       scoreIncrease: newScore - state.currentScore,
       lastUpdatedAt: new Date(),
@@ -50,7 +50,7 @@ export const useScoreStore = create<ScoreState>((set) => ({
 
   // Persist updated score to NFT (marks it as current)
   persistScoreToNFT: () =>
-    set((state) => ({
+    set(state => ({
       currentScore: state.updatedScore || state.currentScore,
       updatedScore: null,
       scoreIncrease: 0,

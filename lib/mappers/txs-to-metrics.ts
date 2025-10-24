@@ -1,8 +1,5 @@
+import type { TransactionApiResponse, TransactionItem } from "@/lib/sources/transactions";
 import { Metrics } from "@/types/common";
-import type {
-  TransactionApiResponse,
-  TransactionItem,
-} from "@/lib/sources/transactions";
 
 const MS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
 
@@ -23,14 +20,13 @@ export const mapTxsToMetrics = (api: TransactionApiResponse): Metrics => {
     if (tx.value) {
       try {
         totalValue += Number(tx.value);
-      } catch {}
+      } catch (e) {
+        // Silently ignore conversion errors
+      }
     }
 
     // NFT minted: check transaction_types for 'nft_mint' or similar
-    if (
-      Array.isArray(tx.transaction_types) &&
-      tx.transaction_types.includes("nft_mint")
-    ) {
+    if (Array.isArray(tx.transaction_types) && tx.transaction_types.includes("nft_mint")) {
       nftMintedCount++;
     }
 
@@ -50,20 +46,13 @@ export const mapTxsToMetrics = (api: TransactionApiResponse): Metrics => {
   // Calculate weeks active
   let weeksActive = 0;
   if (firstTxDate && lastActiveDate) {
-    weeksActive = Math.max(
-      1,
-      Math.round(
-        (lastActiveDate.getTime() - firstTxDate.getTime()) / MS_PER_WEEK
-      )
-    );
+    weeksActive = Math.max(1, Math.round((lastActiveDate.getTime() - firstTxDate.getTime()) / MS_PER_WEEK));
   }
 
   // Placeholder logic for other fields
   const maxConsecutiveActiveWeeks = weeksActive;
   const txTypesUsed = new Set(
-    (txs as any[]).flatMap((tx) =>
-      Array.isArray(tx.transaction_types) ? tx.transaction_types : []
-    )
+    (txs as any[]).flatMap(tx => (Array.isArray(tx.transaction_types) ? tx.transaction_types : [])),
   ).size;
 
   return {
