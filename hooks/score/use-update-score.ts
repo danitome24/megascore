@@ -14,7 +14,7 @@ export function useUpdateScore(initialScore: number, hasNFT: boolean) {
     setIsUpdating(true);
     setScoreIncreased(false);
 
-    toast.loading("Updating reputation...", {
+    const toastId = toast.loading("Updating reputation...", {
       description: "Analyzing network activity",
       duration: 2000,
     });
@@ -33,6 +33,7 @@ export function useUpdateScore(initialScore: number, hasNFT: boolean) {
     toast.success("Score updated", {
       description: `MegaReputation increased by +${increase} points`,
       duration: 4000,
+      id: toastId,
     });
 
     const duration = 1500;
