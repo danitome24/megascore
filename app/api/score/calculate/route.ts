@@ -26,6 +26,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const metricsData = await metrics(wallet);
   const scoreData = await calculate(metricsData);
+  console.log(`Calculated score for wallet ${wallet}: ${scoreData.total}`);
 
   return NextResponse.json({
     status: 200,

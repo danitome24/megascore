@@ -1,16 +1,11 @@
 import { Address, Metrics } from "@/types/common";
+import { fetchTransactions } from "@/lib/sources/transactions";
+import { mapTxsToMetrics } from "@/lib/mappers/txs-to-metrics";
 
 export const metrics = async (wallet: Address): Promise<Metrics> => {
-  return {
-    transactions: 43,
-    weeksActive: 2,
-    uniqueContractsInteractedWith: 5,
-    txTypesUsed: 3,
-    hasDeployedContract: true,
-    contractsDeployedCount: 2,
-    nftMintedCount: 4,
-    maxConsecutiveActiveWeeks: 1,
-    weeksSinceFirstTransaction: 10,
-    lastActiveDate: new Date("2024-12-01"),
-  };
+  const apiData = await fetchTransactions(wallet);
+  console.log(
+    `Fetched ${apiData.items.length || 0} transactions for wallet ${wallet}`
+  );
+  return mapTxsToMetrics(apiData);
 };

@@ -1,0 +1,6 @@
+
+// Wallet with many tx: 0xE360aFCd406C27e11BCf6463AFe3C60272E6e7B0
+// Wallet with a few tx: 0xaa4C60b784E2b3E485035399bF1b1aBDeD66A60f
+curl --request GET \
+  --url http://localhost:3000/api/score/calculate?wallet=0xaa4C60b784E2b3E485035399bF1b1aBDeD66A60f \
+  --header 'Content-Type: application/json' 
