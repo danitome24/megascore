@@ -6,7 +6,7 @@ import { useScoreStore } from "@/lib/store/score-store";
 import { useUpdateScore } from "@/hooks/score/use-update-score";
 import type { Rank } from "@/types/common";
 
-export function ScoreDisplay() {
+export function ScoreDisplaySection() {
   const { currentScore, updatedScore, scoreIncrease } = useScoreStore();
   const { isScoreAnimating } = useUpdateScore();
 

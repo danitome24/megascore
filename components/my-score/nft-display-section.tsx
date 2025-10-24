@@ -7,7 +7,7 @@ import { useScoreStore } from "@/lib/store/score-store";
 import { useUpdateScore } from "@/hooks/score/use-update-score";
 import React from "react";
 
-export function NFTDisplay() {
+export function NFTDisplaySection() {
   const { hasNFT, currentScore, updatedScore } = useScoreStore();
   const { displayScore } = useUpdateScore();
 
