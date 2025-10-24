@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { PageContainer } from "@/components/layout/page-container";
 import { ConnectOverlay } from "@/components/layout/connect-overlay";
 import { MyScoreHeader } from "@/components/my-score/header";
@@ -7,6 +8,7 @@ import { ScoreDisplay } from "@/components/my-score/score-display";
 import { NFTDisplay } from "@/components/my-score/nft-display";
 import { DataGatheredSection } from "@/components/my-score/data-gathered-section";
 import { useUpdateScore } from "@/hooks/score/use-update-score";
+import { useScoreStore } from "@/lib/store/score-store";
 import type {
   Score,
   NFTData,
@@ -17,19 +19,38 @@ import type {
 } from "@/types/common";
 
 export default function MyScorePage() {
-  // Mock data - in real app this would come from blockchain/API
-  const score: Score = {
-    total: 847,
-  };
+  // Initialize store and state
+  const {
+    currentScore,
+    updatedScore,
+    scoreIncrease,
+    hasNFT,
+    setCurrentScore,
+    setHasNFT,
+  } = useScoreStore();
+
+  const {
+    isUpdating,
+    isScoreAnimating,
+    displayScore,
+    handleUpdateScore,
+    persistScoreToNFT,
+  } = useUpdateScore();
+
+  // Initialize with mock data on mount
+  useEffect(() => {
+    // In real app, fetch score from database/API
+    setCurrentScore(847);
+    setHasNFT(true);
+  }, [setCurrentScore, setHasNFT]);
 
   // NFT data - show if user owns one
-  const hasNFT: boolean = true;
   const nftData: NFTData = {
-    tokenId: "847",
-    score: 847,
-    level: 8,
+    tokenId: String(currentScore),
+    score: currentScore,
+    level: Math.floor(currentScore / 100),
     mintDate: "2024-03-15",
-    lastUpdate: "2024-12-07",
+    lastUpdate: new Date().toISOString().split("T")[0],
     attributes: [
       { trait: "Network Activity", value: "High", rarity: "15%" },
       { trait: "Testnet Pioneer", value: "Yes", rarity: "8%" },
@@ -54,20 +75,15 @@ export default function MyScorePage() {
 
   const rank: Rank = {
     rank: 156,
-    level: 8,
+    level: Math.floor(currentScore / 100),
     percentile: 85,
     nextLevelAt: 1000,
   };
 
-  // Use custom hook for score update logic
-  const {
-    isUpdating,
-    isScoreAnimating,
-    displayScore,
-    scoreIncreased,
-    scoreIncrease,
-    handleUpdateScore,
-  } = useUpdateScore(847, hasNFT);
+  // Score object for display
+  const score: Score = {
+    total: currentScore,
+  };
 
   return (
     <PageContainer>
@@ -81,7 +97,7 @@ export default function MyScorePage() {
             <ScoreDisplay
               userScore={score}
               rank={rank}
-              scoreIncreased={scoreIncreased}
+              scoreIncreased={updatedScore !== null}
               scoreIncrease={scoreIncrease}
               isScoreAnimating={isScoreAnimating}
             />
