@@ -2,23 +2,23 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Trophy } from "lucide-react";
-import type { Rank, Score } from "@/types/common";
+import { useScoreStore } from "@/lib/store/score-store";
+import { useUpdateScore } from "@/hooks/score/use-update-score";
+import type { Rank } from "@/types/common";
 
-interface ScoreDisplayProps {
-  userScore: Score;
-  rank: Rank;
-  scoreIncreased: boolean;
-  scoreIncrease: number;
-  isScoreAnimating: boolean;
-}
+export function ScoreDisplay() {
+  const { currentScore, updatedScore, scoreIncrease } = useScoreStore();
+  const { isScoreAnimating } = useUpdateScore();
 
-export function ScoreDisplay({
-  userScore,
-  rank,
-  scoreIncreased,
-  scoreIncrease,
-  isScoreAnimating,
-}: ScoreDisplayProps) {
+  const scoreIncreased = updatedScore !== null;
+
+  // Calculate rank dynamically
+  const rank: Rank = {
+    rank: 156,
+    level: Math.floor(currentScore / 100),
+    percentile: 85,
+    nextLevelAt: 1000,
+  };
   return (
     <Card className="bg-background border-2 border-foreground/20 shadow-xl overflow-hidden relative mb-6">
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-mega-coral via-mega-pink to-mega-blue"></div>
@@ -37,7 +37,7 @@ export function ScoreDisplay({
                 ${scoreIncreased ? "text-mega-green" : "text-foreground"}
               `}
             >
-              {userScore.total}
+              {currentScore}
             </div>
             {scoreIncreased && (
               <div className="text-3xl font-bold text-mega-green animate-bounce">
@@ -73,15 +73,15 @@ export function ScoreDisplay({
             <div className="flex justify-between text-base text-foreground/70">
               <span>Progress to Level {rank.level + 1}</span>
               <span>
-                {Math.round((userScore.total / rank.nextLevelAt) * 100)}%
+                {Math.round((currentScore / rank.nextLevelAt) * 100)}%
               </span>
             </div>
             <Progress
-              value={(userScore.total / rank.nextLevelAt) * 100}
+              value={(currentScore / rank.nextLevelAt) * 100}
               className="h-4 bg-foreground/10"
             />
             <div className="text-sm text-foreground/60">
-              {rank.nextLevelAt - userScore.total} points to next level
+              {rank.nextLevelAt - currentScore} points to next level
             </div>
           </div>
         </div>

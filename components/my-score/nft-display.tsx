@@ -3,22 +3,14 @@ import { Badge } from "@/components/ui/badge";
 import { Share2, Eye, Wallet, Hash } from "lucide-react";
 import { useMintSBT } from "@/hooks/nft/use-mint-sbt";
 import { usePersistScore } from "@/hooks/score/use-persist-score";
+import { useScoreStore } from "@/lib/store/score-store";
+import { useUpdateScore } from "@/hooks/score/use-update-score";
 import React from "react";
 
-interface NFTDisplayProps {
-  hasNFT: boolean;
-  nftData: {
-    tokenId: string;
-    score: number;
-    level: number;
-    mintDate: string;
-    lastUpdate: string;
-    attributes: Array<{ trait: string; value: string; rarity: string }>;
-  };
-  displayScore: number;
-}
+export function NFTDisplay() {
+  const { hasNFT, currentScore, updatedScore } = useScoreStore();
+  const { displayScore } = useUpdateScore();
 
-export function NFTDisplay({ hasNFT, nftData, displayScore }: NFTDisplayProps) {
   // Use custom hook for minting logic
   const {
     isMinting,
@@ -31,6 +23,21 @@ export function NFTDisplay({ hasNFT, nftData, displayScore }: NFTDisplayProps) {
   // Use custom hook for persistence logic
   const { isPersisting, showPersistOption, handlePersistScore } =
     usePersistScore(displayScore);
+
+  // NFT data computed from store
+  const nftData = {
+    tokenId: String(currentScore),
+    score: currentScore,
+    level: Math.floor(currentScore / 100),
+    mintDate: "2024-03-15",
+    lastUpdate: new Date().toISOString().split("T")[0],
+    attributes: [
+      { trait: "Network Activity", value: "High", rarity: "15%" },
+      { trait: "Testnet Pioneer", value: "Yes", rarity: "8%" },
+      { trait: "Early Adopter", value: "Genesis", rarity: "3%" },
+      { trait: "Consistency", value: "Diamond Hands", rarity: "12%" },
+    ],
+  };
 
   if (!hasNFT) return null;
   return (

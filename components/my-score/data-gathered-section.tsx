@@ -1,12 +1,25 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { BarChart3 } from "lucide-react";
-import { Metrics } from "@/types/common";
+import { useScoreStore } from "@/lib/store/score-store";
 
-interface DataGatheredSectionProps {
-  scoreData: Metrics;
-}
+// Mock metrics - in real app, fetch from API/DB
+const mockMetrics = {
+  transactions: 43,
+  weeksActive: 2,
+  uniqueContractsInteractedWith: 5,
+  txTypesUsed: 3,
+  hasDeployedContract: true,
+  contractsDeployedCount: 2,
+  nftMintedCount: 4,
+  maxConsecutiveActiveWeeks: 1,
+  weeksSinceFirstTransaction: 10,
+  lastActiveDate: new Date("2024-12-01"),
+};
 
-export function DataGatheredSection({ scoreData }: DataGatheredSectionProps) {
+export function DataGatheredSection() {
+  const { currentScore } = useScoreStore();
+  const scoreData = mockMetrics;
+
   return (
     <Card className="bg-background border-2 border-foreground/20 shadow-xl">
       <CardHeader className="border-b border-foreground/10 p-4">

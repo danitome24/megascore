@@ -1,14 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { useUpdateScore } from "@/hooks/score/use-update-score";
 
-interface MyScoreHeaderProps {
-  isUpdating: boolean;
-  handleUpdateScore: () => Promise<void>;
-}
-
-export function MyScoreHeader({
-  isUpdating,
-  handleUpdateScore,
-}: MyScoreHeaderProps) {
+export function MyScoreHeader() {
+  const { isUpdating, handleUpdateScore } = useUpdateScore();
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 pb-6 border-b border-foreground/10">
       <div>
