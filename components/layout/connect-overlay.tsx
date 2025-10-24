@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ConnectKitButton } from "connectkit";
 import { motion } from "framer-motion";
@@ -9,9 +12,18 @@ interface ConnectOverlayProps {
 }
 
 export function ConnectOverlay({ children }: ConnectOverlayProps) {
-  const { isConnected } = useAccount();
+  const [showOverlay, setShowOverlay] = useState(true);
+  const { status, isConnected } = useAccount();
 
-  if (isConnected) {
+  useEffect(() => {
+    if (status === "connecting" || status === "reconnecting") {
+      return;
+    }
+
+    setShowOverlay(!isConnected);
+  }, [isConnected, status]);
+
+  if (!showOverlay) {
     return <>{children}</>;
   }
 
