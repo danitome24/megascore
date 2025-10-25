@@ -9,7 +9,6 @@ export function MyScoreHeader() {
     <div className="mb-8 flex flex-col justify-between border-b border-foreground/10 pb-6 sm:flex-row sm:items-center">
       <div>
         <h1 className="mb-2 text-3xl font-bold uppercase tracking-wide text-foreground">My Reputation</h1>
-        <p className="text-base text-foreground/70">MegaETH Network Score</p>
       </div>
       {hasNFT && (
         <div className="mt-3 flex gap-3 sm:mt-0">
