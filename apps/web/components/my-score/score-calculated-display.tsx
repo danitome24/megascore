@@ -47,34 +47,15 @@ export function ScoreCalculatedDisplay({ score, onMint, isLoading = false }: Sco
               >
                 {animatedScore}
               </motion.div>
-
-              {/* Celebration animation */}
-              <motion.div
-                className="absolute text-5xl"
-                initial={{ opacity: 0, y: 20, scale: 0 }}
-                animate={{ opacity: 1, y: -30, scale: 1 }}
-                transition={{ delay: 0.6, duration: 1.2, repeat: Infinity, repeatDelay: 1 }}
-              >
-                ✨
-              </motion.div>
             </motion.div>
 
             <motion.div
-              className="mb-3 text-sm font-semibold uppercase tracking-widest text-mega-green"
+              className="mb-8 text-sm font-semibold uppercase tracking-widest text-mega-green"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
               Your MegaReputation
-            </motion.div>
-
-            <motion.div
-              className="mb-8 text-xl uppercase tracking-wide text-foreground/70"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-            >
-              Score
             </motion.div>
 
             <motion.div
@@ -103,10 +84,6 @@ export function ScoreCalculatedDisplay({ score, onMint, isLoading = false }: Sco
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7 }}
             >
-              <div className="flex items-center justify-center gap-2 font-semibold text-mega-green">
-                <CheckCircle2 className="h-5 w-5" />
-                <span>Score calculated successfully</span>
-              </div>
               <p className="text-sm text-foreground/60">Ready to mint your exclusive NFT badge?</p>
             </motion.div>
           </div>
