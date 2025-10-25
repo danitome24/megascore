@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCounterAnimation } from "@/hooks/use-counter-animation";
 import { motion } from "framer-motion";
-import { CheckCircle, Sparkles, Trophy } from "lucide-react";
+import { CheckCircle2, Crown, Flame, Sparkles, TrendingUp, Trophy } from "lucide-react";
 
 interface ScoreCalculatedDisplayProps {
   score: number;
@@ -22,17 +21,26 @@ export function ScoreCalculatedDisplay({ score, onMint, isLoading = false }: Sco
   return (
     <div className="space-y-6">
       {/* Score Display Card */}
-      <Card className="relative overflow-hidden border-2 border-mega-green/30 bg-background shadow-xl">
+      <Card className="relative overflow-hidden border-2 border-mega-green/40 bg-gradient-to-br from-mega-green/5 via-background to-background shadow-xl">
         <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-mega-coral via-mega-pink to-mega-blue"></div>
-        <CardContent className="p-12">
+
+        {/* Background accent */}
+        <motion.div
+          className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-mega-green/5 blur-3xl"
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ duration: 4, repeat: Infinity }}
+        />
+
+        <CardContent className="relative p-12">
           <div className="text-center">
+            {/* Animated Score */}
             <motion.div
-              className="relative mb-6 flex items-center justify-center gap-3"
-              animate={{ scale: [1, 1.1, 1] }}
+              className="relative mb-8 flex items-center justify-center"
+              animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 0.8, ease: "easeInOut" }}
             >
               <motion.div
-                className="font-mono text-7xl font-bold text-mega-green"
+                className="font-mono text-8xl font-bold text-mega-green"
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8 }}
@@ -42,22 +50,31 @@ export function ScoreCalculatedDisplay({ score, onMint, isLoading = false }: Sco
 
               {/* Celebration animation */}
               <motion.div
-                className="absolute text-4xl"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: -20 }}
-                transition={{ delay: 0.5, duration: 1, repeat: Infinity }}
+                className="absolute text-5xl"
+                initial={{ opacity: 0, y: 20, scale: 0 }}
+                animate={{ opacity: 1, y: -30, scale: 1 }}
+                transition={{ delay: 0.6, duration: 1.2, repeat: Infinity, repeatDelay: 1 }}
               >
                 ✨
               </motion.div>
             </motion.div>
 
             <motion.div
-              className="mb-8 text-xl uppercase tracking-wide text-foreground/70"
+              className="mb-3 text-sm font-semibold uppercase tracking-widest text-mega-green"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              MegaReputation Score
+              Your MegaReputation
+            </motion.div>
+
+            <motion.div
+              className="mb-8 text-xl uppercase tracking-wide text-foreground/70"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              Score
             </motion.div>
 
             <motion.div
@@ -66,60 +83,94 @@ export function ScoreCalculatedDisplay({ score, onMint, isLoading = false }: Sco
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
-              <Badge className="bg-mega-coral px-4 py-2 text-white">
+              <Badge className="border border-mega-coral/30 bg-mega-coral/20 px-4 py-2 text-mega-coral transition-colors hover:bg-mega-coral/30">
                 <Trophy className="mr-2 h-4 w-4" />
                 Rank #{1000 - score}
               </Badge>
-              <Badge className="bg-mega-blue px-4 py-2 text-white">Level {rank}</Badge>
-              <Badge className="bg-mega-green px-4 py-2 text-white">{percentile}th Percentile</Badge>
+              <Badge className="border border-mega-blue/30 bg-mega-blue/20 px-4 py-2 text-mega-blue transition-colors hover:bg-mega-blue/30">
+                <Crown className="mr-2 h-4 w-4" />
+                Level {rank}
+              </Badge>
+              <Badge className="border border-mega-green/30 bg-mega-green/20 px-4 py-2 text-mega-green transition-colors hover:bg-mega-green/30">
+                <TrendingUp className="mr-2 h-4 w-4" />
+                {percentile}th Percentile
+              </Badge>
             </motion.div>
 
             <motion.div
-              className="mb-8 text-sm text-gray-400"
+              className="space-y-3"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7 }}
             >
-              <div className="mb-2 flex items-center justify-center gap-2">
-                <CheckCircle className="h-5 w-5 text-mega-green" />
-                Score calculated successfully
+              <div className="flex items-center justify-center gap-2 font-semibold text-mega-green">
+                <CheckCircle2 className="h-5 w-5" />
+                <span>Score calculated successfully</span>
               </div>
-              Ready to mint your NFT badge?
+              <p className="text-sm text-foreground/60">Ready to mint your exclusive NFT badge?</p>
             </motion.div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Mint CTA Card */}
-      <Card className="border-2 border-mega-pink/30 bg-gradient-to-br from-mega-pink/5 to-transparent">
-        <CardContent className="p-8">
-          <div className="mb-6 flex items-center justify-between gap-4">
-            <div className="flex-1">
-              <h3 className="mb-1 text-lg font-semibold text-mega-pink">Lock in Your Score</h3>
-              <p className="text-sm text-gray-400">Mint an exclusive NFT badge to permanently record your reputation</p>
-            </div>
-            <Badge className="whitespace-nowrap bg-mega-green text-white">5 USDT</Badge>
-          </div>
-          <Button
-            onClick={onMint}
-            disabled={isLoading}
-            size="lg"
-            className="w-full bg-gradient-to-r from-mega-pink to-mega-coral hover:from-mega-pink/90 hover:to-mega-coral/90"
-          >
-            {isLoading ? (
-              <>
-                <Sparkles className="mr-2 h-5 w-5 animate-spin" />
-                Minting NFT...
-              </>
-            ) : (
-              <>
-                <Sparkles className="mr-2 h-5 w-5" />
-                Mint NFT - 5 USDT
-              </>
-            )}
-          </Button>
-        </CardContent>
-      </Card>
+      {/* Mint CTA Card: Only show if account has a score */}
+      {score > 0 && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
+          <Card className="relative overflow-hidden border-2 border-mega-pink/40 bg-gradient-to-br from-mega-pink/5 via-background to-background shadow-lg">
+            {/* Background accent */}
+            <motion.div
+              className="absolute -bottom-20 -left-20 h-40 w-40 rounded-full bg-mega-pink/10 blur-3xl"
+              animate={{ scale: [1, 1.3, 1] }}
+              transition={{ duration: 4, repeat: Infinity }}
+            />
+
+            <CardContent className="relative p-8">
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Flame className="h-5 w-5 text-mega-pink" />
+                    <h3 className="text-lg font-bold text-mega-pink">Lock in Your Score</h3>
+                  </div>
+                  <p className="text-sm text-foreground/60">
+                    Mint an exclusive NFT badge to permanently record your reputation on-chain
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between rounded-lg border border-mega-pink/20 bg-mega-pink/5 p-4">
+                  <div className="space-y-1">
+                    <p className="text-xs uppercase tracking-wide text-foreground/50">Cost</p>
+                    <p className="text-xl font-bold text-mega-pink">5 USDT</p>
+                  </div>
+                  <Sparkles className="h-8 w-8 text-mega-pink/40" />
+                </div>
+
+                <Button
+                  onClick={onMint}
+                  disabled={isLoading}
+                  size="lg"
+                  className="h-12 w-full bg-gradient-to-r from-mega-pink to-mega-coral text-base font-semibold shadow-lg transition-all hover:from-mega-pink/90 hover:to-mega-coral/90 hover:shadow-xl"
+                >
+                  {isLoading ? (
+                    <>
+                      <Sparkles className="mr-3 h-5 w-5 animate-spin" />
+                      Minting Your NFT...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="mr-3 h-5 w-5" />
+                      Mint NFT Badge
+                    </>
+                  )}
+                </Button>
+
+                <p className="text-center text-xs text-foreground/40">
+                  This will initiate a secure transaction to mint your exclusive reputation NFT
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
     </div>
   );
 }
