@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ConnectOverlay } from "@/components/layout/connect-overlay";
 import { PageContainer } from "@/components/layout/page-container";
 import { DataGatheredSection } from "@/components/my-score/data-gathered-section";
 import { MyScoreHeader } from "@/components/my-score/header";
+import { InitialScoreDisplay } from "@/components/my-score/initial-score-display";
 import { NFTDisplaySection } from "@/components/my-score/nft-display-section";
+import { ScoreCalculatedDisplay } from "@/components/my-score/score-calculated-display";
 import { ScoreDisplaySection } from "@/components/my-score/score-display-section";
 import { useScoreStore } from "@/store/score-store";
 import { useAccount } from "wagmi";
@@ -17,29 +19,85 @@ async function fetchAccountData(walletAddress: string) {
 }
 
 export default function MyScorePage() {
-  const { setCurrentScore, setHasNFT, hasNFT } = useScoreStore();
+  const { setCurrentScore, setHasNFT, currentScore } = useScoreStore();
   const { address } = useAccount();
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [isMinting, setIsMinting] = useState(false);
+  const [scoreState, setScoreState] = useState<"initial" | "calculated" | "minted">("initial");
 
   useEffect(() => {
     if (!address) return;
     (async () => {
       const data = await fetchAccountData(address);
       if (data && data.account) {
-        setCurrentScore(data.score?.score ?? 0);
+        const hasScore = data.score?.score ?? 0;
+        setCurrentScore(hasScore);
         setHasNFT(!!data.account.mintedAt);
+        // Set state based on data
+        if (!!data.account.mintedAt) {
+          setScoreState("minted");
+        } else if (hasScore > 0) {
+          setScoreState("calculated");
+        } else {
+          setScoreState("initial");
+        }
       }
     })();
   }, [address, setCurrentScore, setHasNFT]);
 
+  const handleCalculateScore = async () => {
+    setIsCalculating(true);
+    try {
+      // TODO: Call API to calculate score
+      console.log("Calculating score for:", address);
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2500));
+      // Update store with calculated score
+      const calculatedScore = Math.floor(Math.random() * 800) + 200; // Random score between 200-1000
+      setCurrentScore(calculatedScore);
+      setScoreState("calculated");
+    } finally {
+      setIsCalculating(false);
+    }
+  };
+
+  const handleMintNFT = async () => {
+    setIsMinting(true);
+    try {
+      // TODO: Call payment and minting flow
+      console.log("Minting NFT for:", address);
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2500));
+      // Update store to reflect NFT minted
+      setHasNFT(true);
+      setScoreState("minted");
+    } finally {
+      setIsMinting(false);
+    }
+  };
+
   return (
     <PageContainer>
       <ConnectOverlay>
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-6xl">
+        <div className="container mx-auto px-4 py-8">
+          <div className="mx-auto max-w-4xl space-y-8">
             <MyScoreHeader />
-            <ScoreDisplaySection />
-            {hasNFT && <NFTDisplaySection />}
-            {hasNFT && <DataGatheredSection />}
+
+            {scoreState === "initial" && (
+              <InitialScoreDisplay onCalculate={handleCalculateScore} isLoading={isCalculating} />
+            )}
+
+            {scoreState === "calculated" && (
+              <ScoreCalculatedDisplay score={currentScore} onMint={handleMintNFT} isLoading={isMinting} />
+            )}
+
+            {scoreState === "minted" && (
+              <>
+                <ScoreDisplaySection />
+                <NFTDisplaySection />
+                <DataGatheredSection />
+              </>
+            )}
           </div>
         </div>
       </ConnectOverlay>
