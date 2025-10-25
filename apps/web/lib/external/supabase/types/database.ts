@@ -110,21 +110,21 @@ export type Database = {
       referrals: {
         Row: {
           account_id: string;
-          created_at: string | null;
+          created_at: string;
           id: string;
           redeem_count: number;
           referral_code: string;
         };
         Insert: {
           account_id: string;
-          created_at?: string | null;
+          created_at?: string;
           id?: string;
           redeem_count?: number;
           referral_code: string;
         };
         Update: {
           account_id?: string;
-          created_at?: string | null;
+          created_at?: string;
           id?: string;
           redeem_count?: number;
           referral_code?: string;

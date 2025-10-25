@@ -12,7 +12,7 @@ create table referrals (
   account_id uuid references accounts(id) on delete cascade unique not null,
   referral_code text not null,
   redeem_count integer not null default 0,
-  created_at timestamp without time zone null default now(),
+  created_at timestamp without time zone not null default now(),
   constraint referrals_referral_code_key unique (referral_code)
 );
 

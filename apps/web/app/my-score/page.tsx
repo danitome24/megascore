@@ -19,6 +19,7 @@ export default function MyScorePage() {
     setHasNFT(true);
   }, [setCurrentScore, setHasNFT]);
 
+  const hasNFT = false;
   return (
     <PageContainer>
       <ConnectOverlay>
@@ -26,8 +27,8 @@ export default function MyScorePage() {
           <div className="mx-auto max-w-6xl">
             <MyScoreHeader />
             <ScoreDisplaySection />
-            <NFTDisplaySection />
-            <DataGatheredSection />
+            {hasNFT && <NFTDisplaySection />}
+            {hasNFT && <DataGatheredSection />}
           </div>
         </div>
       </ConnectOverlay>
