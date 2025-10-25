@@ -8,18 +8,29 @@ import { MyScoreHeader } from "@/components/my-score/header";
 import { NFTDisplaySection } from "@/components/my-score/nft-display-section";
 import { ScoreDisplaySection } from "@/components/my-score/score-display-section";
 import { useScoreStore } from "@/store/score-store";
+import { useAccount } from "wagmi";
+
+async function fetchAccountData(walletAddress: string) {
+  const res = await fetch(`/api/account/${walletAddress}`);
+  if (!res.ok) return null;
+  return res.json();
+}
 
 export default function MyScorePage() {
-  const { setCurrentScore, setHasNFT } = useScoreStore();
+  const { setCurrentScore, setHasNFT, hasNFT } = useScoreStore();
+  const { address } = useAccount();
 
-  // Initialize with mock data on mount
   useEffect(() => {
-    // In real app, fetch score from database/API
-    setCurrentScore(847);
-    setHasNFT(true);
-  }, [setCurrentScore, setHasNFT]);
+    if (!address) return;
+    (async () => {
+      const data = await fetchAccountData(address);
+      if (data && data.account) {
+        setCurrentScore(data.score?.score ?? 0);
+        setHasNFT(!!data.account.mintedAt);
+      }
+    })();
+  }, [address, setCurrentScore, setHasNFT]);
 
-  const hasNFT = false;
   return (
     <PageContainer>
       <ConnectOverlay>
