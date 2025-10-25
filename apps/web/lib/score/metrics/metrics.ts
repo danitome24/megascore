@@ -1,7 +1,7 @@
 import { MetricsData } from "@/lib/domain/metrics/types";
+import { Address } from "@/lib/domain/shared/types";
 import { fetchTransactions } from "@/lib/external/sources/transactions";
 import { mapTxsToMetrics } from "@/lib/mappers/txs-to-metrics";
-import { Address } from "@/types/common";
 
 export const metrics = async (wallet: Address): Promise<MetricsData> => {
   const apiData = await fetchTransactions(wallet);

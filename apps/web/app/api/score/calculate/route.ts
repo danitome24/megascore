@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Address } from "@/lib/domain/shared/types";
 import { calculate } from "@/lib/score/calculate/score";
 import { metrics } from "@/lib/score/metrics/metrics";
-import { Address } from "@/types/common";
 import { isAddress } from "viem";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {

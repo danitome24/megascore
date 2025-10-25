@@ -3,8 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useUpdateScore } from "@/hooks/score/use-update-score";
 import { useCounterAnimation } from "@/hooks/use-counter-animation";
+import { Rank } from "@/lib/domain/shared/types";
 import { useScoreStore } from "@/store/score-store";
-import type { Rank } from "@/types/common";
 import { motion } from "framer-motion";
 import { Trophy } from "lucide-react";
 

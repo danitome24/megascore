@@ -1,4 +1,4 @@
-import { Address } from "@/types/common";
+import { Address } from "@/lib/domain/shared/types";
 
 export interface Account {
   id: string;
