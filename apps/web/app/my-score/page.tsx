@@ -7,7 +7,7 @@ import { DataGatheredSection } from "@/components/my-score/data-gathered-section
 import { MyScoreHeader } from "@/components/my-score/header";
 import { NFTDisplaySection } from "@/components/my-score/nft-display-section";
 import { ScoreDisplaySection } from "@/components/my-score/score-display-section";
-import { useScoreStore } from "@/lib/store/score-store";
+import { useScoreStore } from "@/store/score-store";
 
 export default function MyScorePage() {
   const { setCurrentScore, setHasNFT } = useScoreStore();

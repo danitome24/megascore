@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useScoreStore } from "@/lib/store/score-store";
+import { useScoreStore } from "@/store/score-store";
 import { toast } from "sonner";
 import { useAccount } from "wagmi";
 

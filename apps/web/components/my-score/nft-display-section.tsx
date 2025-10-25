@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useMintSBT } from "@/hooks/nft/use-mint-sbt";
 import { usePersistScore } from "@/hooks/score/use-persist-score";
 import { useUpdateScore } from "@/hooks/score/use-update-score";
-import { useScoreStore } from "@/lib/store/score-store";
+import { useScoreStore } from "@/store/score-store";
 import { Eye, Hash, Share2, Wallet } from "lucide-react";
 
 export function NFTDisplaySection() {

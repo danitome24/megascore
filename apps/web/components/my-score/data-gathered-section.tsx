@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useScoreStore } from "@/lib/store/score-store";
+import { useScoreStore } from "@/store/score-store";
 import { BarChart3 } from "lucide-react";
 
 // Mock metrics - in real app, fetch from API/DB

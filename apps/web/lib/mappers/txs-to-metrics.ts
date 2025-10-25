@@ -1,4 +1,4 @@
-import type { TransactionApiResponse, TransactionItem } from "@/lib/sources/transactions";
+import type { TransactionApiResponse, TransactionItem } from "@/lib/external/sources/transactions";
 import { Metrics } from "@/types/common";
 
 const MS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
