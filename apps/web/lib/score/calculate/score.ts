@@ -1,6 +1,7 @@
-import { Metrics, Score } from "@/types/common";
+import { MetricsData } from "@/lib/domain/metrics/types";
+import { Score } from "@/lib/domain/score/types";
 
-export const calculate = async (metrics: Metrics): Promise<Score> => {
+export const calculate = async (metrics: MetricsData): Promise<number> => {
   // Weighted score using all metrics fields
   const base = 1000;
   const txScore = metrics.transactions * 8;
@@ -18,18 +19,18 @@ export const calculate = async (metrics: Metrics): Promise<Score> => {
   const weeksSinceActive = Math.floor((now.getTime() - metrics.lastActiveDate.getTime()) / (1000 * 60 * 60 * 24 * 7));
   const recentActivityBonus = weeksSinceActive <= 4 ? 150 : 0;
 
-  return {
-    total:
-      base +
-      txScore +
-      weeksActiveScore +
-      uniqueContractsScore +
-      txTypesScore +
-      contractDeployScore +
-      nftScore +
-      maxConsecWeeksScore +
-      weeksSinceFirstScore +
-      contractBonus +
-      recentActivityBonus,
-  };
+  const total =
+    base +
+    txScore +
+    weeksActiveScore +
+    uniqueContractsScore +
+    txTypesScore +
+    contractDeployScore +
+    nftScore +
+    maxConsecWeeksScore +
+    weeksSinceFirstScore +
+    contractBonus +
+    recentActivityBonus;
+
+  return total;
 };

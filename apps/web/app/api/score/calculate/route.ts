@@ -25,14 +25,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   const metricsData = await metrics(wallet);
-  const scoreData = await calculate(metricsData);
-  console.log(`Calculated score for wallet ${wallet}: ${scoreData.total}`);
+  const score = await calculate(metricsData);
+  console.log(`Calculated score for wallet ${wallet}: ${score}`);
 
   return NextResponse.json({
     status: 200,
     wallet,
     score: {
-      total: scoreData.total,
+      total: score,
     },
   });
 }

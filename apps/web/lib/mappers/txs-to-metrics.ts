@@ -1,9 +1,9 @@
 import type { TransactionApiResponse, TransactionItem } from "@/lib/external/sources/transactions";
-import { Metrics } from "@/types/common";
+import { MetricsData } from "../domain/metrics/types";
 
 const MS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
 
-export const mapTxsToMetrics = (api: TransactionApiResponse): Metrics => {
+export const mapTxsToMetrics = (api: TransactionApiResponse): MetricsData => {
   const txs = api.items || [];
   const uniqueContracts = new Set<string>();
   let nftMintedCount = 0;
