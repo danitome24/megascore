@@ -1,27 +1,94 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# debug
+############################
+# Node / PNPM
+############################
+node_modules/
+.pnpm-debug.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+*.log
 
-# env files
-.env*
+############################
+# OS / Editor
+############################
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 
-# vercel
-.vercel
+############################
+# Environment / Secrets
+############################
+.env
+.env.*
+!.env.example
 
-# typescript
+############################
+# Next.js (apps/web)
+############################
+.next/
+out/
+dist/
+.vercel/
+coverage/
+
+############################
+# Build artifacts (general)
+############################
 *.tsbuildinfo
-next-env.d.ts
+
+############################
+# Foundry (apps/contracts)
+############################
+apps/contracts/out/
+apps/contracts/cache/
+apps/contracts/broadcast/
+apps/contracts/lib/
+apps/contracts/forge-artifacts/
+# Flattened sources (if you generate them)
+apps/contracts/flat/
+
+############################
+# ABI Package
+############################
+# Ignore bulk, allow required manifest + docs + ABI JSON exports
+packages/abi/*
+!packages/abi/README.md
+!packages/abi/package.json
+!packages/abi/*.abi.json
+!packages/abi/index.ts
+
+############################
+# Misc
+############################
+.idea/
+tmp/
+temp/
+*.swp
+
+############################
+# Generated TypeScript types (if you codegen)
+############################
+types/generated/
+generated/
+
+############################
+# Coverage / Reports
+############################
+coverage/
+lcov.info
+
+############################
+# Lockfiles you might not use
+############################
+package-lock.json
+yarn.lock
+
+############################
+# Cache
+############################
+.cache/
+.eslintcache
+.next-turbo/
+turbo/
