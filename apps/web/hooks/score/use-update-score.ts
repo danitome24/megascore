@@ -15,6 +15,7 @@ export function useUpdateScore() {
     currentMetrics,
     updatedMetrics,
     setUpdatedScore,
+    setUpdatedMetrics,
     commitScoreUpdate,
     commitMetricsUpdate,
     persistScoreToNFT,
@@ -40,7 +41,9 @@ export function useUpdateScore() {
       const data = await response.json();
       if (data.status !== 200 || !data.score?.total) throw new Error(data.error || "Invalid score response");
       const newScore = data.score.total;
+      const newMetrics = data.metrics;
       setUpdatedScore(newScore);
+      setUpdatedMetrics(newMetrics);
       toast.success("Score updated!", {
         description: `MegaReputation increased by +${newScore - currentScore} points`,
         duration: 4000,
@@ -55,7 +58,7 @@ export function useUpdateScore() {
     } finally {
       setIsUpdating(false);
     }
-  }, [address, currentScore, setUpdatedScore]);
+  }, [address, currentScore, setUpdatedScore, setUpdatedMetrics]);
 
   const commitUpdate = useCallback(async () => {
     if (!address) {

@@ -34,5 +34,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     score: {
       total: score,
     },
+    metrics: metricsData,
   });
 }
