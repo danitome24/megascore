@@ -6,7 +6,11 @@ import { supabaseClient } from "@/lib/external/supabase/client";
 
 export async function getAccountByWallet(walletAddress: string): Promise<Account | null> {
   const supabase = await supabaseClient();
-  const { data, error } = await supabase.from("accounts").select("*").eq("wallet_address", walletAddress).single();
+  const { data, error } = await supabase
+    .from("accounts")
+    .select("*")
+    .eq("wallet_address", walletAddress.toLowerCase())
+    .single();
   if (error || !data) return null;
   return {
     id: data.id,

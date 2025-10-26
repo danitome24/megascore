@@ -11,20 +11,22 @@ export async function getAccountWithDetails(walletAddress: string): Promise<{
   account: Account;
   metrics: Metrics;
   score: Score;
-  referral: Referral;
+  // referral: Referral;
 } | null> {
   const account = await getAccountByWallet(walletAddress);
   if (!account) {
+    console.error("Account not found for wallet address:", walletAddress);
     return null;
   }
-  const [metrics, score, referral] = await Promise.all([
+  const [metrics, score] = await Promise.all([
     getMetricsByAccountId(account.id),
     getScoreByAccountId(account.id),
-    getReferralByAccountId(account.id),
+    // getReferralByAccountId(account.id),
   ]);
-  if (!metrics || !score || !referral) {
+  if (!metrics || !score) {
+    console.error("Missing related data for account id:", account.id);
     return null;
   }
 
-  return { account, metrics, score, referral };
+  return { account, metrics, score };
 }

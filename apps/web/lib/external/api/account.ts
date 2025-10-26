@@ -15,3 +15,20 @@ export async function createAccount(walletAddress: string): Promise<Account> {
   const data = await res.json();
   return data.account as Account;
 }
+
+export async function getAccountByWallet(walletAddress: string): Promise<Account | null> {
+  const res = await fetch(`/api/account/${walletAddress}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (res.status === 404) {
+    return null; // Account not found
+  }
+  if (!res.ok) {
+    throw new Error("Failed to fetch account");
+  }
+
+  const data = await res.json();
+  return data.account as Account;
+}
