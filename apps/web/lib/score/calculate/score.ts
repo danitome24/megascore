@@ -16,7 +16,8 @@ export const calculate = async (metrics: MetricsData): Promise<number> => {
   const contractBonus = metrics.hasDeployedContract ? 200 : 0;
   // Recent activity bonus (last 4 weeks)
   const now = new Date();
-  const weeksSinceActive = Math.floor((now.getTime() - metrics.lastActiveDate.getTime()) / (1000 * 60 * 60 * 24 * 7));
+  const lastActiveDate = new Date(metrics.lastActiveDate);
+  const weeksSinceActive = Math.floor((now.getTime() - lastActiveDate.getTime()) / (1000 * 60 * 60 * 24 * 7));
   const recentActivityBonus = weeksSinceActive <= 4 ? 150 : 0;
 
   const total =
