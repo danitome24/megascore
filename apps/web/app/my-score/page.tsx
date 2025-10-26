@@ -22,7 +22,7 @@ export default function MyScorePage() {
   const [scoreState, setScoreState] = useState<"loading" | "initial" | "calculated" | "minted">("loading");
 
   const { address } = useAccount();
-  const { setCurrentScore, setHasNFT, currentScore } = useScoreStore();
+  const { setCurrentScore, setHasNFT, setCurrentMetrics, currentScore } = useScoreStore();
 
   useEffect(() => {
     if (!address) return;
@@ -33,6 +33,9 @@ export default function MyScorePage() {
         const hasScore = data.score?.score ?? 0;
         setCurrentScore(hasScore);
         setHasNFT(!!data.account.mintedAt);
+        if (data.metrics?.data) {
+          setCurrentMetrics(data.metrics.data);
+        }
         // Set state based on data
         if (!!data.account.mintedAt) {
           setScoreState("minted");
@@ -74,18 +77,18 @@ export default function MyScorePage() {
       const account = await apiCreateAccount(address);
       await apiCreateScore(account.id, currentScore);
 
-      // TODO: Replace with real metrics data
+      // Mock random metrics data for demo
       const metricsData = {
-        transactions: 0,
-        weeksActive: 0,
-        uniqueContractsInteractedWith: 0,
-        txTypesUsed: 0,
-        hasDeployedContract: false,
-        contractsDeployedCount: 0,
-        nftMintedCount: 0,
-        maxConsecutiveActiveWeeks: 0,
-        weeksSinceFirstTransaction: 0,
-        lastActiveDate: new Date().toISOString(),
+        transactions: Math.floor(Math.random() * 1000),
+        weeksActive: Math.floor(Math.random() * 52),
+        uniqueContractsInteractedWith: Math.floor(Math.random() * 50),
+        txTypesUsed: Math.floor(Math.random() * 10),
+        hasDeployedContract: Math.random() > 0.5,
+        contractsDeployedCount: Math.floor(Math.random() * 5),
+        nftMintedCount: Math.floor(Math.random() * 10),
+        maxConsecutiveActiveWeeks: Math.floor(Math.random() * 20),
+        weeksSinceFirstTransaction: Math.floor(Math.random() * 52),
+        lastActiveDate: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toISOString(),
       };
       await apiCreateMetrics(account.id, metricsData);
 
