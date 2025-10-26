@@ -17,4 +17,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
 // Create the client instance
 const _supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
-export const supabase = _supabaseClient;
+export async function supabaseClient() {
+  return _supabaseClient;
+}

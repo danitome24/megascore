@@ -8,19 +8,23 @@ import { getReferralByAccountId } from "@/lib/external/supabase/referral";
 import { getScoreByAccountId } from "@/lib/external/supabase/score";
 
 export async function getAccountWithDetails(walletAddress: string): Promise<{
-  account: Account | null;
-  metrics: Metrics | null;
-  score: Score | null;
-  referral: Referral | null;
-}> {
+  account: Account;
+  metrics: Metrics;
+  score: Score;
+  referral: Referral;
+} | null> {
   const account = await getAccountByWallet(walletAddress);
   if (!account) {
-    return { account: null, metrics: null, score: null, referral: null };
+    return null;
   }
   const [metrics, score, referral] = await Promise.all([
     getMetricsByAccountId(account.id),
     getScoreByAccountId(account.id),
     getReferralByAccountId(account.id),
   ]);
+  if (!metrics || !score || !referral) {
+    return null;
+  }
+
   return { account, metrics, score, referral };
 }

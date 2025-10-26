@@ -1,8 +1,8 @@
 import { NextRequest } from "next/server";
 import { getAccountWithDetails } from "@/lib/domain/account/service";
 
-export async function GET(req: NextRequest, { params }: { params: { walletAddress: string } }) {
-  const { walletAddress } = params;
+export async function GET(req: NextRequest, { params }: { params: Promise<{ walletAddress: string }> }) {
+  const { walletAddress } = await params;
   if (!walletAddress) {
     return new Response(JSON.stringify({ error: "Missing wallet address" }), { status: 400 });
   }

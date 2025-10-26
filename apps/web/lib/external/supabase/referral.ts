@@ -1,7 +1,10 @@
+"use server";
+
 import type { Referral } from "@/lib/domain/referral/types";
-import { supabase } from "@/lib/external/supabase/client";
+import { supabaseClient } from "@/lib/external/supabase/client";
 
 export async function getReferralByAccountId(accountId: string): Promise<Referral | null> {
+  const supabase = await supabaseClient();
   const { data, error } = await supabase.from("referrals").select("*").eq("account_id", accountId).single();
   if (error || !data) return null;
   return {
