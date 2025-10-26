@@ -10,7 +10,6 @@ import { Trophy } from "lucide-react";
 
 export function ScoreDisplaySection() {
   const { currentScore, updatedScore, scoreIncrease } = useScoreStore();
-  const { isScoreAnimating } = useUpdateScore();
 
   const scoreIncreased = updatedScore !== null;
 
@@ -36,7 +35,7 @@ export function ScoreDisplaySection() {
       <CardContent className="p-8">
         <div className="text-center">
           <motion.div
-            className={`relative mb-4 flex items-center justify-center gap-3 transition-all duration-300 ${isScoreAnimating ? "scale-110" : "scale-100"} `}
+            className={"relative mb-4 flex items-center justify-center gap-3 transition-all duration-300"}
             animate={scoreIncreased ? { scale: [1, 1.15, 1] } : {}}
             transition={{ duration: 0.6, ease: "easeInOut" }}
           >

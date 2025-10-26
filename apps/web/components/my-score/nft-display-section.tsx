@@ -10,13 +10,12 @@ import { Eye, Hash, Share2, Wallet } from "lucide-react";
 
 export function NFTDisplaySection() {
   const { hasNFT, currentScore, updatedScore } = useScoreStore();
-  const { displayScore } = useUpdateScore();
 
   // Use custom hook for minting logic
-  const { isMinting, handleMintSBT } = useMintSBT(displayScore);
+  const { isMinting, handleMintSBT } = useMintSBT(currentScore);
 
   // Use custom hook for persistence logic
-  const { isPersisting, handlePersistScore } = usePersistScore(displayScore);
+  const { isPersisting, handlePersistScore } = usePersistScore(currentScore);
 
   // Only allow update if updatedScore is higher than currentScore
   const canUpdate = updatedScore !== null && updatedScore > currentScore;
