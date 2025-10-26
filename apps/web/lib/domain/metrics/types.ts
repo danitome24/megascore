@@ -8,7 +8,7 @@ export type MetricsData = {
   nftMintedCount: number;
   maxConsecutiveActiveWeeks: number;
   weeksSinceFirstTransaction: number;
-  lastActiveDate: Date;
+  lastActiveDate: string;
 };
 
 export interface Metrics {

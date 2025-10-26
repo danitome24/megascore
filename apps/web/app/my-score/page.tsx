@@ -10,6 +10,7 @@ import { NFTDisplaySection } from "@/components/my-score/nft-display-section";
 import { ScoreCalculatedDisplay } from "@/components/my-score/score-calculated-display";
 import { ScoreDisplaySection } from "@/components/my-score/score-display-section";
 import { createAccount as apiCreateAccount } from "@/lib/external/api/account";
+import { createMetrics as apiCreateMetrics } from "@/lib/external/api/metrics";
 import { createScore as apiCreateScore } from "@/lib/external/api/score";
 import { useScoreStore } from "@/store/score-store";
 import { useAccount } from "wagmi";
@@ -73,6 +74,21 @@ export default function MyScorePage() {
 
       const account = await apiCreateAccount(address);
       await apiCreateScore(account.id, currentScore);
+
+      // TODO: Replace with real metrics data
+      const metricsData = {
+        transactions: 0,
+        weeksActive: 0,
+        uniqueContractsInteractedWith: 0,
+        txTypesUsed: 0,
+        hasDeployedContract: false,
+        contractsDeployedCount: 0,
+        nftMintedCount: 0,
+        maxConsecutiveActiveWeeks: 0,
+        weeksSinceFirstTransaction: 0,
+        lastActiveDate: new Date().toISOString(),
+      };
+      await apiCreateMetrics(account.id, metricsData);
 
       setHasNFT(true);
       setScoreState("minted");
