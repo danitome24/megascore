@@ -1,7 +1,7 @@
 import { Account } from "@/lib/domain/account/types";
 
 // Call the API to create a new account after minting
-export async function createAccount(walletAddress: string): Promise<Account | null> {
+export async function createAccount(walletAddress: string): Promise<Account> {
   const res = await fetch("/api/account", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -12,5 +12,6 @@ export async function createAccount(walletAddress: string): Promise<Account | nu
     throw new Error("Failed to create account");
   }
 
-  return res.json();
+  const data = await res.json();
+  return data.account as Account;
 }

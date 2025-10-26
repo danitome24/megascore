@@ -10,6 +10,7 @@ import { NFTDisplaySection } from "@/components/my-score/nft-display-section";
 import { ScoreCalculatedDisplay } from "@/components/my-score/score-calculated-display";
 import { ScoreDisplaySection } from "@/components/my-score/score-display-section";
 import { createAccount as apiCreateAccount } from "@/lib/external/api/account";
+import { createScore as apiCreateScore } from "@/lib/external/api/score";
 import { useScoreStore } from "@/store/score-store";
 import { useAccount } from "wagmi";
 
@@ -70,10 +71,9 @@ export default function MyScorePage() {
       console.log("Minting NFT for:", address);
       await new Promise(resolve => setTimeout(resolve, 2500));
 
-      // 2. Store account in DB via API utility
-      await apiCreateAccount(address);
+      const account = await apiCreateAccount(address);
+      await apiCreateScore(account.id, currentScore);
 
-      // 3. Update store/UI
       setHasNFT(true);
       setScoreState("minted");
     } catch (error) {
