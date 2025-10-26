@@ -2,24 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useScoreStore } from "@/store/score-store";
 import { BarChart3 } from "lucide-react";
 
-// Mock metrics - in real app, fetch from API/DB
-const mockMetrics = {
-  transactions: 43,
-  weeksActive: 2,
-  uniqueContractsInteractedWith: 5,
-  txTypesUsed: 3,
-  hasDeployedContract: true,
-  contractsDeployedCount: 2,
-  nftMintedCount: 4,
-  maxConsecutiveActiveWeeks: 1,
-  weeksSinceFirstTransaction: 10,
-  lastActiveDate: new Date("2024-12-01"),
-};
-
 export function DataGatheredSection() {
-  const { currentScore } = useScoreStore();
-  const scoreData = mockMetrics;
+  const { currentScore, currentMetrics: metrics } = useScoreStore();
 
+  if (!metrics) {
+    return null;
+  }
   return (
     <Card className="border-2 border-foreground/20 bg-background shadow-xl">
       <CardHeader className="border-b border-foreground/10 p-4">
@@ -31,19 +19,19 @@ export function DataGatheredSection() {
       <CardContent className="p-6">
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <div className="rounded-lg border border-foreground/10 p-4 text-center transition-colors hover:bg-mega-coral/5">
-            <div className="mb-2 text-2xl font-bold text-mega-coral">{scoreData.transactions}</div>
+            <div className="mb-2 text-2xl font-bold text-mega-coral">{metrics.transactions}</div>
             <div className="text-sm uppercase tracking-wide text-foreground/70">Transactions</div>
           </div>
           <div className="rounded-lg border border-foreground/10 p-4 text-center transition-colors hover:bg-mega-blue/5">
-            <div className="mb-2 text-2xl font-bold text-mega-blue">{scoreData.uniqueContractsInteractedWith}</div>
+            <div className="mb-2 text-2xl font-bold text-mega-blue">{metrics.uniqueContractsInteractedWith}</div>
             <div className="text-sm uppercase tracking-wide text-foreground/70">Contracts</div>
           </div>
           <div className="rounded-lg border border-foreground/10 p-4 text-center transition-colors hover:bg-mega-green/5">
-            <div className="mb-2 text-2xl font-bold text-mega-green">{scoreData.maxConsecutiveActiveWeeks}</div>
+            <div className="mb-2 text-2xl font-bold text-mega-green">{metrics.maxConsecutiveActiveWeeks}</div>
             <div className="text-sm uppercase tracking-wide text-foreground/70">Consecutive Active Weeks</div>
           </div>
           <div className="rounded-lg border border-foreground/10 p-4 text-center transition-colors hover:bg-mega-pink/5">
-            <div className="mb-2 text-2xl font-bold text-mega-pink">{scoreData.weeksSinceFirstTransaction}</div>
+            <div className="mb-2 text-2xl font-bold text-mega-pink">{metrics.weeksSinceFirstTransaction}</div>
             <div className="text-sm uppercase tracking-wide text-foreground/70">Age of Wallet</div>
           </div>
         </div>
@@ -51,13 +39,15 @@ export function DataGatheredSection() {
           <div className="rounded-lg bg-foreground/5 p-4">
             <div className="flex items-center justify-between">
               <span className="text-sm uppercase tracking-wide text-foreground/70">Total Transactions</span>
-              <span className="text-lg font-bold text-foreground">{scoreData.transactions}</span>
+              <span className="text-lg font-bold text-foreground">{metrics.transactions}</span>
             </div>
           </div>
           <div className="rounded-lg bg-foreground/5 p-4">
             <div className="flex items-center justify-between">
               <span className="text-sm uppercase tracking-wide text-foreground/70">Last Activity</span>
-              <span className="text-lg font-bold text-foreground">{scoreData.lastActiveDate.toLocaleDateString()}</span>
+              <span className="text-lg font-bold text-foreground">
+                {new Date(metrics.lastActiveDate).toLocaleDateString()}
+              </span>
             </div>
           </div>
         </div>
