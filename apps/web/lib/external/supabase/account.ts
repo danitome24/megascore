@@ -15,3 +15,22 @@ export async function getAccountByWallet(walletAddress: string): Promise<Account
     createdAt: data.created_at,
   };
 }
+
+export async function createAccount(walletAddress: string) {
+  const supabase = await supabaseClient();
+  const { data, error } = await supabase
+    .from("accounts")
+    .insert({
+      wallet_address: walletAddress.toLowerCase(),
+      minted_at: new Date().toISOString(),
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error creating account:", error);
+    return null;
+  }
+
+  return data;
+}
