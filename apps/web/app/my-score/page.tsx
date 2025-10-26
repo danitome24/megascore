@@ -9,6 +9,7 @@ import { InitialScoreDisplay } from "@/components/my-score/initial-score-display
 import { NFTDisplaySection } from "@/components/my-score/nft-display-section";
 import { ScoreCalculatedDisplay } from "@/components/my-score/score-calculated-display";
 import { ScoreDisplaySection } from "@/components/my-score/score-display-section";
+import { Loading } from "@/components/ui/loading";
 import { createAccount as apiCreateAccount, fetchAccountData } from "@/lib/external/api/account";
 import { createMetrics as apiCreateMetrics } from "@/lib/external/api/metrics";
 import { createScore as apiCreateScore } from "@/lib/external/api/score";
@@ -18,13 +19,14 @@ import { useAccount } from "wagmi";
 export default function MyScorePage() {
   const [isCalculating, setIsCalculating] = useState(false);
   const [isMinting, setIsMinting] = useState(false);
-  const [scoreState, setScoreState] = useState<"initial" | "calculated" | "minted">("initial");
+  const [scoreState, setScoreState] = useState<"loading" | "initial" | "calculated" | "minted">("loading");
 
   const { address } = useAccount();
   const { setCurrentScore, setHasNFT, currentScore } = useScoreStore();
 
   useEffect(() => {
     if (!address) return;
+    setScoreState("loading");
     (async () => {
       const data = await fetchAccountData(address);
       if (data && data.account) {
@@ -39,6 +41,8 @@ export default function MyScorePage() {
         } else {
           setScoreState("initial");
         }
+      } else {
+        setScoreState("initial");
       }
     })();
   }, [address, setCurrentScore, setHasNFT]);
@@ -101,6 +105,8 @@ export default function MyScorePage() {
         <div className="container mx-auto px-4 py-8">
           <div className="mx-auto max-w-4xl space-y-8">
             <MyScoreHeader />
+
+            {scoreState === "loading" && <Loading title="Loading your score..." className="py-12" />}
 
             {scoreState === "initial" && (
               <InitialScoreDisplay onCalculate={handleCalculateScore} isLoading={isCalculating} />
