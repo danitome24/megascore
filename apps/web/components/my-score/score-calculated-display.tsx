@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCounterAnimation } from "@/hooks/use-counter-animation";
+import { getPointsToNextRank, getRankByScore } from "@/lib/domain/score/ranks";
 import { motion } from "framer-motion";
 import { CheckCircle2, Crown, Flame, Sparkles, TrendingUp, Trophy } from "lucide-react";
 
@@ -15,7 +16,9 @@ interface ScoreCalculatedDisplayProps {
 
 export function ScoreCalculatedDisplay({ score, onMint, isLoading = false }: ScoreCalculatedDisplayProps) {
   const animatedScore = useCounterAnimation(0, score, 1000, true);
-  const rank = Math.floor(score / 100);
+  const rankObj = getRankByScore(score);
+  const rank = rankObj.rank;
+  const pointsToNext = getPointsToNextRank(score);
   const percentile = Math.min(95, Math.floor((score / 1000) * 100) + 50);
 
   return (
@@ -70,7 +73,10 @@ export function ScoreCalculatedDisplay({ score, onMint, isLoading = false }: Sco
               </Badge>
               <Badge className="border border-mega-blue/30 bg-mega-blue/20 px-4 py-2 text-mega-blue transition-colors hover:bg-mega-blue/30">
                 <Crown className="mr-2 h-4 w-4" />
-                Level {rank}
+                Rank {rank}
+                {pointsToNext !== null && (
+                  <span className="ml-2 text-xs text-foreground/60">({pointsToNext} to next)</span>
+                )}
               </Badge>
               <Badge className="border border-mega-green/30 bg-mega-green/20 px-4 py-2 text-mega-green transition-colors hover:bg-mega-green/30">
                 <TrendingUp className="mr-2 h-4 w-4" />
