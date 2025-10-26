@@ -11,7 +11,6 @@ export async function getAccountWithDetails(walletAddress: string): Promise<{
   account: Account;
   metrics: Metrics;
   score: Score;
-  // referral: Referral;
 } | null> {
   const account = await getAccountByWallet(walletAddress);
   if (!account) {

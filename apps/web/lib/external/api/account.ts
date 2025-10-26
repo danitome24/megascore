@@ -1,4 +1,6 @@
 import { Account } from "@/lib/domain/account/types";
+import { Metrics } from "@/lib/domain/metrics/types";
+import { Score } from "@/lib/domain/score/types";
 
 // Call the API to create a new account after minting
 export async function createAccount(walletAddress: string): Promise<Account> {
@@ -16,7 +18,11 @@ export async function createAccount(walletAddress: string): Promise<Account> {
   return data.account as Account;
 }
 
-export async function getAccountByWallet(walletAddress: string): Promise<Account | null> {
+export async function fetchAccountData(walletAddress: string): Promise<{
+  account: Account;
+  metrics: Metrics;
+  score: Score;
+} | null> {
   const res = await fetch(`/api/account/${walletAddress}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -30,5 +36,9 @@ export async function getAccountByWallet(walletAddress: string): Promise<Account
   }
 
   const data = await res.json();
-  return data.account as Account;
+  return {
+    account: data.account as Account,
+    metrics: data.metrics as Metrics,
+    score: data.score as Score,
+  };
 }

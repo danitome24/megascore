@@ -9,24 +9,19 @@ import { InitialScoreDisplay } from "@/components/my-score/initial-score-display
 import { NFTDisplaySection } from "@/components/my-score/nft-display-section";
 import { ScoreCalculatedDisplay } from "@/components/my-score/score-calculated-display";
 import { ScoreDisplaySection } from "@/components/my-score/score-display-section";
-import { createAccount as apiCreateAccount } from "@/lib/external/api/account";
+import { createAccount as apiCreateAccount, fetchAccountData } from "@/lib/external/api/account";
 import { createMetrics as apiCreateMetrics } from "@/lib/external/api/metrics";
 import { createScore as apiCreateScore } from "@/lib/external/api/score";
 import { useScoreStore } from "@/store/score-store";
 import { useAccount } from "wagmi";
 
-async function fetchAccountData(walletAddress: string) {
-  const res = await fetch(`/api/account/${walletAddress}`);
-  if (!res.ok) return null;
-  return res.json();
-}
-
 export default function MyScorePage() {
-  const { setCurrentScore, setHasNFT, currentScore } = useScoreStore();
-  const { address } = useAccount();
   const [isCalculating, setIsCalculating] = useState(false);
   const [isMinting, setIsMinting] = useState(false);
   const [scoreState, setScoreState] = useState<"initial" | "calculated" | "minted">("initial");
+
+  const { address } = useAccount();
+  const { setCurrentScore, setHasNFT, currentScore } = useScoreStore();
 
   useEffect(() => {
     if (!address) return;
