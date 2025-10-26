@@ -1,3 +1,4 @@
+import type { MetricsData } from "@/lib/domain/metrics/types";
 import { create } from "zustand";
 
 export type ScoreState = {
@@ -13,12 +14,20 @@ export type ScoreState = {
   // NFT state
   hasNFT: boolean;
 
+  // Metrics state
+  currentMetrics: MetricsData | null;
+  updatedMetrics: MetricsData | null;
+
   // Actions
   setCurrentScore: (score: number) => void;
   setUpdatedScore: (score: number) => void;
   setHasNFT: (hasNFT: boolean) => void;
   persistScoreToNFT: () => void;
   reset: () => void;
+
+  setCurrentMetrics: (metrics: MetricsData) => void;
+  setUpdatedMetrics: (metrics: MetricsData) => void;
+  persistMetricsUpdate: () => void;
 };
 
 export const useScoreStore = create<ScoreState>(set => ({
@@ -29,6 +38,17 @@ export const useScoreStore = create<ScoreState>(set => ({
   scoreIncrease: 0,
   lastUpdatedAt: null,
   hasNFT: false,
+  currentMetrics: null,
+  updatedMetrics: null,
+  setCurrentMetrics: (metrics: MetricsData) => set({ currentMetrics: metrics }),
+
+  setUpdatedMetrics: (metrics: MetricsData) => set({ updatedMetrics: metrics }),
+
+  persistMetricsUpdate: () =>
+    set(state => ({
+      currentMetrics: state.updatedMetrics || state.currentMetrics,
+      updatedMetrics: null,
+    })),
 
   // Set the current score (from database or initial fetch)
   setCurrentScore: (score: number) =>
@@ -65,5 +85,7 @@ export const useScoreStore = create<ScoreState>(set => ({
       scoreIncrease: 0,
       lastUpdatedAt: null,
       hasNFT: false,
+      currentMetrics: null,
+      updatedMetrics: null,
     }),
 }));
