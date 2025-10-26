@@ -1,5 +1,6 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useMintSBT } from "@/hooks/nft/use-mint-sbt";
 import { usePersistScore } from "@/hooks/score/use-persist-score";
@@ -12,10 +13,13 @@ export function NFTDisplaySection() {
   const { displayScore } = useUpdateScore();
 
   // Use custom hook for minting logic
-  const { isMinting, showMintOption, scoreIncreased, scoreIncrease, handleMintSBT } = useMintSBT(displayScore);
+  const { isMinting, handleMintSBT } = useMintSBT(displayScore);
 
   // Use custom hook for persistence logic
-  const { isPersisting, showPersistOption, handlePersistScore } = usePersistScore(displayScore);
+  const { isPersisting, handlePersistScore } = usePersistScore(displayScore);
+
+  // Only allow update if updatedScore is higher than currentScore
+  const canUpdate = updatedScore !== null && updatedScore > currentScore;
 
   // NFT data computed from store
   const nftData = {
@@ -62,41 +66,13 @@ export function NFTDisplaySection() {
           </div>
           {/* Columna 2: SBT Actions principales */}
           <div className="space-y-4">
-            {/* SBT Action Alert */}
-            {scoreIncreased && !isMinting && !isPersisting && (
-              <div className="rounded-lg border border-mega-green/20 bg-mega-green/10 p-3">
-                <div className="text-center">
-                  <div className="mb-1 text-sm font-bold text-mega-green">Score +{scoreIncrease}!</div>
-                  <div className="text-xs text-foreground/70">{hasNFT ? "Update SBT" : "Mint first SBT"}</div>
-                </div>
-              </div>
-            )}
-            {/* Mint Button */}
-            {showMintOption && (
-              <button
-                onClick={handleMintSBT}
-                disabled={isMinting}
-                className="w-full border-0 bg-mega-coral font-medium uppercase tracking-wide text-white hover:bg-mega-coral/90"
-              >
-                {isMinting ? (
-                  <>
-                    <Wallet className="mr-2 h-4 w-4 animate-spin" />
-                    Minting...
-                  </>
-                ) : (
-                  <>
-                    <Wallet className="mr-2 h-4 w-4" />
-                    Mint SBT
-                  </>
-                )}
-              </button>
-            )}
-            {/* Update Button */}
-            {showPersistOption && (
-              <button
+            {/* Only show update button if eligible */}
+            {canUpdate ? (
+              <Button
                 onClick={handlePersistScore}
                 disabled={isPersisting}
-                className="w-full border-0 bg-mega-blue font-medium uppercase tracking-wide text-white hover:bg-mega-blue/90"
+                variant="default"
+                className="w-full uppercase tracking-wide"
               >
                 {isPersisting ? (
                   <>
@@ -109,31 +85,26 @@ export function NFTDisplaySection() {
                     Update SBT
                   </>
                 )}
-              </button>
-            )}
-            {/* Disabled Update Button */}
-            {!showPersistOption && !showMintOption && !isMinting && !isPersisting && (
-              <button
-                disabled
-                className="w-full cursor-not-allowed border-0 bg-foreground/10 font-medium uppercase tracking-wide text-foreground/50"
-              >
+              </Button>
+            ) : (
+              <Button disabled variant="secondary" className="w-full uppercase tracking-wide">
                 <Hash className="mr-2 h-4 w-4" />
                 Update SBT
-              </button>
+              </Button>
             )}
             <div className="px-2 text-center text-xs text-foreground/60">
-              {!scoreIncreased ? "Update score to enable SBT actions" : "Ready to update SBT"}
+              {canUpdate ? "Ready to update SBT" : "Update score to enable SBT actions"}
             </div>
             {/* Secondary Actions */}
             <div className="flex gap-2 pt-2">
-              <button className="flex-1 rounded border border-mega-blue bg-transparent px-2 py-1 text-xs text-mega-blue hover:bg-mega-blue hover:text-white">
+              <Button variant="secondary" className="flex-1 px-2 py-1 text-xs uppercase tracking-wide">
                 <Share2 className="mr-1 h-3 w-3" />
                 Share
-              </button>
-              <button className="flex-1 rounded border border-mega-green bg-transparent px-2 py-1 text-xs text-mega-green hover:bg-mega-green hover:text-white">
+              </Button>
+              <Button variant="default" className="flex-1 px-2 py-1 text-xs uppercase tracking-wide">
                 <Eye className="mr-1 h-3 w-3" />
                 Explorer
-              </button>
+              </Button>
             </div>
           </div>
           {/* Columna 3: NFT Details */}
@@ -144,10 +115,6 @@ export function NFTDisplaySection() {
                 <div className="flex justify-between">
                   <span className="text-foreground/70">Token ID</span>
                   <span className="font-mono">#{nftData.tokenId}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-foreground/70">Level</span>
-                  <span className="font-bold text-mega-blue">{nftData.level}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-foreground/70">Minted</span>
