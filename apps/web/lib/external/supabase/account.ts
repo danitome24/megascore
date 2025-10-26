@@ -16,7 +16,7 @@ export async function getAccountByWallet(walletAddress: string): Promise<Account
   };
 }
 
-export async function createAccount(walletAddress: string) {
+export async function createAccount(walletAddress: string): Promise<Account | null> {
   const supabase = await supabaseClient();
   const { data, error } = await supabase
     .from("accounts")
@@ -32,5 +32,10 @@ export async function createAccount(walletAddress: string) {
     return null;
   }
 
-  return data;
+  return {
+    id: data.id,
+    walletAddress: data.wallet_address as Address,
+    mintedAt: data.minted_at,
+    createdAt: data.created_at,
+  };
 }

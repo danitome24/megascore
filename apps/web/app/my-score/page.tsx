@@ -9,6 +9,7 @@ import { InitialScoreDisplay } from "@/components/my-score/initial-score-display
 import { NFTDisplaySection } from "@/components/my-score/nft-display-section";
 import { ScoreCalculatedDisplay } from "@/components/my-score/score-calculated-display";
 import { ScoreDisplaySection } from "@/components/my-score/score-display-section";
+import { createAccount as apiCreateAccount } from "@/lib/external/api/account";
 import { useScoreStore } from "@/store/score-store";
 import { useAccount } from "wagmi";
 
@@ -62,15 +63,22 @@ export default function MyScorePage() {
   };
 
   const handleMintNFT = async () => {
+    if (!address) return;
     setIsMinting(true);
     try {
-      // TODO: Call payment and minting flow
+      // 1. Call blockchain minting logic (simulate for now)
       console.log("Minting NFT for:", address);
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2500));
-      // Update store to reflect NFT minted
+
+      // 2. Store account in DB via API utility
+      await apiCreateAccount(address);
+
+      // 3. Update store/UI
       setHasNFT(true);
       setScoreState("minted");
+    } catch (error) {
+      console.error("Minting or DB error:", error);
+      // Optionally show a toast or error message here
     } finally {
       setIsMinting(false);
     }
