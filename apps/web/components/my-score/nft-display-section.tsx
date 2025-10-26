@@ -3,10 +3,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useMintSBT } from "@/hooks/nft/use-mint-sbt";
-import { usePersistScore } from "@/hooks/score/use-persist-score";
 import { useUpdateScore } from "@/hooks/score/use-update-score";
 import { useScoreStore } from "@/store/score-store";
-import { Eye, Hash, Share2, Wallet } from "lucide-react";
+import { Eye, Hash, Share2 } from "lucide-react";
 
 export function NFTDisplaySection() {
   const { hasNFT, currentScore, updatedScore } = useScoreStore();
@@ -14,8 +13,8 @@ export function NFTDisplaySection() {
   // Use custom hook for minting logic
   const { isMinting, handleMintSBT } = useMintSBT(currentScore);
 
-  // Use custom hook for persistence logic
-  const { isPersisting, handlePersistScore } = usePersistScore(currentScore);
+  // Use custom hook for score update and commit logic
+  const { isUpdating, commitUpdate } = useUpdateScore();
 
   // Only allow update if updatedScore is higher than currentScore
   const canUpdate = updatedScore !== null && updatedScore > currentScore;
@@ -68,12 +67,12 @@ export function NFTDisplaySection() {
             {/* Only show update button if eligible */}
             {canUpdate ? (
               <Button
-                onClick={handlePersistScore}
-                disabled={isPersisting}
+                onClick={commitUpdate}
+                disabled={isUpdating}
                 variant="default"
                 className="w-full uppercase tracking-wide"
               >
-                {isPersisting ? (
+                {isUpdating ? (
                   <>
                     <Hash className="mr-2 h-4 w-4 animate-spin" />
                     Updating...

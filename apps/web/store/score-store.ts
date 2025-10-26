@@ -23,11 +23,13 @@ export type ScoreState = {
   setUpdatedScore: (score: number) => void;
   setHasNFT: (hasNFT: boolean) => void;
   persistScoreToNFT: () => void;
+  commitScoreUpdate: () => void;
   reset: () => void;
 
   setCurrentMetrics: (metrics: MetricsData) => void;
   setUpdatedMetrics: (metrics: MetricsData) => void;
   persistMetricsUpdate: () => void;
+  commitMetricsUpdate: () => void;
 };
 
 export const useScoreStore = create<ScoreState>(set => ({
@@ -40,11 +42,18 @@ export const useScoreStore = create<ScoreState>(set => ({
   hasNFT: false,
   currentMetrics: null,
   updatedMetrics: null,
+
   setCurrentMetrics: (metrics: MetricsData) => set({ currentMetrics: metrics }),
 
   setUpdatedMetrics: (metrics: MetricsData) => set({ updatedMetrics: metrics }),
 
   persistMetricsUpdate: () =>
+    set(state => ({
+      currentMetrics: state.updatedMetrics || state.currentMetrics,
+      updatedMetrics: null,
+    })),
+
+  commitMetricsUpdate: () =>
     set(state => ({
       currentMetrics: state.updatedMetrics || state.currentMetrics,
       updatedMetrics: null,
@@ -70,6 +79,14 @@ export const useScoreStore = create<ScoreState>(set => ({
 
   // Persist updated score to NFT (marks it as current)
   persistScoreToNFT: () =>
+    set(state => ({
+      currentScore: state.updatedScore || state.currentScore,
+      updatedScore: null,
+      scoreIncrease: 0,
+    })),
+
+  // Commit score update (update currentScore with updatedScore and reset)
+  commitScoreUpdate: () =>
     set(state => ({
       currentScore: state.updatedScore || state.currentScore,
       updatedScore: null,

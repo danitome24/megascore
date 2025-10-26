@@ -1,5 +1,6 @@
 "use server";
 
+import { getAccountByWallet } from "./account";
 import type { Metrics, MetricsData } from "@/lib/domain/metrics/types";
 import { supabaseClient } from "@/lib/external/supabase/client";
 
@@ -35,5 +36,55 @@ export async function getMetricsByAccountId(accountId: string): Promise<Metrics 
     accountId: data.account_id,
     data: data.data as unknown as MetricsData,
     updatedAt: data.updated_at,
+  };
+}
+
+export async function updateMetrics(
+  walletAddress: string,
+  newData: MetricsData,
+  oldData: MetricsData,
+): Promise<{ metrics: Metrics; archived: boolean } | null> {
+  const supabase = await supabaseClient();
+
+  // Get account ID from wallet address
+  const account = await getAccountByWallet(walletAddress);
+  if (!account) {
+    console.error("Account not found for wallet:", walletAddress);
+    return null;
+  }
+
+  const accountId = account.id;
+
+  // First, archive the old metrics in metrics_history
+  const { error: archiveError } = await supabase
+    .from("metrics_history")
+    .insert({ account_id: accountId, data: oldData, recorded_at: new Date().toISOString() });
+
+  if (archiveError) {
+    console.error("Error archiving metrics to history:", archiveError);
+    return null;
+  }
+
+  // Then, update the current metrics
+  const { data, error } = await supabase
+    .from("metrics")
+    .update({ data: newData })
+    .eq("account_id", accountId)
+    .select()
+    .single();
+
+  if (error || !data) {
+    console.error("Error updating metrics:", error);
+    return null;
+  }
+
+  return {
+    metrics: {
+      id: data.id,
+      accountId: data.account_id,
+      data: data.data as unknown as MetricsData,
+      updatedAt: data.updated_at,
+    },
+    archived: true,
   };
 }

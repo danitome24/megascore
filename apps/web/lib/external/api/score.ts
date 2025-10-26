@@ -15,3 +15,23 @@ export async function createScore(accountId: string, score: number): Promise<Sco
   const data = await res.json();
   return data.score as Score;
 }
+
+export async function updateScore(
+  walletAddress: string,
+  newScore: number,
+  oldScore: number,
+): Promise<{ score: Score; archived: boolean }> {
+  const res = await fetch("/api/score", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ walletAddress, newScore, oldScore }),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error?.error || "Failed to update score");
+  }
+
+  const data = await res.json();
+  return data;
+}
