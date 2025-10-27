@@ -60,7 +60,7 @@ export async function updateScore(
   // Then, update the current score
   const { data, error } = await supabase
     .from("scores")
-    .update({ score: newScore })
+    .update({ score: newScore, updated_at: new Date().toISOString() })
     .eq("account_id", accountId)
     .select()
     .single();

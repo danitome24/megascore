@@ -68,7 +68,7 @@ export async function updateMetrics(
   // Then, update the current metrics
   const { data, error } = await supabase
     .from("metrics")
-    .update({ data: newData })
+    .update({ data: newData, updated_at: new Date().toISOString() })
     .eq("account_id", accountId)
     .select()
     .single();
