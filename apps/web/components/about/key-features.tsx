@@ -1,13 +1,13 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Shield, TestTube, Zap } from "lucide-react";
+import { Activity, Rocket, Shield, TestTube, Zap } from "lucide-react";
 
 const features = [
   {
     icon: <Activity className="h-6 w-6" />,
     title: "On-Chain Activity Tracking",
     description:
-      "Your transactions, contract interactions, and network participation are automatically tracked and scored.",
+      "Your transactions, contract interactions, and network participation are automatically tracked and scored in real-time.",
     color: "text-mega-blue",
   },
   {
@@ -18,7 +18,7 @@ const features = [
   },
   {
     icon: <Shield className="h-6 w-6" />,
-    title: "Soulbound NFT",
+    title: "Soulbound NFT Badges",
     description: "Your reputation is minted as a non-transferable NFT that evolves with your on-chain journey.",
     color: "text-mega-pink",
   },
@@ -26,7 +26,13 @@ const features = [
     icon: <Zap className="h-6 w-6" />,
     title: "Real-Time Updates",
     description: "Your score updates automatically as you interact with the MegaETH network.",
-    color: "text-mega-coral",
+    color: "text-mega-yellow",
+  },
+  {
+    icon: <Rocket className="h-6 w-6" />,
+    title: "Global Leaderboard",
+    description: "Compete with thousands of MegaETH users and showcase your ranking on the public leaderboard.",
+    color: "text-mega-blue",
   },
 ];
 
@@ -41,11 +47,11 @@ export function KeyFeatures() {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => (
             <div
               key={index}
-              className="flex items-start space-x-4 rounded-lg border border-foreground/10 p-4 transition-colors hover:bg-foreground/5"
+              className="flex flex-col items-start space-y-3 rounded-lg border border-foreground/10 bg-gradient-to-br from-foreground/[0.02] to-transparent p-5 transition-all duration-300 hover:border-foreground/20 hover:bg-foreground/5"
             >
               <div className={`${feature.color} rounded-lg bg-foreground/5 p-3`}>{feature.icon}</div>
               <div>

@@ -1,5 +1,50 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield } from "lucide-react";
+import { BarChart3, Database, Link2, Lock, Shield, Zap } from "lucide-react";
+
+const techDetails = [
+  {
+    icon: <Zap className="h-5 w-5" />,
+    title: "Real-Time Updates",
+    description: "Score calculations happen instantly as you interact with the network",
+    color: "bg-mega-coral/5 border-mega-coral/20",
+    textColor: "text-mega-coral",
+  },
+  {
+    icon: <Lock className="h-5 w-5" />,
+    title: "Soulbound NFTs",
+    description: "Non-transferable NFT badges permanently record your reputation",
+    color: "bg-mega-blue/5 border-mega-blue/20",
+    textColor: "text-mega-blue",
+  },
+  {
+    icon: <Database className="h-5 w-5" />,
+    title: "On-Chain Verified",
+    description: "All scores are verified and stored on the MegaETH blockchain",
+    color: "bg-mega-green/5 border-mega-green/20",
+    textColor: "text-mega-green",
+  },
+  {
+    icon: <Link2 className="h-5 w-5" />,
+    title: "Smart Contracts",
+    description: "Automated scoring through transparent, audited smart contracts",
+    color: "bg-mega-pink/5 border-mega-pink/20",
+    textColor: "text-mega-pink",
+  },
+  {
+    icon: <BarChart3 className="h-5 w-5" />,
+    title: "Transparent Analytics",
+    description: "Track your progress with detailed metrics and historical data",
+    color: "bg-mega-yellow/5 border-mega-yellow/20",
+    textColor: "text-mega-yellow",
+  },
+  {
+    icon: <Shield className="h-5 w-5" />,
+    title: "Security First",
+    description: "Enterprise-grade security with multi-signature governance",
+    color: "bg-mega-blue/5 border-mega-blue/20",
+    textColor: "text-mega-blue",
+  },
+];
 
 export function TechnicalDetails() {
   return (
@@ -11,24 +56,29 @@ export function TechnicalDetails() {
           Technical Implementation
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-6">
-        <p className="mb-6 text-foreground/80">
-          MegaScore is built on MegaETH's high-performance blockchain infrastructure, ensuring real-time score updates
-          and minimal gas costs for score-related transactions.
-        </p>
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-lg border border-foreground/10 p-4 text-center transition-colors hover:bg-mega-coral/5">
-            <div className="mb-2 font-mono text-2xl font-bold text-mega-coral">Real-time</div>
-            <div className="text-sm uppercase tracking-wide text-foreground/70">Score Updates</div>
-          </div>
-          <div className="rounded-lg border border-foreground/10 p-4 text-center transition-colors hover:bg-mega-blue/5">
-            <div className="mb-2 font-mono text-2xl font-bold text-mega-blue">Soulbound</div>
-            <div className="text-sm uppercase tracking-wide text-foreground/70">NFT Technology</div>
-          </div>
-          <div className="rounded-lg border border-foreground/10 p-4 text-center transition-colors hover:bg-mega-green/5">
-            <div className="mb-2 font-mono text-2xl font-bold text-mega-green">On-chain</div>
-            <div className="text-sm uppercase tracking-wide text-foreground/70">Verification</div>
-          </div>
+      <CardContent className="space-y-6 p-6">
+        <div>
+          <p className="text-foreground/80">
+            MegaScore is built on MegaETH's high-performance blockchain infrastructure, ensuring real-time score
+            updates, minimal gas costs, and transparent, auditable scoring mechanisms.
+          </p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {techDetails.map((detail, index) => (
+            <div
+              key={index}
+              className={`rounded-lg border-2 ${detail.color} p-4 transition-all duration-300 hover:shadow-lg`}
+            >
+              <div className={`mb-3 ${detail.textColor}`}>{detail.icon}</div>
+              <h4 className="mb-2 text-sm font-bold uppercase tracking-wide text-foreground">{detail.title}</h4>
+              <p className="text-xs text-foreground/70">{detail.description}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 rounded-lg border border-foreground/10 bg-foreground/5 p-4">
+          <p className="text-sm text-foreground/80">
+            <span className="font-semibold">Stack:</span> MegaETH L2 • Supabase • Real-time Indexing • Smart Contracts
+          </p>
         </div>
       </CardContent>
     </Card>

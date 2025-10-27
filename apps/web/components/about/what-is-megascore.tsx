@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Target } from "lucide-react";
+import { Sparkles, Target } from "lucide-react";
 
 export function WhatIsMegaScore() {
   return (
@@ -11,17 +11,28 @@ export function WhatIsMegaScore() {
           What is MegaScore?
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4 p-6">
-        <p className="text-foreground/80">
-          MegaScore is a comprehensive reputation system designed specifically for the MegaETH blockchain. Unlike
-          traditional social reputation systems, MegaScore focuses exclusively on on-chain activity and network
-          participation.
-        </p>
-        <p className="text-foreground/80">
-          Your score reflects your genuine engagement with the MegaETH ecosystem, from simple transactions to complex
-          smart contract interactions and early testnet participation. This creates a merit-based system that rewards
-          actual network usage and contribution.
-        </p>
+      <CardContent className="space-y-6 p-6">
+        <div className="space-y-4">
+          <p className="text-lg font-semibold text-foreground/90">
+            MegaScore is a revolutionary merit-based reputation system built for the MegaETH blockchain ecosystem.
+          </p>
+          <p className="text-foreground/80">
+            Unlike traditional reputation systems, MegaScore measures what truly matters: your genuine on-chain activity
+            and contributions to the MegaETH network. Every transaction, smart contract interaction, and network
+            participation earns you points that accumulate into your MegaReputation Score.
+          </p>
+          <p className="text-foreground/80">
+            Your score is more than just a number—it's proof of your commitment to the MegaETH ecosystem. Unlock
+            exclusive opportunities, gain community recognition, and become part of a verified network of pioneers.
+          </p>
+        </div>
+        <div className="flex items-start space-x-4 rounded-lg border border-mega-coral/20 bg-mega-coral/5 p-4">
+          <Sparkles className="mt-1 h-5 w-5 flex-shrink-0 text-mega-coral" />
+          <p className="text-sm text-foreground/80">
+            <span className="font-bold text-mega-coral">Transparent & Permanent:</span> Every score is permanently
+            recorded on-chain as a soulbound NFT badge, creating an immutable record of your MegaETH reputation.
+          </p>
+        </div>
       </CardContent>
     </Card>
   );
