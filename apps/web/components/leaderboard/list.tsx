@@ -1,15 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { LeaderboardAccount } from "@/lib/domain/shared/types";
 import { Crown, Medal, Trophy } from "lucide-react";
 
-export interface User {
-  rank: number;
-  address: string;
-  score: number;
-  level: number;
-}
-
 interface ListProps {
-  users: User[];
+  accounts: LeaderboardAccount[];
 }
 
 function getRankIcon(rank: number) {
@@ -29,7 +23,7 @@ function getRankIcon(rank: number) {
   }
 }
 
-export function List({ users }: ListProps) {
+export function List({ accounts }: ListProps) {
   return (
     <>
       {/* Leaderboard Card */}
@@ -43,27 +37,27 @@ export function List({ users }: ListProps) {
         </div>
         <CardContent className="p-6">
           <div className="space-y-3">
-            {users.map((user, index) => (
+            {accounts.map((account, index) => (
               <div
                 key={index}
                 className={`flex items-center justify-between rounded-lg p-4 transition-all duration-200 hover:bg-foreground/5 ${
-                  user.rank <= 3
+                  account.level <= 3
                     ? "border border-mega-coral/20 bg-gradient-to-r from-mega-coral/10 via-mega-pink/10 to-mega-blue/10"
                     : "border border-foreground/10"
                 } `}
               >
                 <div className="flex items-center space-x-6">
                   {/* Rank */}
-                  <div className="flex w-12 items-center justify-center">{getRankIcon(user.rank)}</div>
+                  <div className="flex w-12 items-center justify-center">{getRankIcon(index + 1)}</div>
                   {/* User Info */}
                   <div>
-                    <div className="font-mono text-lg font-medium text-foreground">{user.address}</div>
-                    <div className="mt-1 text-sm uppercase tracking-wide text-foreground/60">Level {user.level}</div>
+                    <div className="font-mono text-lg font-medium text-foreground">{account.address}</div>
+                    <div className="mt-1 text-sm uppercase tracking-wide text-foreground/60">Level {account.level}</div>
                   </div>
                 </div>
                 {/* Score */}
                 <div className="text-right">
-                  <div className="font-mono text-2xl font-bold text-foreground">{user.score.toLocaleString()}</div>
+                  <div className="font-mono text-2xl font-bold text-foreground">{account.score.toLocaleString()}</div>
                 </div>
               </div>
             ))}

@@ -1,6 +1,5 @@
 "use client";
 
-import { ConnectOverlay } from "@/components/layout/connect-overlay";
 import { PageContainer } from "@/components/layout/page-container";
 import { Header } from "@/components/leaderboard/header";
 import { List } from "@/components/leaderboard/list";
@@ -35,7 +34,7 @@ export default function LeaderboardPage() {
             </Alert>
           )}
 
-          {!loading && data.length > 0 && <List users={data} />}
+          {!loading && data.length > 0 && <List accounts={data} />}
         </div>
       </div>
     </PageContainer>

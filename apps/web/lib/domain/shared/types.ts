@@ -1,9 +1,7 @@
 export type Address = `0x${string}`;
 
-// Ranks
-export type Rank = {
-  rank: number;
+export interface LeaderboardAccount {
+  address: Address;
+  score: number;
   level: number;
-  percentile: number;
-  nextLevelAt: number;
-};
+}

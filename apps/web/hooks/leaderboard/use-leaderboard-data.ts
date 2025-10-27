@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { User } from "../../components/leaderboard/list";
+import { LeaderboardAccount } from "@/lib/domain/shared/types";
 import { fetchLeaderboardData } from "@/lib/external/supabase/leaderboard";
 
 interface UseLeaderboardDataReturn {
-  data: User[];
+  data: LeaderboardAccount[];
   loading: boolean;
   error: string | null;
 }
@@ -15,7 +15,7 @@ interface UseLeaderboardDataReturn {
  * Returns data, loading state, and error if any.
  */
 export function useLeaderboardData(): UseLeaderboardDataReturn {
-  const [data, setData] = useState<User[]>([]);
+  const [data, setData] = useState<LeaderboardAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

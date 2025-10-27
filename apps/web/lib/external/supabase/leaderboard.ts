@@ -1,7 +1,7 @@
 "use server";
 
 import { supabaseClient } from "./client";
-import type { User } from "@/components/leaderboard/list";
+import { Address, LeaderboardAccount } from "@/lib/domain/shared/types";
 
 /**
  * Fetches the top 50 leaderboard entries from Supabase, ordered by score descending.
@@ -9,7 +9,7 @@ import type { User } from "@/components/leaderboard/list";
  *
  * @returns Array of leaderboard users with rank, wallet address, score, and level
  */
-export async function fetchLeaderboardData(): Promise<User[]> {
+export async function fetchLeaderboardData(): Promise<LeaderboardAccount[]> {
   const supabase = await supabaseClient();
 
   // Fetch top 50 scores with their associated account wallet addresses
@@ -31,10 +31,9 @@ export async function fetchLeaderboardData(): Promise<User[]> {
     return [];
   }
 
-  // Map scores to User type with rank, address, score, and calculated level
+  // Map scores to LeaderboardAccount type with rank, address, score, and calculated level
   return (scores || []).map((row: any, idx: number) => ({
-    rank: idx + 1,
-    address: row.accounts.wallet_address as string,
+    address: row.accounts.wallet_address as Address,
     score: row.score as number,
     level: Math.max(1, Math.floor((row.score as number) / 250)),
   }));
