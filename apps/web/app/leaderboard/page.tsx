@@ -13,33 +13,31 @@ export default function LeaderboardPage() {
 
   return (
     <PageContainer>
-      <ConnectOverlay>
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-6xl">
-            <Header />
+      <div className="container mx-auto px-4">
+        <div className="mx-auto max-w-6xl">
+          <Header />
 
-            {loading && (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-mega-coral" />
-              </div>
-            )}
+          {loading && (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-mega-coral" />
+            </div>
+          )}
 
-            {error && (
-              <Alert variant="destructive" className="mb-6">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+          {error && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
-            {!loading && data.length === 0 && !error && (
-              <Alert className="mb-6">
-                <AlertDescription>No leaderboard data available</AlertDescription>
-              </Alert>
-            )}
+          {!loading && data.length === 0 && !error && (
+            <Alert className="mb-6">
+              <AlertDescription>No leaderboard data available</AlertDescription>
+            </Alert>
+          )}
 
-            {!loading && data.length > 0 && <List users={data} />}
-          </div>
+          {!loading && data.length > 0 && <List users={data} />}
         </div>
-      </ConnectOverlay>
+      </div>
     </PageContainer>
   );
 }
