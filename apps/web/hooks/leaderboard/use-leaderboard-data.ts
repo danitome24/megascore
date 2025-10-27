@@ -1,74 +1,56 @@
-import { User } from "../../components/leaderboard/list";
+"use client";
 
-export function useLeaderboardData(): User[] {
-  const addresses = [
-    "0x1234...5678",
-    "0x2345...6789",
-    "0x3456...7890",
-    "0x4567...8901",
-    "0x5678...9012",
-    "0x6789...0123",
-    "0x7890...1234",
-    "0x8901...2345",
-    "0x9012...3456",
-    "0x0123...4567",
-    "0xabcd...ef01",
-    "0xbcde...f012",
-    "0xcdef...0123",
-    "0xdef0...1234",
-    "0xef01...2345",
-    "0xf012...3456",
-    "0x0123...4567",
-    "0x1234...5678",
-    "0x2345...6789",
-    "0x3456...7890",
-    "0x4567...8901",
-    "0x5678...9012",
-    "0x6789...0123",
-    "0x7890...1234",
-    "0x8901...2345",
-    "0x9012...3456",
-    "0x0123...4567",
-    "0x1234...5678",
-    "0x2345...6789",
-    "0x3456...7890",
-    "0x4567...8901",
-    "0x5678...9012",
-    "0x6789...0123",
-    "0x7890...1234",
-    "0x8901...2345",
-    "0x9012...3456",
-    "0x0123...4567",
-    "0x1234...5678",
-    "0x2345...6789",
-    "0x3456...7890",
-    "0x4567...8901",
-    "0x5678...9012",
-    "0x6789...0123",
-    "0x7890...1234",
-    "0x8901...2345",
-    "0x9012...3456",
-    "0x0123...4567",
-    "0x1234...5678",
-    "0x2345...6789",
-    "0x3456...7890",
-  ];
-  const data: User[] = [];
+import { useEffect, useState } from "react";
+import type { User } from "../../components/leaderboard/list";
+import { fetchLeaderboardData } from "@/lib/external/supabase/leaderboard";
 
-  const scoreVariations = [5, -3, 8, 2, -1, 12, 7, -5, 15, 3, -2, 9, 4, -7, 11, 6, -4, 13, 1, -6];
+interface UseLeaderboardDataReturn {
+  data: User[];
+  loading: boolean;
+  error: string | null;
+}
 
-  for (let i = 1; i <= 50; i++) {
-    const baseScore = 3000 - (i - 1) * 45 + scoreVariations[i % scoreVariations.length];
-    const level = Math.max(1, Math.floor(baseScore / 250));
+/**
+ * Hook to fetch and manage leaderboard data from Supabase.
+ * Returns data, loading state, and error if any.
+ */
+export function useLeaderboardData(): UseLeaderboardDataReturn {
+  const [data, setData] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    data.push({
-      rank: i,
-      address:
-        addresses[i % addresses.length] || `0x${i.toString(16).padStart(4, "0")}...${(i * 123).toString(16).slice(-4)}`,
-      score: baseScore,
-      level,
-    });
-  }
+  useEffect(() => {
+    let isMounted = true;
 
-  return data;
+    async function loadLeaderboard() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const leaderboardData = await fetchLeaderboardData();
+
+        if (isMounted) {
+          setData(leaderboardData);
+        }
+      } catch (err) {
+        if (isMounted) {
+          const message = err instanceof Error ? err.message : "Failed to fetch leaderboard";
+          setError(message);
+          console.error("Error loading leaderboard:", err);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadLeaderboard();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  return { data, loading, error };
 }
