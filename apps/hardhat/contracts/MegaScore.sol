@@ -23,6 +23,8 @@ contract MegaScore is ERC721, Ownable, EIP712 {
     error MegaScore__ErrorOnPayment();
     error MegaScore__InvalidScore(uint256 score);
     error MegaScore__EmptyImageUri();
+    error MegaScore__ZeroRecipient();
+    error MegaScore__SameRecipientNotAllowed();
 
     // --- Events ---
     event MegaScoreUpdated(address indexed owner, uint256 score, uint256 timestamp);
@@ -45,6 +47,7 @@ contract MegaScore is ERC721, Ownable, EIP712 {
     uint256 immutable i_mintPrice;
     uint256 immutable i_updatePrice;
 
+    address public recipient;
     uint256 public s_tokenId = 0;
     mapping(address => uint256) private s_ownerToTokenId;
     mapping(uint256 => Score) private s_tokenIdToScore;
@@ -54,13 +57,14 @@ contract MegaScore is ERC721, Ownable, EIP712 {
     /**
      * @dev Initializes the contract with mint and update prices.
      */
-    constructor(uint256 mintPrice, uint256 updatePrice)
+    constructor(uint256 mintPrice, uint256 updatePrice, address recipientAddress)
         ERC721(NAME, SYMBOL)
         Ownable(msg.sender)
         EIP712(DOMAIN, VERSION)
     {
         i_mintPrice = mintPrice;
         i_updatePrice = updatePrice;
+        recipient = recipientAddress;
     }
 
     // --- Modifiers ---
@@ -212,6 +216,22 @@ contract MegaScore is ERC721, Ownable, EIP712 {
         );
     }
 
+    // --- External Functions ---
+
+    /**
+     * @notice Sets the recipient address for payments. Only owner can call.
+     * @param newRecipient The address to receive all contract payments.
+     */
+    function setRecipient(address newRecipient) external onlyOwner {
+        if (newRecipient == address(0)) {
+            revert MegaScore__ZeroRecipient();
+        }
+        if (newRecipient == recipient) {
+            revert MegaScore__SameRecipientNotAllowed();
+        }
+        recipient = newRecipient;
+    }
+
     // --- Internal Functions ---
     /**
      * @dev Validates the provided signature.
@@ -236,7 +256,7 @@ contract MegaScore is ERC721, Ownable, EIP712 {
         if (amount < requiredPaymentAmount) {
             revert MegaScore__InsufficientPaymentAmount();
         }
-        (bool success,) = (owner()).call{value: amount}("");
+        (bool success,) = (recipient).call{value: amount}("");
         if (!success) {
             revert MegaScore__ErrorOnPayment();
         }

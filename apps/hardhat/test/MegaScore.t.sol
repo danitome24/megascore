@@ -16,6 +16,7 @@ contract MegaScoreTest is Test {
 
     address owner;
     uint256 ownerPrivateKey;
+    address recipient;
     address user1;
     address user2;
 
@@ -26,13 +27,43 @@ contract MegaScoreTest is Test {
         (owner, ownerPrivateKey) = makeAddrAndKey("owner");
         user1 = makeAddr("user1");
         user2 = makeAddr("user2");
+        recipient = makeAddr("recipient");
 
         vm.prank(owner);
-        megaScore = new MegaScore(MINT_PRICE, UPDATE_PRICE);
+        megaScore = new MegaScore(MINT_PRICE, UPDATE_PRICE, recipient);
 
         // Fund users with ETH for transactions
         vm.deal(user1, 10 ether);
         vm.deal(user2, 10 ether);
+    }
+
+    // --- Recipient/Payment Tests ---
+
+    function test_InitialRecipientIsRecipient() public {
+        assertEq(megaScore.recipient(), recipient);
+    }
+
+    function test_SetRecipientUpdatesRecipient() public {
+        vm.prank(owner);
+        megaScore.setRecipient(user2);
+        assertEq(megaScore.recipient(), user2);
+    }
+
+    function test_MintPaymentGoesToRecipient() public {
+        vm.prank(owner);
+        megaScore.setRecipient(user2);
+
+        uint256 beforeBalance = user2.balance;
+
+        MegaScore.Score memory score = MegaScore.Score({score: TEST_SCORE, timestamp: block.timestamp});
+        bytes32 messageHash = megaScore.getMessageHash(score, user1, false);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
+
+        vm.prank(user1);
+        megaScore.mint{value: MINT_PRICE}(score, TEST_IMAGE_URI, v, r, s);
+
+        uint256 afterBalance = user2.balance;
+        assertEq(afterBalance - beforeBalance, MINT_PRICE);
     }
 
     // --- Deployment Tests ---
@@ -299,7 +330,7 @@ contract MegaScoreTest is Test {
 
     // --- Payment Tests ---
     function test_ReceiveMintPayment() public {
-        uint256 initialBalance = address(owner).balance;
+        uint256 initialBalance = address(recipient).balance;
 
         MegaScore.Score memory score = MegaScore.Score({score: TEST_SCORE, timestamp: block.timestamp});
 
@@ -309,7 +340,7 @@ contract MegaScoreTest is Test {
         vm.prank(user1);
         megaScore.mint{value: MINT_PRICE}(score, TEST_IMAGE_URI, v, r, s);
 
-        uint256 finalBalance = address(owner).balance;
+        uint256 finalBalance = address(recipient).balance;
         assertEq(finalBalance - initialBalance, MINT_PRICE);
     }
 
