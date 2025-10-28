@@ -28,6 +28,7 @@ contract MegaScore is ERC721, Ownable, EIP712 {
     error MegaScore__SameRecipientNotAllowed();
     error MegaScore__ZeroPaymentToken();
     error MegaScore__InsufficientAllowance();
+    error MegaScore__InvalidTimestamp(uint256 timestamp);
 
     // --- Events ---
     event MegaScoreUpdated(address indexed owner, uint256 score, uint256 timestamp);
@@ -44,7 +45,7 @@ contract MegaScore is ERC721, Ownable, EIP712 {
     string public constant SYMBOL = "MGS";
     string public constant DOMAIN = "MegaScore";
     string public constant VERSION = "0.0.1";
-    bytes32 private constant MESSAGE_TYPEHASH = keccak256("Score(uint256 score,uint256 timestamp,address wallet)");
+    bytes32 private constant MESSAGE_TYPEHASH = keccak256("Score(uint256 score,address wallet)");
 
     // --- State Variables ---
     uint256 immutable i_mintPrice;
@@ -113,12 +114,12 @@ contract MegaScore is ERC721, Ownable, EIP712 {
      * @param r The r value of the signature.
      * @param s The s value of the signature.
      */
-    function mint(Score calldata score, string calldata imageUri, uint8 v, bytes32 r, bytes32 s)
+    function mint(uint256 score, string calldata imageUri, uint8 v, bytes32 r, bytes32 s)
         external
         onlyIfNotMinted
         validSignature(getMessageHash(score, msg.sender), v, r, s)
     {
-        _validateScoreForMint(score.score);
+        _validateScoreForMint(score);
         _validateImageUri(imageUri);
 
         _payOrFail(i_mintPrice);
@@ -131,7 +132,7 @@ contract MegaScore is ERC721, Ownable, EIP712 {
         s_ownerToTokenId[msg.sender] = s_tokenId;
 
         // Set initial score and image URI.
-        _updateNFTData(s_tokenId, score.score, imageUri);
+        _updateNFTData(s_tokenId, score, imageUri);
 
         emit MegaScoreMinted(msg.sender, s_tokenId);
     }
@@ -144,7 +145,7 @@ contract MegaScore is ERC721, Ownable, EIP712 {
      * @param r The r value of the signature.
      * @param s The s value of the signature.
      */
-    function updateScore(Score calldata score, uint8 v, bytes32 r, bytes32 s)
+    function updateScore(uint256 score, uint8 v, bytes32 r, bytes32 s)
         external
         validSignature(getMessageHash(score, msg.sender), v, r, s)
         onlyIfMinted
@@ -154,20 +155,20 @@ contract MegaScore is ERC721, Ownable, EIP712 {
         Score memory currentScore = s_tokenIdToScore[tokenId];
 
         // Validate the new score
-        _validateScoreForUpdate(score.score, currentScore.score);
+        _validateScoreForUpdate(score, currentScore.score);
 
         // Ensure the payment is sufficient
         _payOrFail(i_updatePrice);
 
         // Update the score
-        _setScore(score.score, tokenId);
+        _setScore(score, tokenId);
     }
 
     /**
      * @dev Generates the hash of the message to be signed.
      */
-    function getMessageHash(Score memory score, address wallet) public view returns (bytes32) {
-        return _hashTypedDataV4(keccak256(abi.encode(MESSAGE_TYPEHASH, score.score, score.timestamp, wallet)));
+    function getMessageHash(uint256 score, address wallet) public view returns (bytes32) {
+        return _hashTypedDataV4(keccak256(abi.encode(MESSAGE_TYPEHASH, score, wallet)));
     }
 
     /**
