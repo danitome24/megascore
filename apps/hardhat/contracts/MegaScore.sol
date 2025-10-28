@@ -7,6 +7,7 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {EIP712} from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title MegaScore
@@ -25,6 +26,8 @@ contract MegaScore is ERC721, Ownable, EIP712 {
     error MegaScore__EmptyImageUri();
     error MegaScore__ZeroRecipient();
     error MegaScore__SameRecipientNotAllowed();
+    error MegaScore__ZeroPaymentToken();
+    error MegaScore__InsufficientAllowance();
 
     // --- Events ---
     event MegaScoreUpdated(address indexed owner, uint256 score, uint256 timestamp);
@@ -49,6 +52,7 @@ contract MegaScore is ERC721, Ownable, EIP712 {
 
     address public recipient;
     uint256 public s_tokenId = 0;
+    IERC20 public paymentToken;
     mapping(address => uint256) private s_ownerToTokenId;
     mapping(uint256 => Score) private s_tokenIdToScore;
     mapping(uint256 => string) private s_tokenIdToImageUri;
@@ -57,7 +61,7 @@ contract MegaScore is ERC721, Ownable, EIP712 {
     /**
      * @dev Initializes the contract with mint and update prices.
      */
-    constructor(uint256 mintPrice, uint256 updatePrice, address recipientAddress)
+    constructor(uint256 mintPrice, uint256 updatePrice, address recipientAddress, address paymentTokenAddress)
         ERC721(NAME, SYMBOL)
         Ownable(msg.sender)
         EIP712(DOMAIN, VERSION)
@@ -65,6 +69,7 @@ contract MegaScore is ERC721, Ownable, EIP712 {
         i_mintPrice = mintPrice;
         i_updatePrice = updatePrice;
         recipient = recipientAddress;
+        paymentToken = IERC20(paymentTokenAddress);
     }
 
     // --- Modifiers ---
@@ -101,6 +106,7 @@ contract MegaScore is ERC721, Ownable, EIP712 {
     // --- Public Functions ---
     /**
      * @dev Mints a new SBT for the caller with the provided score and image URI.
+     * Payment is made exclusively in ERC20 tokens.
      * @param score The score to associate with the SBT.
      * @param imageUri The URI of the image to associate with the SBT.
      * @param v The recovery id of the signature.
@@ -108,15 +114,14 @@ contract MegaScore is ERC721, Ownable, EIP712 {
      * @param s The s value of the signature.
      */
     function mint(Score calldata score, string calldata imageUri, uint8 v, bytes32 r, bytes32 s)
-        public
-        payable
+        external
         onlyIfNotMinted
         validSignature(getMessageHash(score, msg.sender), v, r, s)
     {
         _validateScoreForMint(score.score);
         _validateImageUri(imageUri);
 
-        _payOrFail(msg.value, i_mintPrice);
+        _payOrFail(i_mintPrice);
 
         // Autoincrement NFT tokenId.
         s_tokenId++;
@@ -133,14 +138,14 @@ contract MegaScore is ERC721, Ownable, EIP712 {
 
     /**
      * @dev Updates the score of the caller's SBT.
+     * Payment is made exclusively in ERC20 tokens.
      * @param score The new score to associate with the SBT.
      * @param v The recovery id of the signature.
      * @param r The r value of the signature.
      * @param s The s value of the signature.
      */
     function updateScore(Score calldata score, uint8 v, bytes32 r, bytes32 s)
-        public
-        payable
+        external
         validSignature(getMessageHash(score, msg.sender), v, r, s)
         onlyIfMinted
     {
@@ -152,7 +157,7 @@ contract MegaScore is ERC721, Ownable, EIP712 {
         _validateScoreForUpdate(score.score, currentScore.score);
 
         // Ensure the payment is sufficient
-        _payOrFail(msg.value, i_updatePrice);
+        _payOrFail(i_updatePrice);
 
         // Update the score
         _setScore(score.score, tokenId);
@@ -232,6 +237,16 @@ contract MegaScore is ERC721, Ownable, EIP712 {
         recipient = newRecipient;
     }
 
+    /**
+     * @notice Sets the ERC20 token address for payments. Only owner can call.
+     */
+    function setPaymentToken(address token) external onlyOwner {
+        if (token == address(0)) {
+            revert MegaScore__ZeroPaymentToken();
+        }
+        paymentToken = IERC20(token);
+    }
+
     // --- Internal Functions ---
     /**
      * @dev Validates the provided signature.
@@ -252,12 +267,15 @@ contract MegaScore is ERC721, Ownable, EIP712 {
     /**
      * @dev Transfers the payment to the owner or reverts if insufficient.
      */
-    function _payOrFail(uint256 amount, uint256 requiredPaymentAmount) private {
-        if (amount < requiredPaymentAmount) {
+    function _payOrFail(uint256 requiredPaymentAmount) private {
+        if (paymentToken.balanceOf(msg.sender) < requiredPaymentAmount) {
             revert MegaScore__InsufficientPaymentAmount();
         }
-        (bool success,) = (recipient).call{value: amount}("");
-        if (!success) {
+        if (paymentToken.allowance(msg.sender, address(this)) < requiredPaymentAmount) {
+            revert MegaScore__InsufficientAllowance();
+        }
+        bool transferred = paymentToken.transferFrom(msg.sender, recipient, requiredPaymentAmount);
+        if (!transferred) {
             revert MegaScore__ErrorOnPayment();
         }
     }
