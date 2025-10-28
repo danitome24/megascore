@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity 0.8.28;
 
 import {Test} from "forge-std/Test.sol";
 import {console} from "forge-std/console.sol";
 import {MegaScore} from "../contracts/MegaScore.sol";
+import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 contract MegaScoreTest is Test {
     MegaScore megaScore;
@@ -14,6 +15,7 @@ contract MegaScoreTest is Test {
     string constant TEST_IMAGE_URI = "ipfs://QmTest123";
 
     address owner;
+    uint256 ownerPrivateKey;
     address user1;
     address user2;
 
@@ -21,11 +23,16 @@ contract MegaScoreTest is Test {
     event MegaScoreMinted(address indexed by, uint256 tokenId);
 
     function setUp() public {
-        owner = address(this);
+        (owner, ownerPrivateKey) = makeAddrAndKey("owner");
         user1 = makeAddr("user1");
         user2 = makeAddr("user2");
 
+        vm.prank(owner);
         megaScore = new MegaScore(MINT_PRICE, UPDATE_PRICE);
+
+        // Fund users with ETH for transactions
+        vm.deal(user1, 10 ether);
+        vm.deal(user2, 10 ether);
     }
 
     // --- Deployment Tests ---
@@ -40,13 +47,13 @@ contract MegaScoreTest is Test {
         MegaScore.Score memory score = MegaScore.Score({score: TEST_SCORE, timestamp: block.timestamp});
 
         bytes32 messageHash = megaScore.getMessageHash(score, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.expectEmit(true, true, false, false);
         emit MegaScoreMinted(user1, 1);
 
         vm.prank(user1);
-        megaScore.mint(score, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score, TEST_IMAGE_URI, v, r, s);
 
         assertEq(megaScore.getTokenIdByAddress(user1), 1);
     }
@@ -55,27 +62,27 @@ contract MegaScoreTest is Test {
         MegaScore.Score memory score = MegaScore.Score({score: TEST_SCORE, timestamp: block.timestamp});
 
         bytes32 messageHash = megaScore.getMessageHash(score, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         // First mint
         vm.prank(user1);
-        megaScore.mint(score, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score, TEST_IMAGE_URI, v, r, s);
 
         // Try to mint again
         vm.expectRevert(abi.encodeWithSelector(MegaScore.MegaScore__AlreadyMinted.selector, user1, address(0)));
         vm.prank(user1);
-        megaScore.mint(score, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score, TEST_IMAGE_URI, v, r, s);
     }
 
     function test_MintFailsWithInsufficientPayment() public {
         MegaScore.Score memory score = MegaScore.Score({score: TEST_SCORE, timestamp: block.timestamp});
 
         bytes32 messageHash = megaScore.getMessageHash(score, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.expectRevert(MegaScore.MegaScore__InsufficientPaymentAmount.selector);
         vm.prank(user1);
-        megaScore.mint(score, TEST_IMAGE_URI, v, r, s){value: 0.01 ether}();
+        megaScore.mint{value: 0.01 ether}(score, TEST_IMAGE_URI, v, r, s);
     }
 
     function test_MintFailsWithInvalidSignature() public {
@@ -86,29 +93,30 @@ contract MegaScoreTest is Test {
 
         vm.expectRevert(MegaScore.MegaScore__MustBeSignedByOwner.selector);
         vm.prank(user1);
-        megaScore.mint(score, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score, TEST_IMAGE_URI, v, r, s);
     }
 
     function test_MintFailsWithEmptyImageUri() public {
         MegaScore.Score memory score = MegaScore.Score({score: TEST_SCORE, timestamp: block.timestamp});
 
         bytes32 messageHash = megaScore.getMessageHash(score, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.expectRevert(MegaScore.MegaScore__EmptyImageUri.selector);
         vm.prank(user1);
-        megaScore.mint(score, "", v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score, "", v, r, s);
     }
 
     function test_MintFailsWithInvalidScore() public {
+        // Score of 0 is invalid
         MegaScore.Score memory score = MegaScore.Score({score: 0, timestamp: block.timestamp});
 
         bytes32 messageHash = megaScore.getMessageHash(score, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.expectRevert(abi.encodeWithSelector(MegaScore.MegaScore__InvalidScore.selector, 0));
         vm.prank(user1);
-        megaScore.mint(score, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score, TEST_IMAGE_URI, v, r, s);
     }
 
     // --- Update Score Tests ---
@@ -117,22 +125,22 @@ contract MegaScoreTest is Test {
         MegaScore.Score memory initialScore = MegaScore.Score({score: TEST_SCORE, timestamp: block.timestamp});
 
         bytes32 messageHash = megaScore.getMessageHash(initialScore, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.prank(user1);
-        megaScore.mint(initialScore, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(initialScore, TEST_IMAGE_URI, v, r, s);
 
         // Update with higher score
         MegaScore.Score memory newScore = MegaScore.Score({score: 2000, timestamp: block.timestamp});
 
         messageHash = megaScore.getMessageHash(newScore, user1, false);
-        (v, r, s) = vm.sign(0x1, messageHash);
+        (v, r, s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.expectEmit(true, false, false, true);
         emit MegaScoreUpdated(user1, 2000, block.timestamp);
 
         vm.prank(user1);
-        megaScore.updateScore(newScore, v, r, s){value: UPDATE_PRICE}();
+        megaScore.updateScore{value: UPDATE_PRICE}(newScore, v, r, s);
 
         MegaScore.Score memory retrievedScore = megaScore.getScoreByAddress(user1);
         assertEq(retrievedScore.score, 2000);
@@ -142,11 +150,11 @@ contract MegaScoreTest is Test {
         MegaScore.Score memory score = MegaScore.Score({score: 2000, timestamp: block.timestamp});
 
         bytes32 messageHash = megaScore.getMessageHash(score, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.expectRevert(abi.encodeWithSelector(MegaScore.MegaScore__NoSBTMintedYet.selector, user1, address(0)));
         vm.prank(user1);
-        megaScore.updateScore(score, v, r, s){value: UPDATE_PRICE}();
+        megaScore.updateScore{value: UPDATE_PRICE}(score, v, r, s);
     }
 
     function test_UpdateFailsWithSameScore() public {
@@ -154,18 +162,18 @@ contract MegaScoreTest is Test {
         MegaScore.Score memory score = MegaScore.Score({score: TEST_SCORE, timestamp: block.timestamp});
 
         bytes32 messageHash = megaScore.getMessageHash(score, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.prank(user1);
-        megaScore.mint(score, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score, TEST_IMAGE_URI, v, r, s);
 
         // Try to update with same score
         messageHash = megaScore.getMessageHash(score, user1, false);
-        (v, r, s) = vm.sign(0x1, messageHash);
+        (v, r, s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.expectRevert(abi.encodeWithSelector(MegaScore.MegaScore__LessOrSameScore.selector, TEST_SCORE, TEST_SCORE));
         vm.prank(user1);
-        megaScore.updateScore(score, v, r, s){value: UPDATE_PRICE}();
+        megaScore.updateScore{value: UPDATE_PRICE}(score, v, r, s);
     }
 
     function test_UpdateFailsWithLowerScore() public {
@@ -173,20 +181,20 @@ contract MegaScoreTest is Test {
         MegaScore.Score memory score = MegaScore.Score({score: TEST_SCORE, timestamp: block.timestamp});
 
         bytes32 messageHash = megaScore.getMessageHash(score, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.prank(user1);
-        megaScore.mint(score, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score, TEST_IMAGE_URI, v, r, s);
 
         // Try to update with lower score
         MegaScore.Score memory lowerScore = MegaScore.Score({score: 500, timestamp: block.timestamp});
 
         messageHash = megaScore.getMessageHash(lowerScore, user1, false);
-        (v, r, s) = vm.sign(0x1, messageHash);
+        (v, r, s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.expectRevert(abi.encodeWithSelector(MegaScore.MegaScore__LessOrSameScore.selector, TEST_SCORE, 500));
         vm.prank(user1);
-        megaScore.updateScore(lowerScore, v, r, s){value: UPDATE_PRICE}();
+        megaScore.updateScore{value: UPDATE_PRICE}(lowerScore, v, r, s);
     }
 
     function test_UpdateFailsWithInsufficientPayment() public {
@@ -194,20 +202,20 @@ contract MegaScoreTest is Test {
         MegaScore.Score memory score = MegaScore.Score({score: TEST_SCORE, timestamp: block.timestamp});
 
         bytes32 messageHash = megaScore.getMessageHash(score, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.prank(user1);
-        megaScore.mint(score, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score, TEST_IMAGE_URI, v, r, s);
 
         // Try update with insufficient payment
         MegaScore.Score memory newScore = MegaScore.Score({score: 2000, timestamp: block.timestamp});
 
         messageHash = megaScore.getMessageHash(newScore, user1, false);
-        (v, r, s) = vm.sign(0x1, messageHash);
+        (v, r, s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.expectRevert(MegaScore.MegaScore__InsufficientPaymentAmount.selector);
         vm.prank(user1);
-        megaScore.updateScore(newScore, v, r, s){value: 0.01 ether}();
+        megaScore.updateScore{value: 0.01 ether}(newScore, v, r, s);
     }
 
     // --- Soul Bound Token Tests ---
@@ -216,10 +224,10 @@ contract MegaScoreTest is Test {
         MegaScore.Score memory score = MegaScore.Score({score: TEST_SCORE, timestamp: block.timestamp});
 
         bytes32 messageHash = megaScore.getMessageHash(score, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.prank(user1);
-        megaScore.mint(score, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score, TEST_IMAGE_URI, v, r, s);
 
         // Try to transfer
         vm.expectRevert(MegaScore.MegaScore__SoulBoundToken.selector);
@@ -232,10 +240,10 @@ contract MegaScoreTest is Test {
         MegaScore.Score memory score = MegaScore.Score({score: TEST_SCORE, timestamp: block.timestamp});
 
         bytes32 messageHash = megaScore.getMessageHash(score, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.prank(user1);
-        megaScore.mint(score, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score, TEST_IMAGE_URI, v, r, s);
 
         // Try safe transfer
         vm.expectRevert(MegaScore.MegaScore__SoulBoundToken.selector);
@@ -249,10 +257,10 @@ contract MegaScoreTest is Test {
         MegaScore.Score memory score = MegaScore.Score({score: TEST_SCORE, timestamp: block.timestamp});
 
         bytes32 messageHash = megaScore.getMessageHash(score, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.prank(user1);
-        megaScore.mint(score, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score, TEST_IMAGE_URI, v, r, s);
 
         // Query
         MegaScore.Score memory retrievedScore = megaScore.getScoreByAddress(user1);
@@ -264,10 +272,10 @@ contract MegaScoreTest is Test {
         MegaScore.Score memory score = MegaScore.Score({score: TEST_SCORE, timestamp: block.timestamp});
 
         bytes32 messageHash = megaScore.getMessageHash(score, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.prank(user1);
-        megaScore.mint(score, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score, TEST_IMAGE_URI, v, r, s);
 
         // Query
         uint256 tokenId = megaScore.getTokenIdByAddress(user1);
@@ -279,10 +287,10 @@ contract MegaScoreTest is Test {
         MegaScore.Score memory score = MegaScore.Score({score: TEST_SCORE, timestamp: block.timestamp});
 
         bytes32 messageHash = megaScore.getMessageHash(score, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.prank(user1);
-        megaScore.mint(score, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score, TEST_IMAGE_URI, v, r, s);
 
         // Get URI
         string memory tokenURI = megaScore.tokenURI(1);
@@ -291,17 +299,17 @@ contract MegaScoreTest is Test {
 
     // --- Payment Tests ---
     function test_ReceiveMintPayment() public {
-        uint256 initialBalance = address(this).balance;
+        uint256 initialBalance = address(owner).balance;
 
         MegaScore.Score memory score = MegaScore.Score({score: TEST_SCORE, timestamp: block.timestamp});
 
         bytes32 messageHash = megaScore.getMessageHash(score, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.prank(user1);
-        megaScore.mint(score, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score, TEST_IMAGE_URI, v, r, s);
 
-        uint256 finalBalance = address(this).balance;
+        uint256 finalBalance = address(owner).balance;
         assertEq(finalBalance - initialBalance, MINT_PRICE);
     }
 
@@ -313,17 +321,17 @@ contract MegaScoreTest is Test {
 
         // User 1 mints
         bytes32 messageHash = megaScore.getMessageHash(score1, user1, false);
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0x1, messageHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.prank(user1);
-        megaScore.mint(score1, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score1, TEST_IMAGE_URI, v, r, s);
 
         // User 2 mints
         messageHash = megaScore.getMessageHash(score2, user2, false);
-        (v, r, s) = vm.sign(0x1, messageHash);
+        (v, r, s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.prank(user2);
-        megaScore.mint(score2, TEST_IMAGE_URI, v, r, s){value: MINT_PRICE}();
+        megaScore.mint{value: MINT_PRICE}(score2, TEST_IMAGE_URI, v, r, s);
 
         // Verify
         MegaScore.Score memory user1Score = megaScore.getScoreByAddress(user1);
