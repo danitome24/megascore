@@ -1,5 +1,5 @@
 {
-  "name": "hardhat",
+  "name": "@megascore/hardhat",
   "version": "1.0.0",
   "type": "module",
   "devDependencies": {
@@ -13,5 +13,18 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.4.0"
+  },
+    "scripts": {
+    "typecheck": "tsc --noEmit",
+    "compile": "hardhat build",
+    "test": "hardhat test",
+    "test:solidity": "hardhat test solidity",
+    "test:nodejs": "hardhat test nodejs",
+    "dev": "hardhat node",
+    "deploy:local": "hardhat ignition deploy ignition/modules/betpool.ts --network hardhat",
+    "deploy:sepolia": "hardhat ignition deploy --network sepolia ignition/modules/betpool.ts",
+    "send:eth": "hardhat run scripts/send-eth.ts --network hardhat",
+    "abi:export": "hardhat run scripts/export-abi.ts",
+    "addresses:export": "hardhat run scripts/export-addresses.ts --network hardhat"
   }
 }
