@@ -22,19 +22,16 @@ const config: HardhatUserConfig = {
     },
   },
   networks: {
-    hardhatMainnet: {
-      type: "edr-simulated",
-      chainType: "l1",
+    hardhat: {
+      type: "http",
+      url: "http://127.0.0.1:8545",
     },
-    hardhatOp: {
-      type: "edr-simulated",
-      chainType: "op",
-    },
-    sepolia: {
+    megaethTestnet: {
       type: "http",
       chainType: "l1",
-      url: configVariable("SEPOLIA_RPC_URL"),
-      accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
+      url: "https://carrot.megaeth.com/rpc",
+      chainId: 6342,
+      accounts: [configVariable("DEV_PRIVATE_KEY")],
     },
   },
 };
