@@ -111,7 +111,7 @@ contract MegaScore is ERC721, Ownable, EIP712 {
         public
         payable
         onlyIfNotMinted
-        validSignature(getMessageHash(score, msg.sender, false), v, r, s)
+        validSignature(getMessageHash(score, msg.sender), v, r, s)
     {
         _validateScoreForMint(score.score);
         _validateImageUri(imageUri);
@@ -141,7 +141,7 @@ contract MegaScore is ERC721, Ownable, EIP712 {
     function updateScore(Score calldata score, uint8 v, bytes32 r, bytes32 s)
         public
         payable
-        validSignature(getMessageHash(score, msg.sender, false), v, r, s)
+        validSignature(getMessageHash(score, msg.sender), v, r, s)
         onlyIfMinted
     {
         uint256 tokenId = s_ownerToTokenId[msg.sender];
@@ -161,7 +161,7 @@ contract MegaScore is ERC721, Ownable, EIP712 {
     /**
      * @dev Generates the hash of the message to be signed.
      */
-    function getMessageHash(Score memory score, address wallet, bool hasReducedPrice) public view returns (bytes32) {
+    function getMessageHash(Score memory score, address wallet) public view returns (bytes32) {
         return _hashTypedDataV4(keccak256(abi.encode(MESSAGE_TYPEHASH, score.score, score.timestamp, wallet)));
     }
 
