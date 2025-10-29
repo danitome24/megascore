@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Usage: hardhat run scripts/export-addresses.ts [chain-name]
-// Exports deployed contract addresses to /packages/addresses/[network].json
+// Usage: hardhat run scripts/export-addresses.ts
+// Exports deployed contract addresses from all chains to /packages/shared/addresses/[network].json
 
 import fs from "fs";
 import path from "path";
@@ -16,31 +16,56 @@ const addressesDir = path.resolve(
 );
 const deploymentsRoot = path.resolve(__dirname, "../ignition/deployments");
 
-// For now, only support hardhat/localhost network (chain-31337)
-const chainFolder = "chain-31337";
-const outputFile = path.join(addressesDir, "localhost.json");
+// Chain ID mapping to network names
+const chainIdMap: Record<string, { folder: string; name: string }> = {
+  "31337": { folder: "chain-31337", name: "localhost" },
+  "6342": { folder: "chain-6342", name: "megaeth-testnet" },
+};
 
-const deploymentFile = path.join(
-  deploymentsRoot,
-  chainFolder,
-  "deployed_addresses.json"
-);
+// Create addresses directory
+fs.mkdirSync(addressesDir, { recursive: true });
 
-if (!fs.existsSync(deploymentFile)) {
-  console.error(`Deployment file not found: ${deploymentFile}`);
+let exportedCount = 0;
+
+// Export addresses from all configured chains
+for (const [
+  chainId,
+  { folder: chainFolder, name: networkName },
+] of Object.entries(chainIdMap)) {
+  const deploymentFile = path.join(
+    deploymentsRoot,
+    chainFolder,
+    "deployed_addresses.json"
+  );
+  const outputFile = path.join(addressesDir, `${networkName}.json`);
+
+  if (!fs.existsSync(deploymentFile)) {
+    console.warn(
+      `⚠️  Deployment file not found for ${networkName}: ${deploymentFile}`
+    );
+    continue;
+  }
+
+  const deployment = JSON.parse(
+    fs.readFileSync(deploymentFile, "utf8")
+  ) as Record<string, string>;
+  const addresses: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(deployment)) {
+    const contractName = key.split("#")[1] || key;
+    addresses[contractName] = value;
+  }
+
+  fs.writeFileSync(outputFile, JSON.stringify(addresses, null, 2));
+  console.log(`✅ Exported addresses for chain ${chainId} to ${outputFile}`);
+  exportedCount++;
+}
+
+if (exportedCount === 0) {
+  console.error("❌ No deployment files found to export");
   process.exit(1);
 }
 
-const deployment = JSON.parse(
-  fs.readFileSync(deploymentFile, "utf8")
-) as Record<string, string>;
-const addresses: Record<string, string> = {};
-
-for (const [key, value] of Object.entries(deployment)) {
-  const contractName = key.split("#")[1] || key;
-  addresses[contractName] = value;
-}
-
-fs.mkdirSync(addressesDir, { recursive: true });
-fs.writeFileSync(outputFile, JSON.stringify(addresses, null, 2));
-console.log(`Exported addresses to ${outputFile}`);
+console.log(
+  `\n✨ Successfully exported addresses from ${exportedCount} chain(s)`
+);
