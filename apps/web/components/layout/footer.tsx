@@ -1,16 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useGetTestTokens } from "@/hooks/contract/use-get-test-tokens";
 import { BLOCKEXPLORER_CONTRACT_URL } from "@/lib/constants";
 import { getAddressesForChain } from "@/lib/external/chains/addresses";
-import { getPaymentTokenContract } from "@/lib/external/contracts/token-contract";
 import { Heart } from "lucide-react";
-import { toast } from "sonner";
-import { megaethTestnet } from "viem/chains";
-import { useAccount, useChainId, useWriteContract } from "wagmi";
-import { usePublicClient } from "wagmi";
+import { useChainId } from "wagmi";
 
 const currentYear = new Date().getFullYear();
 const socialLinks = [
@@ -26,13 +22,7 @@ const socialLinks = [
 ];
 
 export function Footer() {
-  const [isLoading, setIsLoading] = useState(false);
-
   const chainId = useChainId();
-  const publicClient = usePublicClient({ chainId });
-  const { address } = useAccount();
-  const { writeContractAsync: requestTestTokens } = useWriteContract();
-
   const contracts = [
     {
       name: "MegaScore",
@@ -40,45 +30,7 @@ export function Footer() {
     },
   ];
 
-  const handleGetTestTokens = async () => {
-    if (!address) {
-      toast.error("Please connect your wallet to receive test tokens.");
-      return;
-    }
-
-    setIsLoading(true);
-    const toastId = toast.loading("Minting test tokens...");
-
-    try {
-      const txHash = await requestTestTokens({
-        ...getPaymentTokenContract(chainId),
-        functionName: "mint",
-        args: [address, BigInt("1000000000000000000")],
-      });
-
-      // Wait for transaction confirmation
-      if (txHash && publicClient) {
-        toast.loading("Waiting for transaction confirmation...", { id: toastId });
-        // Wait for transaction receipt
-        const receipt = await publicClient.waitForTransactionReceipt({
-          hash: txHash,
-          confirmations: 1,
-        });
-
-        // Check if transaction was successful
-        if (receipt.status === "success") {
-          toast.success("✓ Test tokens minted successfully!", { id: toastId });
-        } else {
-          toast.error("Transaction failed or was reverted.", { id: toastId });
-        }
-      }
-    } catch (error) {
-      console.error("Failed to mint tokens:", error);
-      toast.error("Failed to mint test tokens. Please try again.", { id: toastId });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { getTestTokens, isLoading } = useGetTestTokens();
 
   return (
     <footer className="mt-16 border-t border-foreground/10 bg-background py-12">
@@ -116,7 +68,7 @@ export function Footer() {
                   </div>
                 ))}
               </div>
-              <Button size="sm" className="mt-4 w-full" onClick={handleGetTestTokens} disabled={isLoading}>
+              <Button size="sm" className="mt-4 w-full" onClick={getTestTokens} disabled={isLoading}>
                 {isLoading ? "Minting..." : "Get Test Tokens"}
               </Button>
             </div>
