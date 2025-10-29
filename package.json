@@ -14,7 +14,7 @@
     "hh:dev": "pnpm --filter @megascore/hardhat dev",
     "hh:compile": "pnpm --filter @megascore/hardhat compile",
     "hh:test:solidity": "pnpm --filter @megascore/hardhat test:solidity",
-    "hh:deploy:local": "pnpm --filter @megascore/hardhat deploy:local && pnpm --filter @megascore/hardhat abi:export && pnpm --filter @megascore/hardhat addresses:export",
+    "hh:deploy:local": "pnpm --filter @megascore/hardhat deploy:local && pnpm --filter @megascore/hardhat abi:export && pnpm --filter @megascore/hardhat addresses:export && pnpm --filter @megascore/hardhat send:eth",
     "hh:deploy:testnet": "pnpm --filter @megascore/hardhat deploy:testnet && pnpm --filter @megascore/hardhat abi:export && pnpm --filter @megascore/hardhat addresses:export",
     "hh:abi:export": "pnpm --filter @megascore/hardhat abi:export",
     "hh:addresses:export": "pnpm --filter @megascore/hardhat addresses:export",

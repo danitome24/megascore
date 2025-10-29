@@ -5,10 +5,10 @@ import { hardhat, megaethTestnet } from "wagmi/chains";
 export const config = createConfig(
   getDefaultConfig({
     // Your dApps chains
-    chains: [hardhat, megaethTestnet],
+    chains: [hardhat],
     transports: {
       [hardhat.id]: http(`http://localhost:8545`),
-      [megaethTestnet.id]: http(`https://carrot.megaeth.com/rpc`),
+      // [megaethTestnet.id]: http(`https://carrot.megaeth.com/rpc`),
     },
 
     // Required API Keys

@@ -23,20 +23,20 @@ contract TestToken is ERC20, Ownable {
     }
 
     /**
-     * @dev Allows owner to mint new tokens (for testing purposes)
+     * @dev Allows anyone to mint new tokens (for testing purposes)
      * @param to The address to mint tokens to
      * @param amount The amount of tokens to mint
      */
-    function mint(address to, uint256 amount) external onlyOwner {
+    function mint(address to, uint256 amount) external {
         _mint(to, amount);
     }
 
     /**
-     * @dev Allows owner to burn tokens
+     * @dev Allows anyone to burn tokens
      * @param from The address to burn tokens from
      * @param amount The amount of tokens to burn
      */
-    function burn(address from, uint256 amount) external onlyOwner {
+    function burn(address from, uint256 amount) external {
         _burn(from, amount);
     }
 }
