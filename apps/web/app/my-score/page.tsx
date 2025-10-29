@@ -74,6 +74,7 @@ export default function MyScorePage() {
       console.log("Minting NFT for:", address);
       await new Promise(resolve => setTimeout(resolve, 2500));
 
+      // 2. After successful mint, create account, score, and metrics in DB
       const account = await apiCreateAccount(address);
       await apiCreateScore(account.id, currentScore);
 
