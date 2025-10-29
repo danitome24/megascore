@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useGetTestTokens } from "@/hooks/contract/use-get-test-tokens";
+import { usePaymentToken } from "@/hooks/contracts/use-payment-token-balance";
 import { BLOCKEXPLORER_CONTRACT_URL } from "@/lib/constants";
 import { getAddressesForChain } from "@/lib/external/chains/addresses";
 import { Heart } from "lucide-react";
+import { useAccount } from "wagmi";
 import { useChainId } from "wagmi";
 
 const currentYear = new Date().getFullYear();
@@ -30,7 +31,8 @@ export function Footer() {
     },
   ];
 
-  const { getTestTokens, isLoading } = useGetTestTokens();
+  const { address } = useAccount();
+  const { mintTestTokens, isMinting } = usePaymentToken(address!);
 
   return (
     <footer className="mt-16 border-t border-foreground/10 bg-background py-12">
@@ -68,8 +70,8 @@ export function Footer() {
                   </div>
                 ))}
               </div>
-              <Button size="sm" className="mt-4 w-full" onClick={getTestTokens} disabled={isLoading}>
-                {isLoading ? "Minting..." : "Get Test Tokens"}
+              <Button size="sm" className="mt-4 w-full" onClick={mintTestTokens} disabled={isMinting || !address}>
+                {isMinting ? "Minting..." : "Get Test Tokens"}
               </Button>
             </div>
 

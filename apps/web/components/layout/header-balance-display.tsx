@@ -1,21 +1,14 @@
 "use client";
 
+import { usePaymentToken } from "@/hooks/contracts/use-payment-token-balance";
 import { Address } from "@/lib/domain/shared/types";
-import { getPaymentTokenContract } from "@/lib/external/contracts/token-contract";
 import { motion } from "framer-motion";
 import { formatEther } from "viem/utils";
-import { useAccount, useBalance, useChainId, useReadContract } from "wagmi";
+import { useBalance } from "wagmi";
 
 export function HeaderBalanceDisplay({ address }: { address: Address }) {
-  const chainId = useChainId();
-  const { data: ethBalance, isLoading: isEthLoading } = useBalance({
-    address,
-  });
-  const { data: tokenBalance, isLoading: isTokenLoading } = useReadContract({
-    ...getPaymentTokenContract(chainId),
-    functionName: "balanceOf",
-    args: [address],
-  });
+  const { data: ethBalance, isLoading: isEthLoading } = useBalance({ address });
+  const { tokenBalance, isTokenLoading } = usePaymentToken(address);
 
   const ethValue = ethBalance ? parseFloat(formatEther(ethBalance.value)).toFixed(2) : "0.00";
   const tokenValue = tokenBalance ? parseFloat(formatEther(tokenBalance as bigint)).toFixed(0) : "0";
@@ -33,7 +26,7 @@ export function HeaderBalanceDisplay({ address }: { address: Address }) {
           <span className="font-mono text-lg font-light text-foreground/80 transition-colors hover:text-mega-coral/80">
             {isEthLoading ? "..." : ethValue}
           </span>
-          <span className="tracking-wid<er text-xs font-light uppercase text-foreground/40">ETH</span>
+          <span className="text-xs font-light uppercase tracking-wider text-foreground/40">ETH</span>
         </div>
 
         {/* Divider */}
