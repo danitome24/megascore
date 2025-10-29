@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { Heart, Linkedin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { BLOCKEXPLORER_CONTRACT_URL } from "@/lib/constants";
+import { getAddressesForChain } from "@/lib/external/chains/addresses";
+import { Heart } from "lucide-react";
+import { megaethTestnet } from "viem/chains";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -18,8 +22,8 @@ export function Footer() {
 
   const contracts = [
     {
-      name: "Testnet",
-      address: "0x...",
+      name: "MegaScore",
+      address: getAddressesForChain(megaethTestnet.id).MegaScore,
     },
   ];
 
@@ -48,12 +52,20 @@ export function Footer() {
                 {contracts.map(contract => (
                   <div key={contract.name} className="space-y-1">
                     <p className="text-xs font-semibold uppercase tracking-wide text-foreground/80">{contract.name}</p>
-                    <code className="block truncate font-mono text-xs text-foreground/60 transition-colors hover:text-mega-coral">
+                    <Link
+                      href={`${BLOCKEXPLORER_CONTRACT_URL}${contract.address}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block truncate font-mono text-xs text-foreground/60 transition-colors hover:text-mega-coral"
+                    >
                       {contract.address}
-                    </code>
+                    </Link>
                   </div>
                 ))}
               </div>
+              <Button size="sm" className="mt-4 w-full">
+                Get Test Tokens
+              </Button>
             </div>
 
             {/* Social */}
