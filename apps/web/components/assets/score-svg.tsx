@@ -1,4 +1,17 @@
-export function ScoreSVG() {
+import { getLevelByScore } from "@/lib/domain/score/level";
+import { Address } from "@/lib/domain/shared/types";
+import { formatAddress } from "@/lib/utils";
+
+interface ScoreSVGProps {
+  score: number;
+  address: Address;
+}
+
+export function ScoreSVG({ score, address }: ScoreSVGProps) {
+  const formattedAddress = formatAddress(address);
+  const level = getLevelByScore(score);
+  const formattedScore = score.toLocaleString();
+
   return (
     <svg width="400" height="500" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -74,7 +87,7 @@ export function ScoreSVG() {
         fill="url(#coralGradient)"
         letterSpacing="-2"
       >
-        1,234
+        {formattedScore}
       </text>
       <text
         x="200"
@@ -107,7 +120,7 @@ export function ScoreSVG() {
           fontSize="18"
           fill="url(#accentBlue)"
         >
-          LEVEL 7
+          LEVEL {level.level}
         </text>
       </g>
       <g transform="translate(60, 360)">
@@ -121,7 +134,7 @@ export function ScoreSVG() {
           fontSize="14"
           fill="#DFD9D9"
         >
-          Your Reputation Summary
+          {formattedAddress}
         </text>
         <text
           x="140"
@@ -132,7 +145,7 @@ export function ScoreSVG() {
           fontSize="12"
           fill="rgba(223,217,217,0.7)"
         >
-          Top 15% • 42 Transactions • 8 Contracts
+          MegaScore Reputation NFT
         </text>
       </g>
       <g transform="translate(200, 445)">

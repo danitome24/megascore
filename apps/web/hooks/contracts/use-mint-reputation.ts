@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNftImageGenerator } from "@/hooks/nft/use-nft-image-generator";
 import { Address } from "@/lib/domain/shared/types";
 import { getMegaScoreContract } from "@/lib/external/contracts/megascore-contract";
 import { toast } from "sonner";
@@ -17,32 +18,29 @@ export function useMintReputation() {
   // 3. Contract data
   const { address: contractAddress, abi: contractABI } = getMegaScoreContract(chainId);
 
-  // 4. Custom hooks (to be implemented)
-  // const signScore = useSignScore();
-  // const { generateAndUpload } = useNftImageGenerator();
+  // 4. Custom hooks
+  const { generateAndUpload } = useNftImageGenerator();
+  // const signScore = useSignScore(); // TODO: implement
 
   // 5. Internal functions
   const mintReputationOnChain = async (
     signedScore: any, // TODO: replace with SignedScore type
-    ipfsHash: string,
+    storageUri: string,
     score: number,
-    mintTimestamp: number,
   ) => {
-    // Prepare contract call
     const tx = await writeMegaScore({
       abi: contractABI,
       address: contractAddress as Address,
       functionName: "mint",
       args: [
         score,
-        ipfsHash,
+        storageUri,
         signedScore.signature.v,
         signedScore.signature.r as Address,
         signedScore.signature.s as Address,
       ],
     });
 
-    // Wait for transaction confirmation
     if (!publicClient) throw new Error("Public client not available");
     const receipt = await publicClient.waitForTransactionReceipt({
       hash: tx,
@@ -65,34 +63,27 @@ export function useMintReputation() {
     try {
       if (!walletAddress) throw new Error("Wallet not connected");
 
-      // Step 1: Generate NFT metadata and upload to IPFS
+      // Step 1: Generate NFT and upload to Lens Grove storage
       toastId = toast.loading("Generating your NFT...");
-      const now = Date.now();
-      // const ipfsHash = await generateAndUpload({
-      //   score,
-      //   walletAddress,
-      //   mintedAt: new Date(now),
-      // });
-      // if (!ipfsHash) throw new Error("Failed to generate NFT");
-      const ipfsHash = "TODO_IPFS_HASH"; // Temporary placeholder
+      const storageUri = await generateAndUpload(score, walletAddress);
+      if (!storageUri) throw new Error("Failed to generate NFT");
       toast.success("NFT metadata generated and uploaded!", { id: toastId });
 
       // Step 2: Sign the score for minting
       toastId = toast.loading("Signing your score...");
-      // const signedScore = await signScore(now, contractAddress, {
+      // const signedScore = await signScore({
       //   score,
       //   wallet: walletAddress,
       //   chainId,
-      //   type: "mint",
       // });
       const signedScore = {
         signature: { v: 0, r: "", s: "" },
-      }; // Temporary placeholder
+      }; // TODO: implement useSignScore
       toast.success("Score signed!", { id: toastId });
 
       // Step 3: Mint NFT on chain
       toastId = toast.loading("Minting your NFT on-chain...");
-      await mintReputationOnChain(signedScore, ipfsHash, score, now);
+      await mintReputationOnChain(signedScore, storageUri, score);
       toast.success("NFT minted successfully!", { id: toastId });
     } catch (error) {
       console.error("Error minting reputation NFT:", error);
