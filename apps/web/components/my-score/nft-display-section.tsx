@@ -10,20 +10,12 @@ import { getLevelByScore } from "@/lib/domain/score/level";
 import { extractImageFromTokenUri } from "@/lib/utils";
 import { useScoreStore } from "@/store/score-store";
 import { Eye, Hash, Share2 } from "lucide-react";
-import { useChainId } from "wagmi";
 
 interface NFTDisplaySectionProps {
   txHash?: string | null;
 }
 
-// Block explorer URLs by chain ID
-const BLOCK_EXPLORERS: Record<number, string> = {
-  31337: "http://localhost:8545", // Local hardhat
-  6342: "https://megaeth-testnet.blockscout.com", // MegaETH testnet
-};
-
 export function NFTDisplaySection({ txHash }: NFTDisplaySectionProps) {
-  const chainId = useChainId();
   const { hasNFT, currentScore, updatedScore } = useScoreStore();
 
   // Fetch real NFT data from contract
@@ -46,7 +38,7 @@ export function NFTDisplaySection({ txHash }: NFTDisplaySectionProps) {
   const imageUrl = extractImageFromTokenUri(nftData.tokenUri);
 
   // Get block explorer URL based on chain
-  const explorerUrl = txHash ? `${BLOCK_EXPLORERS[chainId] || BLOCK_EXPLORERS[6342]}/tx/${txHash}` : null;
+  const explorerUrl = `${process.env.NEXT_PUBLIC_BLOCK_EXPLORER_URL}/${txHash}`;
 
   return (
     <Card className="relative mb-6 overflow-hidden border-2 border-foreground/20 bg-background shadow-xl">

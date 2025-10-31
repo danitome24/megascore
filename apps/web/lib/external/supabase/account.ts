@@ -17,6 +17,7 @@ export async function getAccountByWallet(walletAddress: string): Promise<Account
     walletAddress: data.wallet_address as Address,
     mintedAt: data.minted_at,
     createdAt: data.created_at,
+    mintTx: data.mint_tx,
   };
 }
 
@@ -42,5 +43,6 @@ export async function createAccount(walletAddress: string, txHash: string): Prom
     walletAddress: data.wallet_address as Address,
     mintedAt: data.minted_at,
     createdAt: data.created_at,
+    mintTx: data.mint_tx,
   };
 }
