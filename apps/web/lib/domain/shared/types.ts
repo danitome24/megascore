@@ -27,3 +27,9 @@ interface AbiItem {
 }
 
 export type Abi = readonly AbiItem[];
+
+// Signatures
+export interface SignedScore {
+  signature: { v: number; r: string; s: string };
+  score: { score: number; timestamp: number };
+}

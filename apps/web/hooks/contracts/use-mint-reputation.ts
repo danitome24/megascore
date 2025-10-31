@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNftImageGenerator } from "@/hooks/nft/use-nft-image-generator";
+import { useSignScore } from "@/hooks/score/use-sign-score";
 import { Address } from "@/lib/domain/shared/types";
 import { getMegaScoreContract } from "@/lib/external/contracts/megascore-contract";
 import { toast } from "sonner";
@@ -20,14 +21,10 @@ export function useMintReputation() {
 
   // 4. Custom hooks
   const { generateAndUpload } = useNftImageGenerator();
-  // const signScore = useSignScore(); // TODO: implement
+  const signScore = useSignScore();
 
   // 5. Internal functions
-  const mintReputationOnChain = async (
-    signedScore: any, // TODO: replace with SignedScore type
-    storageUri: string,
-    score: number,
-  ) => {
+  const mintReputationOnChain = async (signedScore: any, storageUri: string, score: number) => {
     const tx = await writeMegaScore({
       abi: contractABI,
       address: contractAddress as Address,
@@ -48,9 +45,6 @@ export function useMintReputation() {
     });
 
     if (receipt.status === "success") {
-      // TODO: Save to database
-      // await addAccount(walletAddress, ...);
-      // await addScore(account, score);
       return receipt;
     } else {
       throw new Error("Transaction failed");
@@ -63,7 +57,7 @@ export function useMintReputation() {
     try {
       if (!walletAddress) throw new Error("Wallet not connected");
 
-      // Step 1: Generate NFT and upload to Lens Grove storage
+      // Step 1: Generate NFT and upload to storage
       toastId = toast.loading("Generating your NFT...");
       const storageUri = await generateAndUpload(score, walletAddress);
       if (!storageUri) throw new Error("Failed to generate NFT");
@@ -71,14 +65,8 @@ export function useMintReputation() {
 
       // Step 2: Sign the score for minting
       toastId = toast.loading("Signing your score...");
-      // const signedScore = await signScore({
-      //   score,
-      //   wallet: walletAddress,
-      //   chainId,
-      // });
-      // const signedScore = {
-      //   signature: { v: 0, r: "", s: "" },
-      // }; // TODO: implement useSignScore
+      const signedScore = await signScore(score, walletAddress, chainId, contractAddress as Address);
+      console.log("Signed Score:", signedScore);
       toast.success("Score signed!", { id: toastId });
 
       // Step 3: Mint NFT on chain
