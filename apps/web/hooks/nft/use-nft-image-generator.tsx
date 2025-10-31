@@ -14,13 +14,28 @@ export function useNftImageGenerator() {
   };
 
   /**
-   * Upload to Lens Grove storage
-   * TODO: Implement with Lens Grove storage integration
+   * Upload to Pinata via /api/files endpoint
    */
   const uploadToStorage = async (blob: Blob): Promise<string> => {
-    // TODO: Implement Lens Grove storage upload
-    // Return storage URI/hash
-    throw new Error("uploadToStorage not implemented");
+    try {
+      const formData = new FormData();
+      formData.append("file", blob, "score-nft.svg");
+
+      const uploadRequest = await fetch("/api/files", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!uploadRequest.ok) {
+        throw new Error(`Upload failed: ${uploadRequest.statusText}`);
+      }
+
+      const { signedUrl } = await uploadRequest.json();
+      return signedUrl;
+    } catch (error) {
+      console.error("Error uploading to Pinata:", error);
+      throw error;
+    }
   };
 
   /**
@@ -32,7 +47,6 @@ export function useNftImageGenerator() {
       const svgComponent = renderToStaticMarkup(<ScoreSVG score={score} address={address} />);
       const blob = svgToBlob(svgComponent);
 
-      // Upload to Lens Grove storage
       const storageUri = await uploadToStorage(blob);
       return storageUri;
     } catch (error) {
