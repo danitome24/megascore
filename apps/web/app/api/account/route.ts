@@ -3,13 +3,13 @@ import { createAccount } from "@/lib/external/supabase/account";
 
 export async function POST(req: NextRequest) {
   try {
-    const { walletAddress } = await req.json();
+    const { walletAddress, txHash } = await req.json();
 
     if (!walletAddress) {
       return NextResponse.json({ error: "walletAddress is required" }, { status: 400 });
     }
 
-    const account = await createAccount(walletAddress);
+    const account = await createAccount(walletAddress, txHash);
 
     if (!account) {
       return NextResponse.json({ error: "Failed to create account" }, { status: 500 });

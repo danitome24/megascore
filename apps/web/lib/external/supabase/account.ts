@@ -20,13 +20,14 @@ export async function getAccountByWallet(walletAddress: string): Promise<Account
   };
 }
 
-export async function createAccount(walletAddress: string): Promise<Account | null> {
+export async function createAccount(walletAddress: string, txHash: string): Promise<Account | null> {
   const supabase = await supabaseClient();
   const { data, error } = await supabase
     .from("accounts")
     .insert({
       wallet_address: walletAddress.toLowerCase(),
       minted_at: new Date().toISOString(),
+      mint_tx: txHash,
     })
     .select()
     .single();

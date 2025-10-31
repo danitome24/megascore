@@ -51,7 +51,7 @@ export function useMintReputation() {
     }
   };
 
-  const mintReputation = async (score: number): Promise<void> => {
+  const mintReputation = async (score: number): Promise<string> => {
     setIsMinting(true);
     let toastId: string | number | undefined;
     try {
@@ -72,8 +72,10 @@ export function useMintReputation() {
 
       // Step 3: Mint NFT on chain
       toastId = toast.loading("Minting your NFT on-chain...");
-      await mintReputationOnChain(signedScore, storageUri, score);
+      const receipt = await mintReputationOnChain(signedScore, storageUri, score);
       toast.success("NFT minted successfully!", { id: toastId });
+
+      return receipt.transactionHash;
     } catch (error) {
       console.error("Error minting reputation NFT:", error);
       toast.error("Error minting NFT", {

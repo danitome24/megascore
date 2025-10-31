@@ -3,11 +3,11 @@ import { Metrics } from "@/lib/domain/metrics/types";
 import { Score } from "@/lib/domain/score/types";
 
 // Call the API to create a new account after minting
-export async function createAccount(walletAddress: string): Promise<Account> {
+export async function createAccount(walletAddress: string, txHash: string): Promise<Account> {
   const res = await fetch("/api/account", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ walletAddress }),
+    body: JSON.stringify({ walletAddress, txHash }),
   });
 
   if (!res.ok) {

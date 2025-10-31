@@ -82,10 +82,10 @@ export default function MyScorePage() {
     if (!address || !currentScore) return;
     try {
       // 1. Call blockchain minting logic using the hook
-      await mintReputation(currentScore);
+      const txHash = await mintReputation(currentScore);
 
       // 2. After successful mint, create account, score, and metrics in DB
-      const account = await apiCreateAccount(address);
+      const account = await apiCreateAccount(address, txHash);
       await apiCreateScore(account.id, currentScore);
 
       // Mock random metrics data for demo
