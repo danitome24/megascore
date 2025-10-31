@@ -14,8 +14,8 @@ import { useMintReputation } from "@/hooks/contracts/use-mint-reputation";
 import { createAccount as apiCreateAccount, fetchAccountData } from "@/lib/external/api/account";
 import { createMetrics as apiCreateMetrics } from "@/lib/external/api/metrics";
 import { createScore as apiCreateScore } from "@/lib/external/api/score";
-import { useScoreStore } from "@/store/score-store";
 import { useAccountStore } from "@/store/account-store";
+import { useScoreStore } from "@/store/score-store";
 import { useAccount } from "wagmi";
 
 export default function MyScorePage() {
@@ -27,43 +27,58 @@ export default function MyScorePage() {
   const { setAccount, setLoading: setAccountLoading, setError: setAccountError } = useAccountStore();
   const { mintReputation, isMinting } = useMintReputation();
 
+  // Determine score state based on account data
+  const determineScoreState = (hasNFT: boolean, score: number): typeof scoreState => {
+    if (hasNFT) return "minted";
+    if (score > 0) return "calculated";
+    return "initial";
+  };
+
+  // Update score store with fetched data
+  const updateScoreStore = (score: number, metrics: any, hasNFT: boolean) => {
+    setCurrentScore(score);
+    setHasNFT(hasNFT);
+    if (metrics?.data) {
+      setCurrentMetrics(metrics.data);
+    }
+  };
+
+  // Handle successful account data fetch
+  const handleAccountDataFetched = (data: any) => {
+    setAccount(data.account);
+
+    const score = data.score?.score ?? 0;
+    const hasNFT = !!data.account.mintedAt;
+
+    updateScoreStore(score, data.metrics, hasNFT);
+    setScoreState(determineScoreState(hasNFT, score));
+    setAccountError(null);
+  };
+
+  // Handle account data fetch error
+  const handleAccountDataError = (error: Error) => {
+    console.error("Error fetching account data:", error);
+    setAccountError(error);
+    setScoreState("initial");
+  };
+
   useEffect(() => {
     if (!address) return;
+
     setScoreState("loading");
     setAccountLoading(true);
 
     (async () => {
       try {
         const data = await fetchAccountData(address);
-        if (data && data.account) {
-          // Update account store - API already returns proper Account type
-          setAccount(data.account);
-
-          const hasScore = data.score?.score ?? 0;
-          setCurrentScore(hasScore);
-          setHasNFT(!!data.account.mintedAt);
-          if (data.metrics?.data) {
-            setCurrentMetrics(data.metrics.data);
-          }
-
-          // Set state based on data
-          if (!!data.account.mintedAt) {
-            setScoreState("minted");
-          } else if (hasScore > 0) {
-            setScoreState("calculated");
-          } else {
-            setScoreState("initial");
-          }
-
-          setAccountError(null);
+        if (data) {
+          handleAccountDataFetched(data);
         } else {
           setScoreState("initial");
           setAccount(null);
         }
       } catch (error) {
-        console.error("Error fetching account data:", error);
-        setAccountError(error as Error);
-        setScoreState("initial");
+        handleAccountDataError(error as Error);
       } finally {
         setAccountLoading(false);
       }
