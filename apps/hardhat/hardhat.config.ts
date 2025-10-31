@@ -31,6 +31,7 @@ const config: HardhatUserConfig = {
     hardhat: {
       type: "http",
       url: "http://127.0.0.1:8545",
+      accounts: [configVariable("DEV_PRIVATE_KEY")],
     },
     megaethTestnet: {
       type: "http",

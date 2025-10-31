@@ -52,16 +52,27 @@ export default function MyScorePage() {
   }, [address, setCurrentScore, setHasNFT, setCurrentMetrics]);
 
   const handleCalculateScore = async () => {
+    if (!address) return;
     setIsCalculating(true);
     try {
-      // TODO: Call API to calculate score
-      console.log("Calculating score for:", address);
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2500));
-      // Update store with calculated score
-      const calculatedScore = Math.floor(Math.random() * 800) + 200; // Random score between 200-1000
+      // Call API to calculate score
+      const response = await fetch(`/api/score/calculate?wallet=${address}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to calculate score");
+      }
+
+      const data = await response.json();
+      const calculatedScore = data.score.total;
       setCurrentScore(calculatedScore);
       setScoreState("calculated");
+    } catch (error) {
+      console.error("Error calculating score:", error);
     } finally {
       setIsCalculating(false);
     }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNftImageGenerator } from "@/hooks/nft/use-nft-image-generator";
 import { useSignScore } from "@/hooks/score/use-sign-score";
-import { Address } from "@/lib/domain/shared/types";
+import { Address, SignedScore } from "@/lib/domain/shared/types";
 import { getMegaScoreContract } from "@/lib/external/contracts/megascore-contract";
 import { toast } from "sonner";
 import { useAccount, useChainId, usePublicClient, useWriteContract } from "wagmi";
@@ -24,7 +24,7 @@ export function useMintReputation() {
   const signScore = useSignScore();
 
   // 5. Internal functions
-  const mintReputationOnChain = async (signedScore: any, storageUri: string, score: number) => {
+  const mintReputationOnChain = async (signedScore: SignedScore, storageUri: string, score: number) => {
     const tx = await writeMegaScore({
       abi: contractABI,
       address: contractAddress as Address,
@@ -60,6 +60,7 @@ export function useMintReputation() {
       // Step 1: Generate NFT and upload to storage
       toastId = toast.loading("Generating your NFT...");
       const storageUri = await generateAndUpload(score, walletAddress);
+      console.log("Storage URI:", storageUri);
       if (!storageUri) throw new Error("Failed to generate NFT");
       toast.success("NFT metadata generated and uploaded!", { id: toastId });
 
@@ -70,8 +71,8 @@ export function useMintReputation() {
       toast.success("Score signed!", { id: toastId });
 
       // Step 3: Mint NFT on chain
-      // toastId = toast.loading("Minting your NFT on-chain...");
-      // await mintReputationOnChain(signedScore, storageUri, score);
+      toastId = toast.loading("Minting your NFT on-chain...");
+      await mintReputationOnChain(signedScore, storageUri, score);
       toast.success("NFT minted successfully!", { id: toastId });
     } catch (error) {
       console.error("Error minting reputation NFT:", error);
