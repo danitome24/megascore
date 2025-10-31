@@ -2,16 +2,12 @@ import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useMintSBT } from "@/hooks/nft/use-mint-sbt";
 import { useUpdateScore } from "@/hooks/score/use-update-score";
 import { useScoreStore } from "@/store/score-store";
 import { Eye, Hash, Share2 } from "lucide-react";
 
 export function NFTDisplaySection() {
   const { hasNFT, currentScore, updatedScore } = useScoreStore();
-
-  // Use custom hook for minting logic
-  const { isMinting, handleMintSBT } = useMintSBT(currentScore);
 
   // Use custom hook for score update and commit logic
   const { isUpdating, commitUpdate } = useUpdateScore();
