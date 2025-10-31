@@ -3,7 +3,7 @@ import { useScoreStore } from "@/store/score-store";
 import { BarChart3 } from "lucide-react";
 
 export function DataGatheredSection() {
-  const { currentScore, currentMetrics: metrics } = useScoreStore();
+  const { currentMetrics: metrics } = useScoreStore();
 
   if (!metrics) {
     return null;
