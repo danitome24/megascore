@@ -10,7 +10,7 @@ export default buildModule("MegaScoreModule", (m) => {
   const testToken = m.contract("TestToken", [
     "MegaScore Test Token",
     "MSCORE",
-    1000000000n * 10n ** 18n,
+    1000n * 10n ** 18n,
   ]);
 
   // Deploy MegaScore contract with the test token
