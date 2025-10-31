@@ -8,14 +8,13 @@ import { useNFTDetails } from "@/hooks/contracts/use-nft-details";
 import { useUpdateScore } from "@/hooks/score/use-update-score";
 import { getLevelByScore } from "@/lib/domain/score/level";
 import { extractImageFromTokenUri } from "@/lib/utils";
+import { useAccountStore } from "@/store/account-store";
 import { useScoreStore } from "@/store/score-store";
 import { Eye, Hash, Share2 } from "lucide-react";
+import { useChainId } from "wagmi";
 
-interface NFTDisplaySectionProps {
-  txHash?: string | null;
-}
-
-export function NFTDisplaySection({ txHash }: NFTDisplaySectionProps) {
+export function NFTDisplaySection() {
+  const { account } = useAccountStore();
   const { hasNFT, currentScore, updatedScore } = useScoreStore();
 
   // Fetch real NFT data from contract
@@ -28,7 +27,7 @@ export function NFTDisplaySection({ txHash }: NFTDisplaySectionProps) {
   const canUpdate = updatedScore !== null && updatedScore > currentScore;
 
   // Show loading state or return if no NFT data and not loading
-  if (!hasNFT || (!nftData && !isLoading)) return null;
+  if (!hasNFT || !account || (!nftData && !isLoading)) return null;
   if (!nftData) return null;
 
   // Calculate level from score using shared function
@@ -38,7 +37,7 @@ export function NFTDisplaySection({ txHash }: NFTDisplaySectionProps) {
   const imageUrl = extractImageFromTokenUri(nftData.tokenUri);
 
   // Get block explorer URL based on chain
-  const explorerUrl = `${process.env.NEXT_PUBLIC_BLOCK_EXPLORER_URL}/${txHash}`;
+  const explorerUrl = `${process.env.NEXT_PUBLIC_BLOCKEXPLORER_URL}${account.mintTx}`;
 
   return (
     <Card className="relative mb-6 overflow-hidden border-2 border-foreground/20 bg-background shadow-xl">

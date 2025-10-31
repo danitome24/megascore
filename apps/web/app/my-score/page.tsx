@@ -15,6 +15,7 @@ import { createAccount as apiCreateAccount, fetchAccountData } from "@/lib/exter
 import { createMetrics as apiCreateMetrics } from "@/lib/external/api/metrics";
 import { createScore as apiCreateScore } from "@/lib/external/api/score";
 import { useScoreStore } from "@/store/score-store";
+import { useAccountStore } from "@/store/account-store";
 import { useAccount } from "wagmi";
 
 export default function MyScorePage() {
@@ -23,33 +24,51 @@ export default function MyScorePage() {
 
   const { address } = useAccount();
   const { setCurrentScore, setHasNFT, setCurrentMetrics, currentScore } = useScoreStore();
+  const { setAccount, setLoading: setAccountLoading, setError: setAccountError } = useAccountStore();
   const { mintReputation, isMinting } = useMintReputation();
 
   useEffect(() => {
     if (!address) return;
     setScoreState("loading");
+    setAccountLoading(true);
+
     (async () => {
-      const data = await fetchAccountData(address);
-      if (data && data.account) {
-        const hasScore = data.score?.score ?? 0;
-        setCurrentScore(hasScore);
-        setHasNFT(!!data.account.mintedAt);
-        if (data.metrics?.data) {
-          setCurrentMetrics(data.metrics.data);
-        }
-        // Set state based on data
-        if (!!data.account.mintedAt) {
-          setScoreState("minted");
-        } else if (hasScore > 0) {
-          setScoreState("calculated");
+      try {
+        const data = await fetchAccountData(address);
+        if (data && data.account) {
+          // Update account store - API already returns proper Account type
+          setAccount(data.account);
+
+          const hasScore = data.score?.score ?? 0;
+          setCurrentScore(hasScore);
+          setHasNFT(!!data.account.mintedAt);
+          if (data.metrics?.data) {
+            setCurrentMetrics(data.metrics.data);
+          }
+
+          // Set state based on data
+          if (!!data.account.mintedAt) {
+            setScoreState("minted");
+          } else if (hasScore > 0) {
+            setScoreState("calculated");
+          } else {
+            setScoreState("initial");
+          }
+
+          setAccountError(null);
         } else {
           setScoreState("initial");
+          setAccount(null);
         }
-      } else {
+      } catch (error) {
+        console.error("Error fetching account data:", error);
+        setAccountError(error as Error);
         setScoreState("initial");
+      } finally {
+        setAccountLoading(false);
       }
     })();
-  }, [address, setCurrentScore, setHasNFT, setCurrentMetrics]);
+  }, [address, setCurrentScore, setHasNFT, setCurrentMetrics, setAccount, setAccountLoading, setAccountError]);
 
   const handleCalculateScore = async () => {
     if (!address) return;
@@ -81,14 +100,21 @@ export default function MyScorePage() {
   const handleMintNFT = async () => {
     if (!address || !currentScore) return;
     try {
+      setAccountLoading(true);
+
       // 1. Call blockchain minting logic using the hook
       const txHash = await mintReputation(currentScore);
 
-      // 2. After successful mint, create account, score, and metrics in DB
-      const account = await apiCreateAccount(address, txHash);
-      await apiCreateScore(account.id, currentScore);
+      // 2. Create account in DB with mint_tx
+      const newAccountData = await apiCreateAccount(address, txHash);
 
-      // Mock random metrics data for demo
+      // 3. Update account store with full account data
+      setAccount(newAccountData);
+
+      // 4. Create score record
+      await apiCreateScore(newAccountData.id, currentScore);
+
+      // 5. Create metrics
       const metricsData = {
         transactions: Math.floor(Math.random() * 1000),
         weeksActive: Math.floor(Math.random() * 52),
@@ -101,13 +127,16 @@ export default function MyScorePage() {
         weeksSinceFirstTransaction: Math.floor(Math.random() * 52),
         lastActiveDate: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toISOString(),
       };
-      await apiCreateMetrics(account.id, metricsData);
+      await apiCreateMetrics(newAccountData.id, metricsData);
 
       setHasNFT(true);
       setScoreState("minted");
+      setAccountError(null);
     } catch (error) {
       console.error("Minting or DB error:", error);
-      // Error is handled by toast notifications in the hook
+      setAccountError(error as Error);
+    } finally {
+      setAccountLoading(false);
     }
   };
 
