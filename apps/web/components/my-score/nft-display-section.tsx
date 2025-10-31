@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,8 +10,20 @@ import { getLevelByScore } from "@/lib/domain/score/level";
 import { extractImageFromTokenUri } from "@/lib/utils";
 import { useScoreStore } from "@/store/score-store";
 import { Eye, Hash, Share2 } from "lucide-react";
+import { useChainId } from "wagmi";
 
-export function NFTDisplaySection() {
+interface NFTDisplaySectionProps {
+  txHash?: string | null;
+}
+
+// Block explorer URLs by chain ID
+const BLOCK_EXPLORERS: Record<number, string> = {
+  31337: "http://localhost:8545", // Local hardhat
+  6342: "https://megaeth-testnet.blockscout.com", // MegaETH testnet
+};
+
+export function NFTDisplaySection({ txHash }: NFTDisplaySectionProps) {
+  const chainId = useChainId();
   const { hasNFT, currentScore, updatedScore } = useScoreStore();
 
   // Fetch real NFT data from contract
@@ -31,6 +44,10 @@ export function NFTDisplaySection() {
 
   // Extract actual image URL from tokenUri (handles base64-encoded JSON)
   const imageUrl = extractImageFromTokenUri(nftData.tokenUri);
+
+  // Get block explorer URL based on chain
+  const explorerUrl = txHash ? `${BLOCK_EXPLORERS[chainId] || BLOCK_EXPLORERS[6342]}/tx/${txHash}` : null;
+
   return (
     <Card className="relative mb-6 overflow-hidden border-2 border-foreground/20 bg-background shadow-xl">
       <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-mega-blue via-mega-green to-mega-coral"></div>
@@ -138,10 +155,22 @@ export function NFTDisplaySection() {
                     <Share2 className="mr-2 h-4 w-4" />
                     Share
                   </Button>
-                  <Button variant="outline" className="flex-1 uppercase tracking-wide">
-                    <Eye className="mr-2 h-4 w-4" />
-                    Explorer
-                  </Button>
+                  {explorerUrl ? (
+                    <Link
+                      href={explorerUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex flex-1 items-center justify-center rounded-md border border-input bg-background px-3 py-2 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground"
+                    >
+                      <Eye className="mr-2 h-4 w-4" />
+                      Explorer
+                    </Link>
+                  ) : (
+                    <Button disabled variant="outline" className="flex-1 uppercase tracking-wide">
+                      <Eye className="mr-2 h-4 w-4" />
+                      Explorer
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
