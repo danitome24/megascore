@@ -10,6 +10,7 @@ import { NFTDisplaySection } from "@/components/my-score/nft-display-section";
 import { ScoreCalculatedDisplay } from "@/components/my-score/score-calculated-display";
 import { ScoreDisplaySection } from "@/components/my-score/score-display-section";
 import { Loading } from "@/components/ui/loading";
+import { useMintReputation } from "@/hooks/contracts/use-mint-reputation";
 import { createAccount as apiCreateAccount, fetchAccountData } from "@/lib/external/api/account";
 import { createMetrics as apiCreateMetrics } from "@/lib/external/api/metrics";
 import { createScore as apiCreateScore } from "@/lib/external/api/score";
@@ -18,11 +19,11 @@ import { useAccount } from "wagmi";
 
 export default function MyScorePage() {
   const [isCalculating, setIsCalculating] = useState(false);
-  const [isMinting, setIsMinting] = useState(false);
   const [scoreState, setScoreState] = useState<"loading" | "initial" | "calculated" | "minted">("loading");
 
   const { address } = useAccount();
   const { setCurrentScore, setHasNFT, setCurrentMetrics, currentScore } = useScoreStore();
+  const { mintReputation, isMinting } = useMintReputation();
 
   useEffect(() => {
     if (!address) return;
@@ -48,7 +49,7 @@ export default function MyScorePage() {
         setScoreState("initial");
       }
     })();
-  }, [address, setCurrentScore, setHasNFT]);
+  }, [address, setCurrentScore, setHasNFT, setCurrentMetrics]);
 
   const handleCalculateScore = async () => {
     setIsCalculating(true);
@@ -67,12 +68,10 @@ export default function MyScorePage() {
   };
 
   const handleMintNFT = async () => {
-    if (!address) return;
-    setIsMinting(true);
+    if (!address || !currentScore) return;
     try {
-      // 1. Call blockchain minting logic (simulate for now)
-      console.log("Minting NFT for:", address);
-      await new Promise(resolve => setTimeout(resolve, 2500));
+      // 1. Call blockchain minting logic using the hook
+      await mintReputation(currentScore);
 
       // 2. After successful mint, create account, score, and metrics in DB
       const account = await apiCreateAccount(address);
@@ -97,9 +96,7 @@ export default function MyScorePage() {
       setScoreState("minted");
     } catch (error) {
       console.error("Minting or DB error:", error);
-      // Optionally show a toast or error message here
-    } finally {
-      setIsMinting(false);
+      // Error is handled by toast notifications in the hook
     }
   };
 

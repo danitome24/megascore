@@ -76,14 +76,14 @@ export function useMintReputation() {
       //   wallet: walletAddress,
       //   chainId,
       // });
-      const signedScore = {
-        signature: { v: 0, r: "", s: "" },
-      }; // TODO: implement useSignScore
+      // const signedScore = {
+      //   signature: { v: 0, r: "", s: "" },
+      // }; // TODO: implement useSignScore
       toast.success("Score signed!", { id: toastId });
 
       // Step 3: Mint NFT on chain
-      toastId = toast.loading("Minting your NFT on-chain...");
-      await mintReputationOnChain(signedScore, storageUri, score);
+      // toastId = toast.loading("Minting your NFT on-chain...");
+      // await mintReputationOnChain(signedScore, storageUri, score);
       toast.success("NFT minted successfully!", { id: toastId });
     } catch (error) {
       console.error("Error minting reputation NFT:", error);

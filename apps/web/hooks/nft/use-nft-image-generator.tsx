@@ -16,10 +16,10 @@ export function useNftImageGenerator() {
   /**
    * Upload to Pinata via /api/files endpoint
    */
-  const uploadToStorage = async (blob: Blob): Promise<string> => {
+  const uploadToStorage = async (blob: Blob, address: Address): Promise<string> => {
     try {
       const formData = new FormData();
-      formData.append("file", blob, "score-nft.svg");
+      formData.append("file", blob, `${address}-${Date.now()}.svg`);
 
       const uploadRequest = await fetch("/api/files", {
         method: "POST",
@@ -30,7 +30,7 @@ export function useNftImageGenerator() {
         throw new Error(`Upload failed: ${uploadRequest.statusText}`);
       }
 
-      const { signedUrl } = await uploadRequest.json();
+      const signedUrl = await uploadRequest.json();
       return signedUrl;
     } catch (error) {
       console.error("Error uploading to Pinata:", error);
@@ -47,7 +47,7 @@ export function useNftImageGenerator() {
       const svgComponent = renderToStaticMarkup(<ScoreSVG score={score} address={address} />);
       const blob = svgToBlob(svgComponent);
 
-      const storageUri = await uploadToStorage(blob);
+      const storageUri = await uploadToStorage(blob, address);
       return storageUri;
     } catch (error) {
       console.error("Error generating and uploading NFT:", error);
