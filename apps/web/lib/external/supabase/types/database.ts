@@ -11,10 +11,10 @@ export type Database = {
     Functions: {
       graphql: {
         Args: {
-          operationName?: string;
-          extensions?: Json;
-          variables?: Json;
           query?: string;
+          operationName?: string;
+          variables?: Json;
+          extensions?: Json;
         };
         Returns: Json;
       };
@@ -32,21 +32,18 @@ export type Database = {
         Row: {
           created_at: string;
           id: string;
-          mint_tx: string;
           minted_at: string;
           wallet_address: string;
         };
         Insert: {
           created_at?: string;
           id?: string;
-          mint_tx: string;
           minted_at?: string;
           wallet_address: string;
         };
         Update: {
           created_at?: string;
           id?: string;
-          mint_tx?: string;
           minted_at?: string;
           wallet_address?: string;
         };
@@ -105,6 +102,44 @@ export type Database = {
             foreignKeyName: "metrics_history_account_id_fkey";
             columns: ["account_id"];
             isOneToOne: false;
+            referencedRelation: "accounts";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      nfts: {
+        Row: {
+          account_id: string;
+          created_at: string;
+          id: string;
+          last_updated_at: string;
+          minted_at: string;
+          token_id: number;
+          tx_hash: string;
+        };
+        Insert: {
+          account_id: string;
+          created_at?: string;
+          id?: string;
+          last_updated_at?: string;
+          minted_at: string;
+          token_id: number;
+          tx_hash: string;
+        };
+        Update: {
+          account_id?: string;
+          created_at?: string;
+          id?: string;
+          last_updated_at?: string;
+          minted_at?: string;
+          token_id?: number;
+          tx_hash?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fk_nft_accounts";
+            columns: ["account_id"];
+            isOneToOne: true;
             referencedRelation: "accounts";
             referencedColumns: ["id"];
           },
