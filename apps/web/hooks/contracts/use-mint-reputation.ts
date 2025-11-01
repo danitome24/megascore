@@ -60,14 +60,12 @@ export function useMintReputation() {
       // Step 1: Generate NFT and upload to storage
       toastId = toast.loading("Generating your NFT...");
       const storageUri = await generateAndUpload(score, walletAddress);
-      console.log("Storage URI:", storageUri);
       if (!storageUri) throw new Error("Failed to generate NFT");
       toast.success("NFT metadata generated and uploaded!", { id: toastId });
 
       // Step 2: Sign the score for minting
       toastId = toast.loading("Signing your score...");
       const signedScore = await signScore(score, walletAddress, chainId, contractAddress as Address);
-      console.log("Signed Score:", signedScore);
       toast.success("Score signed!", { id: toastId });
 
       // Step 3: Mint NFT on chain

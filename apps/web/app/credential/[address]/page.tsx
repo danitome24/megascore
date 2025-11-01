@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { getLevelByScore } from "@/lib/domain/score/level";
+import { getNFTDataFromContract } from "@/lib/external/contracts/nft-reader";
 import { extractImageFromTokenUri } from "@/lib/utils";
 import { Metadata } from "next";
 
@@ -11,31 +12,20 @@ interface SharePageProps {
   };
 }
 
-// Fetch user reputation data from database and blockchain
+// Fetch NFT data directly from smart contract
 async function getReputationData(address: string) {
   try {
-    // Fetch account and score from database
-    const accountResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/account/${address}`,
-      {
-        cache: "no-store",
-      },
-    );
+    const nftData = await getNFTDataFromContract(address);
 
-    if (!accountResponse.ok) {
-      console.error("Account API response not ok:", accountResponse.status);
+    if (!nftData) {
       return null;
     }
 
-    const accountData = await accountResponse.json();
-    console.log("Account data fetched:", accountData);
-
-    // accountData should contain: account info, current score, and tokenUri from blockchain
     return {
       walletAddress: address,
-      score: accountData.score?.score || 0,
-      tokenUri: accountData.nft?.tokenUri || "",
-      account: accountData.account,
+      score: nftData.score,
+      tokenUri: nftData.tokenUri,
+      tokenId: nftData.tokenId,
     };
   } catch (error) {
     console.error("Error fetching reputation data:", error);
@@ -104,7 +94,7 @@ export default async function SharePage({ params }: SharePageProps) {
     );
   }
 
-  const { score, tokenUri } = reputationData;
+  const { score, tokenUri, tokenId } = reputationData;
   const levelData = getLevelByScore(score);
   const nftUri = extractImageFromTokenUri(tokenUri);
   const nftUrl = nftUri ? `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${nftUri}` : "";
@@ -112,11 +102,10 @@ export default async function SharePage({ params }: SharePageProps) {
   console.log("Credential page data:", {
     address,
     score,
-    tokenUri: tokenUri,
-    tokenUriLength: tokenUri?.length,
-    nftUri,
-    nftUrl: nftUrl?.substring(0, 100),
-    gatewayUrl: process.env.NEXT_PUBLIC_GATEWAY_URL,
+    tokenId,
+    tokenUri: tokenUri.substring(0, 50),
+    nftUri: nftUri.substring(0, 50),
+    nftUrl: nftUrl.substring(0, 100),
   });
 
   return (
@@ -174,6 +163,11 @@ export default async function SharePage({ params }: SharePageProps) {
                 </div>
 
                 <div className="space-y-1 border-t border-foreground/10 pt-2">
+                  <p className="text-sm uppercase tracking-wide text-foreground/60">Token ID</p>
+                  <p className="font-mono text-sm text-foreground/70">#{tokenId}</p>
+                </div>
+
+                <div className="space-y-1">
                   <p className="text-sm uppercase tracking-wide text-foreground/60">Wallet Address</p>
                   <p className="break-all font-mono text-sm text-foreground/70">{address}</p>
                 </div>
