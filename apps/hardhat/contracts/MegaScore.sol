@@ -141,11 +141,12 @@ contract MegaScore is ERC721, Ownable, EIP712 {
      * @dev Updates the score of the caller's SBT.
      * Payment is made exclusively in ERC20 tokens.
      * @param score The new score to associate with the SBT.
+     * @param imageUri The URI of the updated image to associate with the SBT.
      * @param v The recovery id of the signature.
      * @param r The r value of the signature.
      * @param s The s value of the signature.
      */
-    function updateScore(uint256 score, uint8 v, bytes32 r, bytes32 s)
+    function updateScore(uint256 score, string calldata imageUri, uint8 v, bytes32 r, bytes32 s)
         external
         validSignature(getMessageHash(score, msg.sender), v, r, s)
         onlyIfMinted
@@ -157,11 +158,14 @@ contract MegaScore is ERC721, Ownable, EIP712 {
         // Validate the new score
         _validateScoreForUpdate(score, currentScore.score);
 
+        // Validate the image URI
+        _validateImageUri(imageUri);
+
         // Ensure the payment is sufficient
         _payOrFail(i_updatePrice);
 
-        // Update the score
-        _setScore(score, tokenId);
+        // Update the score and image URI
+        _updateNFTData(tokenId, score, imageUri);
     }
 
     /**

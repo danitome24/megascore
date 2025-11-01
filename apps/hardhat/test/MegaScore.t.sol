@@ -288,6 +288,7 @@ contract MegaScoreTest is Test {
 
         // Update with higher score
         uint256 newScore = 2000;
+        string memory newImageUri = "ipfs://QmTestUpdated123";
         messageHash = megaScore.getMessageHash(newScore, user1);
         (v, r, s) = vm.sign(ownerPrivateKey, messageHash);
 
@@ -295,7 +296,7 @@ contract MegaScoreTest is Test {
         emit MegaScoreUpdated(user1, 2000, block.timestamp);
 
         vm.prank(user1);
-        megaScore.updateScore(newScore, v, r, s);
+        megaScore.updateScore(newScore, newImageUri, v, r, s);
 
         MegaScore.Score memory retrievedScore = megaScore.getScoreByAddress(user1);
         assertEq(retrievedScore.score, 2000);
@@ -308,7 +309,7 @@ contract MegaScoreTest is Test {
 
         vm.expectRevert(abi.encodeWithSelector(MegaScore.MegaScore__NoSBTMintedYet.selector, user1, address(0)));
         vm.prank(user1);
-        megaScore.updateScore(scoreValue, v, r, s);
+        megaScore.updateScore(scoreValue, TEST_IMAGE_URI, v, r, s);
     }
 
     function test_Update_FailsWithSameScore() public {
@@ -326,7 +327,7 @@ contract MegaScoreTest is Test {
 
         vm.expectRevert(abi.encodeWithSelector(MegaScore.MegaScore__LessOrSameScore.selector, TEST_SCORE, TEST_SCORE));
         vm.prank(user1);
-        megaScore.updateScore(scoreValue, v, r, s);
+        megaScore.updateScore(scoreValue, TEST_IMAGE_URI, v, r, s);
     }
 
     function test_Update_FailsWithLowerScore() public {
@@ -345,7 +346,7 @@ contract MegaScoreTest is Test {
 
         vm.expectRevert(abi.encodeWithSelector(MegaScore.MegaScore__LessOrSameScore.selector, TEST_SCORE, 500));
         vm.prank(user1);
-        megaScore.updateScore(lowerScore, v, r, s);
+        megaScore.updateScore(lowerScore, TEST_IMAGE_URI, v, r, s);
     }
 
     function test_Update_FailsWithInsufficientPayment() public {
@@ -375,7 +376,7 @@ contract MegaScoreTest is Test {
 
         vm.expectRevert(MegaScore.MegaScore__InsufficientPaymentAmount.selector);
         vm.prank(poorUser);
-        megaScore.updateScore(newScore, v, r, s);
+        megaScore.updateScore(newScore, TEST_IMAGE_URI, v, r, s);
     }
 
     function test_Update_PaymentGoesToRecipient() public {
@@ -399,7 +400,7 @@ contract MegaScoreTest is Test {
         (v, r, s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.prank(user1);
-        megaScore.updateScore(newScore, v, r, s);
+        megaScore.updateScore(newScore, TEST_IMAGE_URI, v, r, s);
 
         uint256 afterBalance = paymentToken.balanceOf(user2);
         assertEq(afterBalance - beforeBalance, UPDATE_PRICE);
@@ -416,22 +417,75 @@ contract MegaScoreTest is Test {
 
         // First update
         uint256 score2 = 2000;
+        string memory imageUri2 = "ipfs://QmUpdated1";
         messageHash = megaScore.getMessageHash(score2, user1);
         (v, r, s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.prank(user1);
-        megaScore.updateScore(score2, v, r, s);
+        megaScore.updateScore(score2, imageUri2, v, r, s);
 
         // Second update
         uint256 score3 = 3000;
+        string memory imageUri3 = "ipfs://QmUpdated2";
         messageHash = megaScore.getMessageHash(score3, user1);
         (v, r, s) = vm.sign(ownerPrivateKey, messageHash);
 
         vm.prank(user1);
-        megaScore.updateScore(score3, v, r, s);
+        megaScore.updateScore(score3, imageUri3, v, r, s);
 
         MegaScore.Score memory finalScore = megaScore.getScoreByAddress(user1);
         assertEq(finalScore.score, 3000);
+    }
+
+    function test_Update_UpdatesTokenUri() public {
+        // Mint with initial image URI
+        uint256 scoreValue = TEST_SCORE;
+        bytes32 messageHash = megaScore.getMessageHash(scoreValue, user1);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
+
+        vm.prank(user1);
+        megaScore.mint(scoreValue, TEST_IMAGE_URI, v, r, s);
+
+        // Get initial tokenURI
+        string memory initialTokenUri = megaScore.tokenURI(1);
+        assertTrue(bytes(initialTokenUri).length > 0);
+
+        // Update with new score and new image URI
+        uint256 newScore = 2000;
+        string memory newImageUri = "ipfs://QmTestUpdated999";
+        messageHash = megaScore.getMessageHash(newScore, user1);
+        (v, r, s) = vm.sign(ownerPrivateKey, messageHash);
+
+        vm.prank(user1);
+        megaScore.updateScore(newScore, newImageUri, v, r, s);
+
+        // Get updated tokenURI
+        string memory updatedTokenUri = megaScore.tokenURI(1);
+        assertTrue(bytes(updatedTokenUri).length > 0);
+
+        // Verify that token URIs are different (they contain different image URIs)
+        // Note: We can't directly compare them as strings in Solidity tests easily,
+        // but we can verify that both exist and contain the expected content
+        assertFalse(keccak256(bytes(initialTokenUri)) == keccak256(bytes(updatedTokenUri)));
+    }
+
+    function test_Update_FailsWithEmptyImageUri() public {
+        // Mint first
+        uint256 scoreValue = TEST_SCORE;
+        bytes32 messageHash = megaScore.getMessageHash(scoreValue, user1);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerPrivateKey, messageHash);
+
+        vm.prank(user1);
+        megaScore.mint(scoreValue, TEST_IMAGE_URI, v, r, s);
+
+        // Try to update with empty image URI
+        uint256 newScore = 2000;
+        messageHash = megaScore.getMessageHash(newScore, user1);
+        (v, r, s) = vm.sign(ownerPrivateKey, messageHash);
+
+        vm.expectRevert(MegaScore.MegaScore__EmptyImageUri.selector);
+        vm.prank(user1);
+        megaScore.updateScore(newScore, "", v, r, s);
     }
 
     // ========== SOUL BOUND TOKEN TESTS ==========
