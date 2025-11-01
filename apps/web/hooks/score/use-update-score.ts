@@ -42,11 +42,21 @@ export function useUpdateScore() {
       const newMetrics = data.metrics;
       setUpdatedScore(newScore);
       setUpdatedMetrics(newMetrics);
-      toast.success("Score updated!", {
-        description: `MegaReputation increased by +${newScore - currentScore} points`,
-        duration: 4000,
-        id: toastId,
-      });
+
+      const scoreIncrease = newScore - currentScore;
+      if (scoreIncrease > 0) {
+        toast.success("Score updated!", {
+          description: `MegaReputation increased by +${scoreIncrease} points`,
+          duration: 4000,
+          id: toastId,
+        });
+      } else {
+        toast.info("Score checked", {
+          description: "Your reputation score hasn't changed",
+          duration: 4000,
+          id: toastId,
+        });
+      }
     } catch (error) {
       toast.error("Failed to update score", {
         description: error instanceof Error ? error.message : "Unknown error occurred",

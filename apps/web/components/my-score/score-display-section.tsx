@@ -1,7 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { useUpdateScore } from "@/hooks/score/use-update-score";
 import { useCounterAnimation } from "@/hooks/use-counter-animation";
 import { getLevelByScore, getPointsToNextLevel } from "@/lib/domain/score/level";
 import { useScoreStore } from "@/store/score-store";
@@ -11,11 +10,12 @@ import { Trophy } from "lucide-react";
 export function ScoreDisplaySection() {
   const { currentScore, updatedScore, scoreIncrease } = useScoreStore();
 
-  const scoreIncreased = updatedScore !== null;
+  // Only show animation if score actually increased (not same or lower)
+  const scoreIncreased = updatedScore !== null && updatedScore > currentScore;
 
-  // Animate score from current to updated
+  // Animate score from current to updated only if score increased
   const targetScore = scoreIncreased && updatedScore ? updatedScore : currentScore;
-  const animatedScore = useCounterAnimation(currentScore, targetScore, 1500, scoreIncreased && updatedScore !== null);
+  const animatedScore = useCounterAnimation(currentScore, targetScore, 1500, scoreIncreased);
 
   // Calculate rank dynamically
   const levelObj = getLevelByScore(currentScore);
@@ -24,7 +24,6 @@ export function ScoreDisplaySection() {
   const nextLevelObj = getLevelByScore(levelObj.maxScore + 1);
   const nextLevelAt = nextLevelObj && nextLevelObj.level > level ? nextLevelObj.minScore : Infinity;
   const pointsToNext = getPointsToNextLevel(currentScore);
-  const percentile = Math.min(95, Math.floor((currentScore / 1000) * 100) + 50);
   // Progress within current level
   const progress =
     nextLevelAt !== Infinity ? ((currentScore - levelObj.minScore) / (nextLevelAt - levelObj.minScore)) * 100 : 100;
