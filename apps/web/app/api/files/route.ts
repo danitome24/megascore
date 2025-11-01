@@ -16,15 +16,20 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const { oldUri } = await request.json();
+    const { oldUri: cid } = await request.json();
 
-    if (!oldUri) {
+    if (!cid) {
       return NextResponse.json({ error: "No URI provided for deletion" }, { status: 400 });
     }
-    // Use Pinata SDK to delete the file
-    const deletedFiles = await pinata.files.public.delete([oldUri]);
+    const files = await pinata.files.public.list().cid(cid);
+    if (!files || files.files.length === 0) {
+      return NextResponse.json({ error: "File not found" }, { status: 404 });
+    }
 
-    console.log(`Deleted file: ${oldUri}`, deletedFiles);
+    // Use Pinata SDK to delete the file
+    const deletedFiles = await pinata.files.public.delete([files.files[0].id]);
+
+    console.log(`Deleted file: ${cid}`, deletedFiles);
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (e) {
     console.log("Error deleting file:", e);
