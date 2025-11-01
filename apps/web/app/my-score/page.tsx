@@ -27,63 +27,60 @@ export default function MyScorePage() {
   const { setAccount, setLoading: setAccountLoading, setError: setAccountError } = useAccountStore();
   const { mintReputation, isMinting } = useMintReputation();
 
-  // Determine score state based on account data
-  const determineScoreState = (hasNFT: boolean, score: number): typeof scoreState => {
-    if (hasNFT) return "minted";
-    if (score > 0) return "calculated";
-    return "initial";
-  };
-
-  // Update score store with fetched data
-  const updateScoreStore = (score: number, metrics: any, hasNFT: boolean) => {
-    setCurrentScore(score);
-    setHasNFT(hasNFT);
-    if (metrics?.data) {
-      setCurrentMetrics(metrics.data);
-    }
-  };
-
-  // Handle successful account data fetch
-  const handleAccountDataFetched = (data: any) => {
-    setAccount(data.account);
-
-    const score = data.score?.score ?? 0;
-    const hasNFT = !!data.account.mintedAt;
-
-    updateScoreStore(score, data.metrics, hasNFT);
-    setScoreState(determineScoreState(hasNFT, score));
-    setAccountError(null);
-  };
-
-  // Handle account data fetch error
-  const handleAccountDataError = (error: Error) => {
-    console.error("Error fetching account data:", error);
-    setAccountError(error);
-    setScoreState("initial");
-  };
-
+  // Fetch account data on mount and address change
   useEffect(() => {
-    if (!address) return;
+    if (!address) {
+      setScoreState("initial");
+      return;
+    }
 
+    let isMounted = true;
     setScoreState("loading");
     setAccountLoading(true);
 
     (async () => {
       try {
         const data = await fetchAccountData(address);
+
+        if (!isMounted) return;
+
         if (data) {
-          handleAccountDataFetched(data);
+          const { account, score, metrics } = data;
+          const hasNFT = !!account.mintedAt;
+          const scoreValue = score?.score ?? 0;
+
+          // Update stores
+          setAccount(account);
+          setCurrentScore(scoreValue);
+          setHasNFT(hasNFT);
+          if (metrics?.data) {
+            setCurrentMetrics(metrics.data);
+          }
+
+          // Determine state
+          setScoreState(hasNFT ? "minted" : scoreValue > 0 ? "calculated" : "initial");
+          setAccountError(null);
         } else {
           setScoreState("initial");
           setAccount(null);
         }
       } catch (error) {
-        handleAccountDataError(error as Error);
+        if (isMounted) {
+          console.error("Error fetching account data:", error);
+          setAccountError(error as Error);
+          setScoreState("initial");
+        }
       } finally {
-        setAccountLoading(false);
+        if (isMounted) {
+          setAccountLoading(false);
+        }
       }
     })();
-  }, [address, setCurrentScore, setHasNFT, setCurrentMetrics, setAccount, setAccountLoading, setAccountError]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [address, setAccount, setCurrentScore, setHasNFT, setCurrentMetrics, setAccountLoading, setAccountError]);
 
   const handleCalculateScore = async () => {
     if (!address) return;
