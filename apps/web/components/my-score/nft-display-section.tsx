@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNFTDetails } from "@/hooks/contracts/use-nft-details";
+import { useUpdateReputation } from "@/hooks/contracts/use-update-reputation";
 import { useUpdateScore } from "@/hooks/score/use-update-score";
 import { getLevelByScore } from "@/lib/domain/score/level";
 import { extractImageFromTokenUri } from "@/lib/utils";
@@ -14,14 +15,16 @@ import { Eye, Hash, Share2 } from "lucide-react";
 import { useChainId } from "wagmi";
 
 export function NFTDisplaySection() {
+  const chainId = useChainId();
   const { account } = useAccountStore();
-  const { hasNFT, currentScore, updatedScore } = useScoreStore();
+  const { hasNFT, currentScore, updatedScore, currentMetrics, updatedMetrics } = useScoreStore();
 
   // Fetch real NFT data from contract
   const { nftData, isLoading } = useNFTDetails();
 
-  // Use custom hook for score update and commit logic
+  // Hooks for score updates
   const { isUpdating, commitUpdate } = useUpdateScore();
+  const { updateReputation, isUpdating: isUpdatingReputation } = useUpdateReputation();
 
   // Only allow update if updatedScore is higher than currentScore
   const canUpdate = updatedScore !== null && updatedScore > currentScore;
@@ -36,8 +39,26 @@ export function NFTDisplaySection() {
   // Extract actual image URL from tokenUri (handles base64-encoded JSON)
   const imageUrl = extractImageFromTokenUri(nftData.tokenUri);
 
-  // Get block explorer URL based on chain
+  // Get block explorer URL from account store
   const explorerUrl = `${process.env.NEXT_PUBLIC_BLOCKEXPLORER_URL}${account.mintTx}`;
+
+  // Handle update button click
+  const handleUpdateClick = async () => {
+    if (!canUpdate) return;
+    try {
+      // Call the reputation update hook (signs, updates on-chain, updates DB)
+      await updateReputation({
+        newScore: updatedScore,
+        currentScore,
+        currentMetrics,
+        updatedMetrics,
+      });
+      // After successful on-chain update, commit to local state
+      commitUpdate();
+    } catch (error) {
+      console.error("Failed to update reputation:", error);
+    }
+  };
 
   return (
     <Card className="relative mb-6 overflow-hidden border-2 border-foreground/20 bg-background shadow-xl">
@@ -113,12 +134,12 @@ export function NFTDisplaySection() {
                 {/* Update Button */}
                 {canUpdate ? (
                   <Button
-                    onClick={commitUpdate}
-                    disabled={isUpdating}
+                    onClick={handleUpdateClick}
+                    disabled={isUpdatingReputation}
                     variant="default"
                     className="w-full uppercase tracking-wide"
                   >
-                    {isUpdating ? (
+                    {isUpdatingReputation ? (
                       <>
                         <Hash className="mr-2 h-4 w-4 animate-spin" />
                         Updating...

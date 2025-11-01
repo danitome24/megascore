@@ -1,6 +1,4 @@
 import { useCallback, useState } from "react";
-import { updateMetrics as updateMetricsAPI } from "@/lib/external/api/metrics";
-import { updateScore as updateScoreAPI } from "@/lib/external/api/score";
 import { useScoreStore } from "@/store/score-store";
 import { toast } from "sonner";
 import { useAccount } from "wagmi";
@@ -71,38 +69,17 @@ export function useUpdateScore() {
       return;
     }
 
-    setIsUpdating(true);
-    const toastId = toast.loading("Committing score update...", {
-      description: "Persisting your reputation update",
-    });
+    // Simply update the store: set currentScore to updatedScore and reset updatedScore
+    commitScoreUpdate();
 
-    try {
-      // Update score in API (old score goes to scores_history, new score becomes current)
-      await updateScoreAPI(address, updatedScore, currentScore);
-
-      // Update metrics in API if both exist (old metrics goes to metrics_history, new metrics becomes current)
-      if (currentMetrics && updatedMetrics) {
-        await updateMetricsAPI(address, updatedMetrics, currentMetrics);
-        commitMetricsUpdate();
-      }
-
-      // Update store: set currentScore to updatedScore and reset updatedScore
-      commitScoreUpdate();
-
-      toast.success("Score committed!", {
-        description: "Your reputation has been permanently updated",
-        id: toastId,
-      });
-    } catch (error) {
-      toast.error("Failed to commit score update", {
-        description: error instanceof Error ? error.message : "Unknown error occurred",
-        id: toastId,
-      });
-      console.error("Error committing score update:", error);
-    } finally {
-      setIsUpdating(false);
+    if (currentMetrics && updatedMetrics) {
+      commitMetricsUpdate();
     }
-  }, [address, updatedScore, currentScore, currentMetrics, updatedMetrics, commitScoreUpdate, commitMetricsUpdate]);
+
+    toast.success("Score updated!", {
+      description: "Your reputation has been updated",
+    });
+  }, [address, updatedScore, commitScoreUpdate, commitMetricsUpdate, currentMetrics, updatedMetrics]);
 
   return {
     isUpdating,
