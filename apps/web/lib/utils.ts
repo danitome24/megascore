@@ -19,7 +19,7 @@ export function formatAddress(address: string): string {
  * @param tokenUri - The token URI that may contain base64-encoded JSON metadata
  * @returns The extracted image URL or the original URI if it's already a direct URL
  */
-export function extractImageFromTokenUri(tokenUri: string): string | null {
+export function extractImageFromTokenUri(tokenUri: string): string {
   try {
     // Check if it's a data URI with base64-encoded JSON
     if (tokenUri.includes("data:application/json;base64,")) {
@@ -27,7 +27,7 @@ export function extractImageFromTokenUri(tokenUri: string): string | null {
       if (base64Part) {
         const decodedJson = Buffer.from(base64Part, "base64").toString("utf-8");
         const metadata = JSON.parse(decodedJson);
-        return metadata.image || null;
+        return metadata.image;
       }
     }
     // Return as-is if it's a direct URL

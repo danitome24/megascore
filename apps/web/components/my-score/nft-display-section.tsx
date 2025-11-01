@@ -15,7 +15,6 @@ import { Eye, Hash, Share2 } from "lucide-react";
 import { useChainId } from "wagmi";
 
 export function NFTDisplaySection() {
-  const chainId = useChainId();
   const { account } = useAccountStore();
   const { hasNFT, currentScore, updatedScore, currentMetrics, updatedMetrics } = useScoreStore();
 
@@ -37,8 +36,8 @@ export function NFTDisplaySection() {
   const levelData = getLevelByScore(nftData.score);
 
   // Extract actual image URL from tokenUri (handles base64-encoded JSON)
-  const imageUrl = extractImageFromTokenUri(nftData.tokenUri);
-
+  const nftUri = extractImageFromTokenUri(nftData.tokenUri);
+  const nftUrl = `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${nftUri}`;
   // Get block explorer URL from account store
   const explorerUrl = `${process.env.NEXT_PUBLIC_BLOCKEXPLORER_URL}${account.mintTx}`;
 
@@ -70,9 +69,9 @@ export function NFTDisplaySection() {
           <div className="flex justify-center">
             <div className="relative flex h-auto w-full max-w-sm flex-col items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-mega-coral via-mega-pink to-mega-blue p-6 text-white">
               {/* Display image from tokenUri if available */}
-              {imageUrl ? (
+              {nftUri ? (
                 <Image
-                  src={imageUrl}
+                  src={nftUrl}
                   alt="NFT Metadata"
                   className="h-full w-full object-cover"
                   width={300}

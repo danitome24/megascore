@@ -6,6 +6,7 @@ import { Address, SignedScore } from "@/lib/domain/shared/types";
 import { updateMetrics as updateMetricsAPI } from "@/lib/external/api/metrics";
 import { updateScore as updateScoreAPI } from "@/lib/external/api/score";
 import { getMegaScoreContract } from "@/lib/external/contracts/megascore-contract";
+import { extractImageFromTokenUri } from "@/lib/utils";
 import { toast } from "sonner";
 import { useAccount, useChainId, usePublicClient, useWriteContract } from "wagmi";
 
@@ -72,13 +73,11 @@ export function useUpdateReputation() {
       toastId = toast.loading("Generating new NFT with updated score...");
       const storageUri = await generateAndUpload(params.newScore, walletAddress);
       if (!storageUri) throw new Error("Failed to generate NFT metadata");
-      console.log("Storage URI:", storageUri);
       toast.success("New NFT metadata generated and uploaded!", { id: toastId });
 
       // Step 2: Sign the new score
       toastId = toast.loading("Signing your updated score...");
       const signedScore = await signScore(params.newScore, walletAddress, chainId, contractAddress as Address);
-      console.log("Signed Score:", signedScore);
       toast.success("Score signed!", { id: toastId });
 
       // Step 3: Update score on-chain with new NFT metadata
@@ -107,7 +106,8 @@ export function useUpdateReputation() {
       });
       throw error;
     } finally {
-      deleteOldNftFile(params.existingUri);
+      const extractedUri = extractImageFromTokenUri(params.existingUri);
+      deleteOldNftFile(extractedUri);
       setIsUpdating(false);
     }
   };
