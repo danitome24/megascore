@@ -39,6 +39,24 @@ export function useNftImageGenerator() {
   };
 
   /**
+   * Delete old NFT file from Pinata
+   */
+  const deleteOldNftFile = async (oldUri: string): Promise<void> => {
+    try {
+      await fetch("/api/files", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ oldUri }),
+      });
+    } catch (error) {
+      console.error("Error deleting old NFT file:", error);
+      // Don't throw - deletion failure shouldn't block the flow
+    }
+  };
+
+  /**
    * Render ScoreSVG component to string and upload to storage
    */
   const generateAndUpload = async (score: number, address: Address): Promise<string> => {
@@ -59,6 +77,7 @@ export function useNftImageGenerator() {
 
   return {
     generateAndUpload,
+    deleteOldNftFile,
     isGenerating,
   };
 }

@@ -44,7 +44,7 @@ export function NFTDisplaySection() {
 
   // Handle update button click
   const handleUpdateClick = async () => {
-    if (!canUpdate) return;
+    if (!canUpdate || !currentMetrics || !updatedMetrics) return;
     try {
       // Call the reputation update hook (signs, updates on-chain, updates DB)
       await updateReputation({
@@ -52,6 +52,7 @@ export function NFTDisplaySection() {
         currentScore,
         currentMetrics,
         updatedMetrics,
+        existingUri: nftData.tokenUri,
       });
       // After successful on-chain update, commit to local state
       commitUpdate();

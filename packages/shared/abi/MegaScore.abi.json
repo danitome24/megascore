@@ -988,6 +988,11 @@
         "type": "uint256"
       },
       {
+        "internalType": "string",
+        "name": "imageUri",
+        "type": "string"
+      },
+      {
         "internalType": "uint8",
         "name": "v",
         "type": "uint8"

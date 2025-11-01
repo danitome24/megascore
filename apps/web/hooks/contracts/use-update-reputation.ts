@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNftImageGenerator } from "@/hooks/nft/use-nft-image-generator";
 import { useSignScore } from "@/hooks/score/use-sign-score";
+import { MetricsData } from "@/lib/domain/metrics/types";
 import { Address, SignedScore } from "@/lib/domain/shared/types";
 import { updateMetrics as updateMetricsAPI } from "@/lib/external/api/metrics";
 import { updateScore as updateScoreAPI } from "@/lib/external/api/score";
@@ -11,8 +12,9 @@ import { useAccount, useChainId, usePublicClient, useWriteContract } from "wagmi
 interface UpdateReputationParams {
   newScore: number;
   currentScore: number;
-  currentMetrics: any;
-  updatedMetrics: any;
+  currentMetrics: MetricsData;
+  updatedMetrics: MetricsData;
+  existingUri: string;
 }
 
 export function useUpdateReputation() {
@@ -30,15 +32,21 @@ export function useUpdateReputation() {
 
   // 4. Custom hooks
   const signScore = useSignScore();
-  const { generateAndUpload } = useNftImageGenerator();
+  const { generateAndUpload, deleteOldNftFile } = useNftImageGenerator();
 
   // 5. Internal functions
-  const updateScoreOnChain = async (signedScore: SignedScore, score: number) => {
+  const updateScoreOnChain = async (signedScore: SignedScore, score: number, imageUri: string) => {
     const tx = await writeContract({
       abi: contractABI,
       address: contractAddress as Address,
       functionName: "updateScore",
-      args: [score, signedScore.signature.v, signedScore.signature.r as Address, signedScore.signature.s as Address],
+      args: [
+        score,
+        imageUri,
+        signedScore.signature.v,
+        signedScore.signature.r as Address,
+        signedScore.signature.s as Address,
+      ],
     });
 
     if (!publicClient) throw new Error("Public client not available");
@@ -75,7 +83,7 @@ export function useUpdateReputation() {
 
       // Step 3: Update score on-chain with new NFT metadata
       toastId = toast.loading("Updating your reputation on-chain...");
-      await updateScoreOnChain(signedScore, params.newScore);
+      await updateScoreOnChain(signedScore, params.newScore, storageUri);
       toast.success("Score updated on-chain!", { id: toastId });
 
       // Step 4: Update score in API (old score goes to scores_history, new score becomes current)
@@ -99,6 +107,7 @@ export function useUpdateReputation() {
       });
       throw error;
     } finally {
+      deleteOldNftFile(params.existingUri);
       setIsUpdating(false);
     }
   };
