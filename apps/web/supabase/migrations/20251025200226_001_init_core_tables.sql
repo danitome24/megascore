@@ -2,6 +2,7 @@
 create table accounts (
   id uuid primary key default gen_random_uuid(),
   wallet_address text unique not null,
+  mint_tx text unique not null,
   minted_at timestamptz not null default now(),
   created_at timestamptz not null default now()
 );
