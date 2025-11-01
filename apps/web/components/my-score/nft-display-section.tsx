@@ -19,10 +19,10 @@ export function NFTDisplaySection() {
   const { hasNFT, currentScore, updatedScore, currentMetrics, updatedMetrics } = useScoreStore();
 
   // Fetch real NFT data from contract
-  const { nftData, isLoading } = useNFTDetails();
+  const { nftData, isLoading, refetch: refetchNftData } = useNFTDetails();
 
   // Hooks for score updates
-  const { isUpdating, commitUpdate } = useUpdateScore();
+  const { commitUpdate } = useUpdateScore();
   const { updateReputation, isUpdating: isUpdatingReputation } = useUpdateReputation();
 
   // Only allow update if updatedScore is higher than currentScore
@@ -55,6 +55,9 @@ export function NFTDisplaySection() {
       });
       // After successful on-chain update, commit to local state
       commitUpdate();
+
+      // Refetch NFT data from contract to get updated score and tokenUri
+      refetchNftData();
     } catch (error) {
       console.error("Failed to update reputation:", error);
     }

@@ -33,5 +33,5 @@ export const calculate = async (metrics: MetricsData): Promise<number> => {
     contractBonus +
     recentActivityBonus;
 
-  return 519;
+  return 520;
 };
