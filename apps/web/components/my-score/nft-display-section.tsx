@@ -186,15 +186,12 @@ export function NFTDisplaySection() {
                     Share
                   </Button>
                   {explorerUrl ? (
-                    <Link
-                      href={explorerUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex flex-1 items-center justify-center rounded-md border border-input bg-background px-3 py-2 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground"
-                    >
-                      <Eye className="mr-2 h-4 w-4" />
-                      Explorer
-                    </Link>
+                    <Button asChild variant="outline" className="flex-1 uppercase tracking-wide">
+                      <Link href={explorerUrl} target="_blank" rel="noopener noreferrer">
+                        <Eye className="mr-2 h-4 w-4" />
+                        Explorer
+                      </Link>
+                    </Button>
                   ) : (
                     <Button disabled variant="outline" className="flex-1 uppercase tracking-wide">
                       <Eye className="mr-2 h-4 w-4" />
