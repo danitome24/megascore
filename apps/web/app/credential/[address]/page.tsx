@@ -99,15 +99,6 @@ export default async function SharePage({ params }: SharePageProps) {
   const nftUri = extractImageFromTokenUri(tokenUri);
   const nftUrl = nftUri ? `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${nftUri}` : "";
 
-  console.log("Credential page data:", {
-    address,
-    score,
-    tokenId,
-    tokenUri: tokenUri.substring(0, 50),
-    nftUri: nftUri.substring(0, 50),
-    nftUrl: nftUrl.substring(0, 100),
-  });
-
   return (
     <div className="min-h-screen">
       <div className="mx-auto max-w-2xl py-12">
