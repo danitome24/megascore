@@ -63,6 +63,21 @@ export function NFTDisplaySection() {
     }
   };
 
+  // Handle share button click - opens X/Twitter with credential share URL
+  const handleShareClick = () => {
+    if (!account) return;
+
+    const tweetText = `I just earned a MegaScore of ${nftData.score} on @MegaETH! 🚀 My reputation is now Level #${levelData.level}. Join me in building on MegaETH! 🏆 #Web3 #MegaETH`;
+
+    // Create credential URL - page will fetch data from database and blockchain
+    const credentialUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/credential/${account.walletAddress}`;
+
+    // Share on Twitter with the credential page URL
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(credentialUrl)}&hashtags=Web3,MegaETH,Reputation`;
+
+    window.open(twitterUrl, "_blank", "width=550,height=420");
+  };
+
   return (
     <Card className="relative mb-6 overflow-hidden border-2 border-foreground/20 bg-background shadow-xl">
       <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-mega-blue via-mega-green to-mega-coral"></div>
@@ -166,7 +181,7 @@ export function NFTDisplaySection() {
 
                 {/* Secondary Actions */}
                 <div className="flex gap-2 pt-2">
-                  <Button variant="secondary" className="flex-1 uppercase tracking-wide">
+                  <Button onClick={handleShareClick} variant="secondary" className="flex-1 uppercase tracking-wide">
                     <Share2 className="mr-2 h-4 w-4" />
                     Share
                   </Button>
