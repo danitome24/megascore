@@ -1,6 +1,5 @@
 "use client";
 
-import { PageContainer } from "@/components/layout/page-container";
 import { Header } from "@/components/leaderboard/header";
 import { List } from "@/components/leaderboard/list";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -11,7 +10,7 @@ export default function LeaderboardPage() {
   const { data, loading, error } = useLeaderboardData();
 
   return (
-    <PageContainer>
+    <>
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl">
           <Header />
@@ -37,6 +36,6 @@ export default function LeaderboardPage() {
           {!loading && data.length > 0 && <List accounts={data} />}
         </div>
       </div>
-    </PageContainer>
+    </>
   );
 }

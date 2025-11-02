@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { ConnectOverlay } from "@/components/layout/connect-overlay";
-import { PageContainer } from "@/components/layout/page-container";
 import { DataGatheredSection } from "@/components/my-score/data-gathered-section";
 import { MyScoreHeader } from "@/components/my-score/header";
 import { InitialScoreDisplay } from "@/components/my-score/initial-score-display";
@@ -153,7 +152,7 @@ export default function MyScorePage() {
   };
 
   return (
-    <PageContainer>
+    <>
       <ConnectOverlay>
         <div className="container mx-auto px-4 py-8">
           <div className="mx-auto max-w-4xl space-y-8">
@@ -179,6 +178,6 @@ export default function MyScorePage() {
           </div>
         </div>
       </ConnectOverlay>
-    </PageContainer>
+    </>
   );
 }
