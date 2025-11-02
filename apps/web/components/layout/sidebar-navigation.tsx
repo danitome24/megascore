@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SidebarConnectButton } from "@/components/layout/sidebar-connect-button";
@@ -29,17 +30,32 @@ export function SidebarNavigation() {
         onMouseLeave={() => setIsExpanded(false)}
       >
         {/* Logo */}
-        <div className="flex h-16 items-center justify-center border-b border-background/20">
-          <motion.div
-            className="font-bold text-background"
-            animate={{
-              fontSize: isExpanded ? "1.25rem" : "0.875rem",
-              letterSpacing: isExpanded ? "0.1em" : "0",
-            }}
-            transition={{ duration: 0.2 }}
-          >
-            {isExpanded ? "MEGASCORE" : "M"}
-          </motion.div>
+        <div className="flex h-16 items-center justify-center border border-foreground/20 bg-background/30 px-2">
+          <AnimatePresence mode="wait">
+            {isExpanded ? (
+              <motion.div
+                key="text"
+                className="text-xl font-bold tracking-tight text-foreground"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.2 }}
+              >
+                MEGAREPUTATION
+              </motion.div>
+            ) : (
+              <motion.div
+                key="logo"
+                className="relative h-14 w-14"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Image src="/assets/logo.png" alt="MegaReputation" fill className="object-contain" />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Navigation Items */}
