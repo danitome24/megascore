@@ -33,3 +33,9 @@ export interface SignedScore {
   signature: { v: number; r: string; s: string };
   score: { score: number; timestamp: number };
 }
+
+// Stats
+export interface MegaReputationStats {
+  holders: number;
+  metricsTracked: number;
+}
