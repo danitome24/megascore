@@ -1,8 +1,8 @@
-import { NetworkStatsClient } from "@/components/home/network-stats-client";
-import { getMegaScoreStats } from "@/lib/external/api/stats";
+import { StatsClient } from "@/components/home/stats-client";
+import { getMegaReputationStats } from "@/lib/external/api/stats";
 
-export async function NetworkStatsSection() {
-  const stats = await getMegaScoreStats();
+export async function StatsSection() {
+  const stats = await getMegaReputationStats();
 
   const displayStats = [
     {
@@ -32,7 +32,7 @@ export async function NetworkStatsSection() {
       <div className="from-mega-green/2 to-mega-coral/2 absolute inset-0 bg-gradient-to-r via-transparent" />
       <div className="container relative z-10 mx-auto px-8">
         <div className="mx-auto max-w-4xl text-center">
-          <NetworkStatsClient stats={displayStats} />
+          <StatsClient stats={displayStats} />
         </div>
       </div>
     </section>

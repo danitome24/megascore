@@ -3,7 +3,7 @@
 import { StatsCard } from "@/components/home/stats-card";
 import { motion } from "framer-motion";
 
-interface NetworkStatsClientProps {
+interface StatsClientProps {
   stats: Array<{
     value: string;
     label: string;
@@ -11,7 +11,7 @@ interface NetworkStatsClientProps {
   }>;
 }
 
-export function NetworkStatsClient({ stats }: NetworkStatsClientProps) {
+export function StatsClient({ stats }: StatsClientProps) {
   return (
     <motion.div
       className="space-y-12"

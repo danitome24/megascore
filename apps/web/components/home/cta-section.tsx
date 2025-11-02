@@ -1,8 +1,8 @@
 import { CTASectionClient } from "@/components/home/cta-section-client";
-import { getMegaScoreStats } from "@/lib/external/api/stats";
+import { getMegaReputationStats } from "@/lib/external/api/stats";
 
 export async function CTASection() {
-  const stats = await getMegaScoreStats();
+  const stats = await getMegaReputationStats();
 
   return (
     <section className="relative border-t border-foreground/10 py-24">
