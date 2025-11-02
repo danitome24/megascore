@@ -21,7 +21,7 @@ export function StatsClient({ stats }: StatsClientProps) {
       viewport={{ once: true }}
     >
       <h2 className="text-3xl font-bold uppercase tracking-[0.1em] text-foreground md:text-4xl">
-        <span className="text-mega-blue">MegaScore</span> Impact
+        <span className="text-mega-blue">MegaReputation</span> Impact
       </h2>
       <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
         {stats.map((stat, index) => (

@@ -16,7 +16,7 @@ export async function getMegaReputationStats(): Promise<MegaReputationStats> {
     const stats = await res.json();
     return stats as MegaReputationStats;
   } catch (error) {
-    console.error("Error fetching MegaScore stats:", error);
+    console.error("Error fetching MegaReputation stats:", error);
     throw error;
   }
 }

@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "MegaScore - MegaETH Reputation System",
+  title: "MegaReputation - MegaETH Reputation System",
   description: "Track your on-chain reputation and engagement on MegaETH",
 };
 

@@ -8,7 +8,7 @@ export async function StatsSection() {
     {
       value: `${stats.holders}+`,
       label: "Reputation Holders",
-      description: "Users with verified MegaScore NFTs",
+      description: "Users with verified MegaReputation NFTs",
     },
     {
       value: `${stats.metricsTracked}`,
