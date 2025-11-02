@@ -1,13 +1,23 @@
-"use client";
-
 import { Header } from "@/components/leaderboard/header";
 import { List } from "@/components/leaderboard/list";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useLeaderboardData } from "@/hooks/leaderboard/use-leaderboard-data";
-import { Loader2 } from "lucide-react";
+import { LeaderboardAccount } from "@/lib/domain/shared/types";
+import { fetchLeaderboardData } from "@/lib/external/supabase/leaderboard";
 
-export default function LeaderboardPage() {
-  const { data, loading, error } = useLeaderboardData();
+// Disable caching for this page
+export const revalidate = 0; // ISR: revalidate immediately (no cache)
+export const dynamic = "force-dynamic"; // Force dynamic rendering
+
+export default async function LeaderboardPage() {
+  let data: LeaderboardAccount[] = [];
+  let error: string | null = null;
+
+  try {
+    data = await fetchLeaderboardData();
+  } catch (err) {
+    error = err instanceof Error ? err.message : "Failed to fetch leaderboard";
+    console.error("Error fetching leaderboard:", err);
+  }
 
   return (
     <>
@@ -15,25 +25,19 @@ export default function LeaderboardPage() {
         <div className="mx-auto max-w-6xl">
           <Header />
 
-          {loading && (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-mega-coral" />
-            </div>
-          )}
-
           {error && (
             <Alert variant="destructive" className="mb-6">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
-          {!loading && data.length === 0 && !error && (
+          {data.length === 0 && !error && (
             <Alert className="mb-6">
               <AlertDescription>No leaderboard data available</AlertDescription>
             </Alert>
           )}
 
-          {!loading && data.length > 0 && <List accounts={data} />}
+          {data.length > 0 && <List accounts={data} />}
         </div>
       </div>
     </>
