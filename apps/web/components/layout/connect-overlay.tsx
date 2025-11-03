@@ -13,15 +13,15 @@ interface ConnectOverlayProps {
 
 export function ConnectOverlay({ children }: ConnectOverlayProps) {
   const [showOverlay, setShowOverlay] = useState<boolean | null>(null);
-  const { status, isConnected } = useAccount();
+  const { status } = useAccount();
 
   useEffect(() => {
     if (status === "connecting" || status === "reconnecting") {
       return;
     }
 
-    setShowOverlay(!isConnected);
-  }, [isConnected, status]);
+    setShowOverlay(!(status === "connected"));
+  }, [status]);
 
   // Don't render anything until we know the connection status
   if (showOverlay === null) {
