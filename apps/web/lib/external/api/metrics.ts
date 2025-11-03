@@ -1,37 +1,50 @@
+"use client";
+
+import { createMetricsAction, updateMetricsAction } from "@/app/actions/metrics";
 import type { Metrics, OnChainActivity } from "@/lib/domain/metrics/types";
 
+/**
+ * Create metrics for an account
+ * Uses server action for better security and type safety
+ *
+ * @param accountId - Account ID in database
+ * @param data - On-chain activity metrics
+ * @returns Created metrics data
+ * @throws Error if metrics creation fails
+ */
 export async function createMetrics(accountId: string, data: OnChainActivity): Promise<Metrics> {
-  const res = await fetch("/api/metrics", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ accountId, data }),
-  });
+  const result = await createMetricsAction(accountId, data);
 
-  if (!res.ok) {
-    const error = await res.json().catch(() => ({}));
-    throw new Error(error?.error || "Failed to store metrics in database");
+  if (!result.success) {
+    throw new Error(result.error || "Failed to store metrics in database");
   }
 
-  const result = await res.json();
   return result.metrics as Metrics;
 }
 
+/**
+ * Update metrics for an account
+ * Uses server action for better security and type safety
+ *
+ * @param walletAddress - User's wallet address
+ * @param newData - New on-chain activity metrics
+ * @param oldData - Previous on-chain activity metrics
+ * @returns Updated metrics data and archive status
+ * @throws Error if metrics update fails
+ */
 export async function updateMetrics(
   walletAddress: string,
   newData: OnChainActivity,
   oldData: OnChainActivity,
 ): Promise<{ metrics: Metrics; archived: boolean }> {
-  const res = await fetch("/api/metrics", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ walletAddress, newData, oldData }),
-  });
+  const result = await updateMetricsAction(walletAddress, newData, oldData);
 
-  if (!res.ok) {
-    const error = await res.json().catch(() => ({}));
-    throw new Error(error?.error || "Failed to update metrics");
+  if (!result.success) {
+    throw new Error(result.error || "Failed to update metrics");
   }
 
-  const data = await res.json();
-  return data;
+  return {
+    metrics: result.metrics as Metrics,
+    archived: result.archived ?? false,
+  };
 }
