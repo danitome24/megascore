@@ -9,138 +9,57 @@ import { NFTDisplaySection } from "@/components/my-score/nft-display-section";
 import { ScoreCalculatedDisplay } from "@/components/my-score/score-calculated-display";
 import { ScoreDisplaySection } from "@/components/my-score/score-display-section";
 import { Loading } from "@/components/ui/loading";
-import { useMintReputation } from "@/hooks/contracts/use-mint-reputation";
-import { MetricScore } from "@/lib/domain/reputation/types";
-import { createAccount as apiCreateAccount, fetchAccountData } from "@/lib/external/api/account";
-import { createMetrics as apiCreateMetrics } from "@/lib/external/api/metrics";
-import { createScore as apiCreateScore } from "@/lib/external/api/score";
+import { useAccountInitialization } from "@/hooks/account/use-account-initialization";
+import { useReputation } from "@/hooks/reputation/use-reputation";
+import { useScoreCalculation } from "@/hooks/score/use-score-calculation";
 import { useAccountStore } from "@/store/account-store";
 import { useMetricsStore } from "@/store/metrics-store";
 import { useScoreStore } from "@/store/score-store";
-import { useAccount } from "wagmi";
+
+type ScoreState = "loading" | "initial" | "calculated" | "minted";
 
 export default function MyScorePage() {
-  const [isCalculating, setIsCalculating] = useState(false);
-  const [scoreState, setScoreState] = useState<"loading" | "initial" | "calculated" | "minted">("loading");
+  const [scoreState, setScoreState] = useState<ScoreState>("loading");
 
-  const { address } = useAccount();
-  const { setCurrentScore, setHasNFT, currentScore } = useScoreStore();
+  const { currentScore, setCurrentScore } = useScoreStore();
   const { currentMetrics, setCurrentMetrics } = useMetricsStore();
-  const { setAccount, setLoading: setAccountLoading, setError: setAccountError } = useAccountStore();
-  const { mintReputation, isMinting } = useMintReputation();
+  const { isLoading: accountLoading, account } = useAccountStore();
 
-  // Fetch account data on mount and address change
+  // Initialize account on mount
+  useAccountInitialization();
+  const { calculateScore, isCalculating } = useScoreCalculation();
+  const { mint, isMinting } = useReputation();
+
+  // Determine state based on stores
   useEffect(() => {
-    if (!address) {
+    if (accountLoading) {
+      setScoreState("loading");
+    } else if (account?.mintedAt) {
+      // Account has NFT minted
+      setScoreState("minted");
+    } else if (currentMetrics && currentScore > 0) {
+      // Score calculated but not minted yet
+      setScoreState("calculated");
+    } else if (currentScore === 0 && !currentMetrics) {
+      // No score or metrics yet
       setScoreState("initial");
-      return;
     }
-
-    let isMounted = true;
-    setScoreState("loading");
-    setAccountLoading(true);
-
-    (async () => {
-      try {
-        const data = await fetchAccountData(address);
-
-        if (!isMounted) return;
-
-        if (data) {
-          const { account, score } = data;
-          const hasNFT = !!account.mintedAt;
-          const scoreValue = score?.score ?? 0;
-
-          // Update stores
-          setAccount(account);
-          setCurrentScore(scoreValue);
-          setHasNFT(hasNFT);
-          setCurrentMetrics(data.metrics.data);
-
-          // Determine state
-          setScoreState(hasNFT ? "minted" : scoreValue > 0 ? "calculated" : "initial");
-          setAccountError(null);
-        } else {
-          setScoreState("initial");
-          setAccount(null);
-        }
-      } catch (error) {
-        if (isMounted) {
-          console.error("Error fetching account data:", error);
-          setAccountError(error as Error);
-          setScoreState("initial");
-        }
-      } finally {
-        if (isMounted) {
-          setAccountLoading(false);
-        }
-      }
-    })();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [address, setAccount, setCurrentScore, setHasNFT, setCurrentMetrics, setAccountLoading, setAccountError]);
+  }, [accountLoading, account?.mintedAt, currentScore, currentMetrics]);
 
   const handleCalculateScore = async () => {
-    if (!address) return;
-    setIsCalculating(true);
-    try {
-      // Call API to calculate score
-      const response = await fetch(`/api/score/calculate?wallet=${address}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to calculate score");
-      }
-
-      const data = await response.json();
-      const calculatedScore = data.reputation.totalScore as number;
-      const breakdownMetrics = data.reputation.breakdown as MetricScore[];
-
-      setCurrentScore(calculatedScore);
+    const result = await calculateScore();
+    if (result.success && result.score && result.metrics) {
+      setCurrentScore(result.score);
+      setCurrentMetrics(result.metrics);
       setScoreState("calculated");
-      setCurrentMetrics(breakdownMetrics);
-    } catch (error) {
-      console.error("Error calculating score:", error);
-    } finally {
-      setIsCalculating(false);
     }
   };
 
   const handleMintNFT = async () => {
-    if (!address || !currentScore || !currentMetrics) return;
-    try {
-      setAccountLoading(true);
-
-      // 1. Call blockchain minting logic using the hook
-      // const txHash = await mintReputation(currentScore);
-      const txHash = "0x0qkjelqkwjelqwje";
-
-      // 2. Create account in DB with mint_tx
-      const newAccountData = await apiCreateAccount(address, txHash);
-
-      // 3. Update account store with full account data
-      setAccount(newAccountData);
-
-      // 4. Create score record
-      await apiCreateScore(newAccountData.id, currentScore);
-
-      // 5. Create metrics
-      await apiCreateMetrics(newAccountData.id, currentMetrics);
-
-      setHasNFT(true);
+    if (!currentMetrics) return;
+    const result = await mint(currentScore, currentMetrics);
+    if (result.success) {
       setScoreState("minted");
-      setAccountError(null);
-    } catch (error) {
-      console.error("Minting or DB error:", error);
-      setAccountError(error as Error);
-    } finally {
-      setAccountLoading(false);
     }
   };
 

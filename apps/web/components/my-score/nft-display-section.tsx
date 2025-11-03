@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNFTDetails } from "@/hooks/contracts/use-nft-details";
-import { useUpdateReputation } from "@/hooks/contracts/use-update-reputation";
+import { useUpdateReputationOnChain } from "@/hooks/contracts/use-update-reputation-on-chain";
 import { useUpdateScore } from "@/hooks/score/use-update-score";
 import { getLevelByScore } from "@/lib/domain/reputation/level";
 import { extractImageFromTokenUri } from "@/lib/utils";
@@ -25,7 +25,7 @@ export function NFTDisplaySection() {
 
   // Hooks for score updates
   const { commitUpdate } = useUpdateScore();
-  const { updateReputation, isUpdating: isUpdatingReputation } = useUpdateReputation();
+  const { updateOnChain, isUpdating: isUpdatingReputation } = useUpdateReputationOnChain();
 
   // Only allow update if updatedScore is higher than currentScore
   const canUpdate = updatedScore !== null && updatedScore > currentScore;
@@ -48,7 +48,7 @@ export function NFTDisplaySection() {
     if (!canUpdate || !currentMetrics || !updatedMetrics) return;
     try {
       // Call the reputation update hook (signs, updates on-chain, updates DB)
-      await updateReputation({
+      await updateOnChain({
         newScore: updatedScore,
         currentScore,
         currentMetrics,
