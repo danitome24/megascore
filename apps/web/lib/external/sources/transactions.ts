@@ -1,3 +1,5 @@
+import { OnChainActivity } from "@/lib/domain/metrics/types";
+import { mapTxsToMetrics } from "@/lib/mappers/txs-to-metrics";
 import axios from "axios";
 
 export type TransactionParty = {
@@ -68,11 +70,14 @@ export type TransactionApiResponse = {
 
 const API_URL = "https://megaeth-testnet.blockscout.com/api/v2";
 
-export async function fetchTransactions(address: string): Promise<TransactionApiResponse> {
+export async function fetchTransactions(address: string): Promise<OnChainActivity> {
   if (!address) throw new Error("Address is required");
   const url = `${API_URL}/addresses/${address}/transactions`;
   const response = await axios.get(url, {
     headers: { accept: "application/json" },
   });
-  return response.data as TransactionApiResponse;
+
+  const data = response.data as TransactionApiResponse;
+
+  return mapTxsToMetrics(data);
 }

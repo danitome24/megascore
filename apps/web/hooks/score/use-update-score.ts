@@ -37,8 +37,8 @@ export function useUpdateScore() {
       const response = await fetch(`/api/score/calculate?wallet=${address}`);
       if (!response.ok) throw new Error("Failed to calculate score");
       const data = await response.json();
-      if (data.status !== 200 || !data.score?.total) throw new Error(data.error || "Invalid score response");
-      const newScore = data.score.total;
+      if (data.status !== 200 || !data.reputation?.totalScore) throw new Error(data.error || "Invalid score response");
+      const newScore = data.reputation.totalScore;
       const newMetrics = data.metrics;
       setUpdatedScore(newScore);
       setUpdatedMetrics(newMetrics);

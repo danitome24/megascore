@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { generateReputationScore } from "@/lib/domain/reputation/calculation";
 import { Address } from "@/lib/domain/shared/types";
-import { calculate } from "@/lib/score/calculate/score";
-import { metrics } from "@/lib/score/metrics/metrics";
+import { fetchTransactions } from "@/lib/external/sources/transactions";
 import { isAddress } from "viem";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -24,16 +24,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
   }
 
-  const metricsData = await metrics(wallet);
-  const score = await calculate(metricsData);
-  console.log(`Calculated score for wallet ${wallet}: ${score}`);
+  const onChainActivity = await fetchTransactions(wallet);
+  const reputationScore = generateReputationScore(onChainActivity);
+  console.log(`Calculated score for wallet ${wallet}: ${reputationScore.totalScore}`);
 
   return NextResponse.json({
     status: 200,
     wallet,
-    score: {
-      total: score,
-    },
-    metrics: metricsData,
+    reputation: reputationScore,
   });
 }

@@ -98,7 +98,7 @@ export default function MyScorePage() {
       }
 
       const data = await response.json();
-      const calculatedScore = data.score.total;
+      const calculatedScore = data.reputation.totalScore;
       setCurrentScore(calculatedScore);
       setScoreState("calculated");
     } catch (error) {

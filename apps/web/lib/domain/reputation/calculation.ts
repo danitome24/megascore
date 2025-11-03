@@ -26,7 +26,6 @@ export function calculateTransactionScore(transactions: number): MetricScore {
     name: "Transaction Activity",
     value: Math.min(score, 200),
     description: `${transactions} transactions recorded`,
-    formula: `sqrt(${transactions}/10) × ${CORE_METRIC_WEIGHTS.transactions}`,
   };
 }
 
@@ -40,7 +39,6 @@ export function calculateWeeksActiveScore(weeksActive: number): MetricScore {
     name: "Weeks Active",
     value: Math.min(score, 240),
     description: `${weeksActive} weeks of activity`,
-    formula: `${weeksActive} × (${CORE_METRIC_WEIGHTS.weeksActive} × 0.48)`,
   };
 }
 
@@ -54,7 +52,6 @@ export function calculateContractDiversityScore(uniqueContracts: number): Metric
     name: "Contract Diversity",
     value: Math.min(score, 100),
     description: `${uniqueContracts} unique contracts interacted with`,
-    formula: `sqrt(${uniqueContracts}/5) × ${CORE_METRIC_WEIGHTS.contractDiversity}`,
   };
 }
 
@@ -68,7 +65,6 @@ export function calculateTxTypeVarietyScore(txTypes: number): MetricScore {
     name: "Transaction Variety",
     value: Math.min(score, 15),
     description: `${txTypes} different transaction types used`,
-    formula: `${txTypes} × (${CORE_METRIC_WEIGHTS.txTypeVariety} × 2.67)`,
   };
 }
 
@@ -85,7 +81,6 @@ export function calculateDeploymentScore(hasDeployed: boolean, deploymentCount: 
     name: "Developer Activity",
     value: Math.min(score, 150),
     description: `${deploymentCount} smart contract${deploymentCount !== 1 ? "s" : ""} deployed`,
-    formula: `50 (base) + sqrt(${deploymentCount}/2) × ${CORE_METRIC_WEIGHTS.deploymentBonus}`,
   };
 }
 
@@ -99,7 +94,6 @@ export function calculateConsecutiveWeeksScore(maxConsecutiveWeeks: number): Met
     name: "Sustained Engagement",
     value: Math.min(score, 150),
     description: `${maxConsecutiveWeeks} consecutive active weeks`,
-    formula: `${maxConsecutiveWeeks} × (${CORE_METRIC_WEIGHTS.consecutiveWeeks} × 0.77)`,
   };
 }
 
@@ -113,7 +107,6 @@ export function calculateTenureScore(weeksSinceFirst: number): MetricScore {
     name: "Tenure",
     value: Math.min(score, 100),
     description: `Active for ${weeksSinceFirst} weeks since first transaction`,
-    formula: `${weeksSinceFirst} × (${CORE_METRIC_WEIGHTS.tenure} × 0.1)`,
   };
 }
 
