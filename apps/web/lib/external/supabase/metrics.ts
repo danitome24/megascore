@@ -21,9 +21,9 @@ export async function createMetrics(accountId: string, data: MetricScore[]): Pro
   return {
     id: metricsData.id,
     accountId: metricsData.account_id,
-    data: metricsData.data,
+    data: metricsData.data as unknown as MetricScore[],
     updatedAt: metricsData.updated_at,
-  } as Metrics;
+  } as unknown as Metrics;
 }
 
 export async function getMetricsByAccountId(accountId: string): Promise<Metrics | null> {
@@ -33,9 +33,9 @@ export async function getMetricsByAccountId(accountId: string): Promise<Metrics 
   return {
     id: data.id,
     accountId: data.account_id,
-    data: data.data,
+    data: data.data as unknown as MetricScore[],
     updatedAt: data.updated_at,
-  } as Metrics;
+  } as unknown as Metrics;
 }
 
 export async function updateMetrics(
@@ -83,9 +83,9 @@ export async function updateMetrics(
     metrics: {
       id: data.id,
       accountId: data.account_id,
-      data: data.data,
+      data: data.data as unknown as MetricScore[],
       updatedAt: data.updated_at,
-    } as Metrics,
+    } as unknown as Metrics,
     archived: true,
   };
 }
