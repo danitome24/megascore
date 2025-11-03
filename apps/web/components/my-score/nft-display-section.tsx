@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useNFTDetails } from "@/hooks/contracts/use-nft-details";
+import { useNFTOnChain } from "@/hooks/contracts/use-nft-details-on-chain";
 import { useUpdateReputationOnChain } from "@/hooks/contracts/use-update-reputation-on-chain";
 import { useUpdateScore } from "@/hooks/score/use-update-score";
 import { getLevelByScore } from "@/lib/domain/reputation/level";
@@ -21,7 +21,7 @@ export function NFTDisplaySection() {
   const { currentMetrics, updatedMetrics } = useMetricsStore();
 
   // Fetch real NFT data from contract
-  const { nftData, isLoading, refetch: refetchNftData } = useNFTDetails();
+  const { details, isLoading, refetch: refetchNftData } = useNFTOnChain();
 
   // Hooks for score updates
   const { commitUpdate } = useUpdateScore();
@@ -31,14 +31,14 @@ export function NFTDisplaySection() {
   const canUpdate = updatedScore !== null && updatedScore > currentScore;
 
   // Show loading state or return if no NFT data and not loading
-  if (!hasNFT || !account || (!nftData && !isLoading)) return null;
-  if (!nftData) return null;
+  if (!hasNFT || !account || (!details && !isLoading)) return null;
+  if (!details) return null;
 
   // Calculate level from score using shared function
-  const levelData = getLevelByScore(nftData.score);
+  const levelData = getLevelByScore(details.score);
 
   // Extract actual image URL from tokenUri (handles base64-encoded JSON)
-  const nftUri = extractImageFromTokenUri(nftData.tokenUri);
+  const nftUri = extractImageFromTokenUri(details.tokenUri);
   const nftUrl = `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${nftUri}`;
   // Get block explorer URL from account store
   const explorerUrl = `${process.env.NEXT_PUBLIC_BLOCKEXPLORER_URL}${account.mintTx}`;
@@ -53,7 +53,7 @@ export function NFTDisplaySection() {
         currentScore,
         currentMetrics,
         updatedMetrics,
-        existingUri: nftData.tokenUri,
+        existingUri: details.tokenUri,
       });
       // After successful on-chain update, commit to local state
       commitUpdate();
@@ -69,7 +69,7 @@ export function NFTDisplaySection() {
   const handleShareClick = () => {
     if (!account) return;
 
-    const tweetText = `I just earned a MegaScore of ${nftData.score} on @MegaETH! 🚀 My reputation is now Level #${levelData.level}. Join me in building on MegaETH! 🏆 #Web3 #MegaETH`;
+    const tweetText = `I just earned a MegaScore of ${details.score} on @MegaETH! 🚀 My reputation is now Level #${levelData.level}. Join me in building on MegaETH! 🏆 #Web3 #MegaETH`;
 
     // Create credential URL - page will fetch data from database and blockchain
     const credentialUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/credential/${account.walletAddress}`;
@@ -108,10 +108,10 @@ export function NFTDisplaySection() {
                   {/* NFT Content */}
                   <div className="z-10 text-center">
                     <div className="mb-2 font-mono text-xs uppercase tracking-wider opacity-80">MEGASCORE</div>
-                    <div className="mb-2 font-mono text-4xl font-bold">{nftData.score}</div>
+                    <div className="mb-2 font-mono text-4xl font-bold">{details.score}</div>
                     <div className="mb-2 text-sm uppercase tracking-wide">Reputation Score</div>
                     <div className="mb-4 font-mono text-xs opacity-60">Level {levelData.level}</div>
-                    <div className="font-mono text-xs opacity-60">#{nftData.tokenId}</div>
+                    <div className="font-mono text-xs opacity-60">#{details.tokenId}</div>
                   </div>
                   {/* MegaETH Logo */}
                   <div className="absolute bottom-3 left-3 font-mono text-xs uppercase tracking-wider opacity-60">
@@ -130,11 +130,11 @@ export function NFTDisplaySection() {
               <div className="space-y-2 rounded-lg bg-foreground/5 p-4 text-sm">
                 <div className="flex justify-between">
                   <span className="text-foreground/70">Token ID</span>
-                  <span className="font-mono font-semibold">#{nftData.tokenId}</span>
+                  <span className="font-mono font-semibold">#{details.tokenId}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-foreground/70">Score</span>
-                  <span className="font-mono font-semibold">{nftData.score}</span>
+                  <span className="font-mono font-semibold">{details.score}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-foreground/70">Level</span>

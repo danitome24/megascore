@@ -9,22 +9,22 @@ export interface NFTDetails {
 }
 
 interface UseNFTDetailsReturn {
-  nftData: NFTDetails | null;
+  details: NFTDetails | null;
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
 }
 
-export function useNFTDetails(): UseNFTDetailsReturn {
+export function useNFTOnChain(): UseNFTDetailsReturn {
   const { address } = useAccount();
 
-  const [nftData, setNftData] = useState<NFTDetails | null>(null);
+  const [details, setDetails] = useState<NFTDetails | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   const fetchNFTData = useCallback(async () => {
     if (!address) {
-      setNftData(null);
+      setDetails(null);
       return;
     }
 
@@ -33,11 +33,11 @@ export function useNFTDetails(): UseNFTDetailsReturn {
 
     try {
       const data = await getNFTDataFromContract(address);
-      setNftData(data);
+      setDetails(data);
     } catch (err) {
       const error = err instanceof Error ? err : new Error("Failed to fetch NFT data");
       setError(error);
-      setNftData(null);
+      setDetails(null);
     } finally {
       setIsLoading(false);
     }
@@ -48,7 +48,7 @@ export function useNFTDetails(): UseNFTDetailsReturn {
   }, [fetchNFTData]);
 
   return {
-    nftData,
+    details,
     isLoading,
     error,
     refetch: fetchNFTData,
