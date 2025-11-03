@@ -1,15 +1,14 @@
 "use server";
 
 import { getAccountByWallet } from "./account";
-import type { Metrics, OnChainActivity } from "@/lib/domain/metrics/types";
+import type { Metrics } from "@/lib/domain/metrics/types";
+import { MetricScore } from "@/lib/domain/reputation/types";
 import { supabaseClient } from "@/lib/external/supabase/client";
 
-export async function createMetrics(accountId: string, data: OnChainActivity): Promise<Metrics | null> {
+export async function createMetrics(accountId: string, data: MetricScore[]): Promise<Metrics | null> {
   const supabase = await supabaseClient();
 
-  const serializableData = {
-    ...data,
-  };
+  const serializableData = JSON.parse(JSON.stringify(data));
   const { data: metricsData, error } = await supabase
     .from("metrics")
     .insert({ account_id: accountId, data: serializableData })
@@ -22,9 +21,9 @@ export async function createMetrics(accountId: string, data: OnChainActivity): P
   return {
     id: metricsData.id,
     accountId: metricsData.account_id,
-    data: metricsData.data as unknown as OnChainActivity,
+    data: metricsData.data,
     updatedAt: metricsData.updated_at,
-  };
+  } as Metrics;
 }
 
 export async function getMetricsByAccountId(accountId: string): Promise<Metrics | null> {
@@ -34,15 +33,15 @@ export async function getMetricsByAccountId(accountId: string): Promise<Metrics 
   return {
     id: data.id,
     accountId: data.account_id,
-    data: data.data as unknown as OnChainActivity,
+    data: data.data,
     updatedAt: data.updated_at,
-  };
+  } as Metrics;
 }
 
 export async function updateMetrics(
   walletAddress: string,
-  newData: OnChainActivity,
-  oldData: OnChainActivity,
+  newData: MetricScore[],
+  oldData: MetricScore[],
 ): Promise<{ metrics: Metrics; archived: boolean } | null> {
   const supabase = await supabaseClient();
 
@@ -56,9 +55,10 @@ export async function updateMetrics(
   const accountId = account.id;
 
   // First, archive the old metrics in metrics_history
+  const serializableOldData = JSON.parse(JSON.stringify(oldData));
   const { error: archiveError } = await supabase
     .from("metrics_history")
-    .insert({ account_id: accountId, data: oldData, recorded_at: new Date().toISOString() });
+    .insert({ account_id: accountId, data: serializableOldData, recorded_at: new Date().toISOString() });
 
   if (archiveError) {
     console.error("Error archiving metrics to history:", archiveError);
@@ -66,9 +66,10 @@ export async function updateMetrics(
   }
 
   // Then, update the current metrics
+  const serializableNewData = JSON.parse(JSON.stringify(newData));
   const { data, error } = await supabase
     .from("metrics")
-    .update({ data: newData, updated_at: new Date().toISOString() })
+    .update({ data: serializableNewData, updated_at: new Date().toISOString() })
     .eq("account_id", accountId)
     .select()
     .single();
@@ -82,9 +83,9 @@ export async function updateMetrics(
     metrics: {
       id: data.id,
       accountId: data.account_id,
-      data: data.data as unknown as OnChainActivity,
+      data: data.data,
       updatedAt: data.updated_at,
-    },
+    } as Metrics,
     archived: true,
   };
 }

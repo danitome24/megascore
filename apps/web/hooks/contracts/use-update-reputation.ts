@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNftImageGenerator } from "@/hooks/nft/use-nft-image-generator";
 import { useSignScore } from "@/hooks/score/use-sign-score";
-import { OnChainActivity } from "@/lib/domain/metrics/types";
+import { MetricScore } from "@/lib/domain/reputation/types";
 import { Address, SignedScore } from "@/lib/domain/shared/types";
 import { updateMetrics as updateMetricsAPI } from "@/lib/external/api/metrics";
 import { updateScore as updateScoreAPI } from "@/lib/external/api/score";
@@ -13,8 +13,8 @@ import { useAccount, useChainId, usePublicClient, useWriteContract } from "wagmi
 interface UpdateReputationParams {
   newScore: number;
   currentScore: number;
-  currentMetrics: OnChainActivity;
-  updatedMetrics: OnChainActivity;
+  currentMetrics: MetricScore[];
+  updatedMetrics: MetricScore[];
   existingUri: string;
 }
 
@@ -90,9 +90,9 @@ export function useUpdateReputation() {
       await updateScoreAPI(walletAddress, params.newScore, params.currentScore);
 
       // Step 5: Update metrics in API if both exist (old metrics goes to metrics_history, new metrics becomes current)
-      // if (params.currentMetrics && params.updatedMetrics) {
-      //   await updateMetricsAPI(walletAddress, params.updatedMetrics, params.currentMetrics);
-      // }
+      if (params.currentMetrics && params.updatedMetrics) {
+        await updateMetricsAPI(walletAddress, params.updatedMetrics, params.currentMetrics);
+      }
 
       toast.success("Reputation updated!", {
         description: "Your reputation and NFT have been permanently updated",

@@ -2,17 +2,18 @@
 
 import { createMetricsAction, updateMetricsAction } from "@/app/actions/metrics";
 import type { Metrics, OnChainActivity } from "@/lib/domain/metrics/types";
+import { MetricScore } from "@/lib/domain/reputation/types";
 
 /**
  * Create metrics for an account
  * Uses server action for better security and type safety
  *
  * @param accountId - Account ID in database
- * @param data - On-chain activity metrics
+ * @param data - Metric score breakdown
  * @returns Created metrics data
  * @throws Error if metrics creation fails
  */
-export async function createMetrics(accountId: string, data: OnChainActivity): Promise<Metrics> {
+export async function createMetrics(accountId: string, data: MetricScore[]): Promise<Metrics> {
   const result = await createMetricsAction(accountId, data);
 
   if (!result.success) {
@@ -27,15 +28,15 @@ export async function createMetrics(accountId: string, data: OnChainActivity): P
  * Uses server action for better security and type safety
  *
  * @param walletAddress - User's wallet address
- * @param newData - New on-chain activity metrics
- * @param oldData - Previous on-chain activity metrics
+ * @param newData - New metric score breakdown
+ * @param oldData - Previous metric score breakdown
  * @returns Updated metrics data and archive status
  * @throws Error if metrics update fails
  */
 export async function updateMetrics(
   walletAddress: string,
-  newData: OnChainActivity,
-  oldData: OnChainActivity,
+  newData: MetricScore[],
+  oldData: MetricScore[],
 ): Promise<{ metrics: Metrics; archived: boolean }> {
   const result = await updateMetricsAction(walletAddress, newData, oldData);
 

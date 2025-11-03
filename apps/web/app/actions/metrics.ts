@@ -1,6 +1,7 @@
 "use server";
 
 import type { Metrics, OnChainActivity } from "@/lib/domain/metrics/types";
+import { MetricScore } from "@/lib/domain/reputation/types";
 import { createMetrics as dbCreateMetrics, updateMetrics as dbUpdateMetrics } from "@/lib/external/supabase/metrics";
 
 interface CreateMetricsResult {
@@ -26,7 +27,7 @@ interface UpdateMetricsResult {
  * @param data - On-chain activity metrics
  * @returns Result with metrics data or error message
  */
-export async function createMetricsAction(accountId: string, data: OnChainActivity): Promise<CreateMetricsResult> {
+export async function createMetricsAction(accountId: string, data: MetricScore[]): Promise<CreateMetricsResult> {
   try {
     // Validation: Check if accountId provided
     if (!accountId || accountId.trim() === "") {
@@ -86,18 +87,18 @@ export async function createMetricsAction(accountId: string, data: OnChainActivi
 /**
  * Server Action: Update metrics for an account
  *
- * Updates on-chain activity metrics and optionally archives old metrics.
+ * Updates metric score breakdown and optionally archives old metrics.
  * This replaces the PUT /api/metrics endpoint.
  *
  * @param walletAddress - User's wallet address
- * @param newData - New on-chain activity metrics
- * @param oldData - Previous on-chain activity metrics (for comparison)
+ * @param newData - New metric score breakdown
+ * @param oldData - Previous metric score breakdown (for comparison)
  * @returns Result with updated metrics and archive status or error message
  */
 export async function updateMetricsAction(
   walletAddress: string,
-  newData: OnChainActivity,
-  oldData: OnChainActivity,
+  newData: MetricScore[],
+  oldData: MetricScore[],
 ): Promise<UpdateMetricsResult> {
   try {
     // Validation: Check if walletAddress provided
@@ -133,13 +134,7 @@ export async function updateMetricsAction(
     }
 
     // Validation: Ensure metrics actually changed
-    const hasChanges =
-      newData.transactions !== oldData.transactions ||
-      newData.weeksActive !== oldData.weeksActive ||
-      newData.uniqueContractsInteractedWith !== oldData.uniqueContractsInteractedWith ||
-      newData.txTypesUsed !== oldData.txTypesUsed ||
-      newData.contractsDeployedCount !== oldData.contractsDeployedCount ||
-      newData.nftMintedCount !== oldData.nftMintedCount;
+    const hasChanges = JSON.stringify(newData) !== JSON.stringify(oldData);
 
     if (!hasChanges) {
       return {
@@ -148,12 +143,8 @@ export async function updateMetricsAction(
       };
     }
 
-    // Validation: Check required fields in OnChainActivity
-    if (
-      typeof newData.transactions !== "number" ||
-      typeof newData.weeksActive !== "number" ||
-      typeof newData.uniqueContractsInteractedWith !== "number"
-    ) {
+    // Validation: Check required fields in MetricScore[]
+    if (!Array.isArray(newData) || newData.length === 0) {
       return {
         success: false,
         error: "Invalid metrics data structure",

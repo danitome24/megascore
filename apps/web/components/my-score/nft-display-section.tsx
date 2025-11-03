@@ -10,13 +10,15 @@ import { useUpdateScore } from "@/hooks/score/use-update-score";
 import { getLevelByScore } from "@/lib/domain/reputation/level";
 import { extractImageFromTokenUri } from "@/lib/utils";
 import { useAccountStore } from "@/store/account-store";
+import { useMetricsStore } from "@/store/metrics-store";
 import { useScoreStore } from "@/store/score-store";
 import { Eye, Hash, Share2 } from "lucide-react";
 import { useChainId } from "wagmi";
 
 export function NFTDisplaySection() {
   const { account } = useAccountStore();
-  const { hasNFT, currentScore, updatedScore, currentMetrics, updatedMetrics } = useScoreStore();
+  const { hasNFT, currentScore, updatedScore } = useScoreStore();
+  const { currentMetrics, updatedMetrics } = useMetricsStore();
 
   // Fetch real NFT data from contract
   const { nftData, isLoading, refetch: refetchNftData } = useNFTDetails();

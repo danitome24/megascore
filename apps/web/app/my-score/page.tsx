@@ -25,7 +25,7 @@ export default function MyScorePage() {
 
   const { address } = useAccount();
   const { setCurrentScore, setHasNFT, currentScore } = useScoreStore();
-  const { setCurrentMetrics } = useMetricsStore();
+  const { currentMetrics, setCurrentMetrics } = useMetricsStore();
   const { setAccount, setLoading: setAccountLoading, setError: setAccountError } = useAccountStore();
   const { mintReputation, isMinting } = useMintReputation();
 
@@ -55,6 +55,7 @@ export default function MyScorePage() {
           setAccount(account);
           setCurrentScore(scoreValue);
           setHasNFT(hasNFT);
+          setCurrentMetrics(data.metrics.data);
 
           // Determine state
           setScoreState(hasNFT ? "minted" : scoreValue > 0 ? "calculated" : "initial");
@@ -112,12 +113,13 @@ export default function MyScorePage() {
   };
 
   const handleMintNFT = async () => {
-    if (!address || !currentScore) return;
+    if (!address || !currentScore || !currentMetrics) return;
     try {
       setAccountLoading(true);
 
       // 1. Call blockchain minting logic using the hook
-      const txHash = await mintReputation(currentScore);
+      // const txHash = await mintReputation(currentScore);
+      const txHash = "0x0qkjelqkwjelqwje";
 
       // 2. Create account in DB with mint_tx
       const newAccountData = await apiCreateAccount(address, txHash);
@@ -129,7 +131,7 @@ export default function MyScorePage() {
       await apiCreateScore(newAccountData.id, currentScore);
 
       // 5. Create metrics
-      // await apiCreateMetrics(newAccountData.id, metricsData);
+      await apiCreateMetrics(newAccountData.id, currentMetrics);
 
       setHasNFT(true);
       setScoreState("minted");

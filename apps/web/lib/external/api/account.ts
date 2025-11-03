@@ -26,7 +26,7 @@ export async function createAccount(walletAddress: string, txHash: string): Prom
 
 export async function fetchAccountData(walletAddress: string): Promise<{
   account: Account;
-  // metrics: Metrics;
+  metrics: Metrics;
   score: Score;
 } | null> {
   const res = await fetch(`/api/account/${walletAddress}`, {
@@ -44,7 +44,7 @@ export async function fetchAccountData(walletAddress: string): Promise<{
   const data = await res.json();
   return {
     account: data.account as Account,
-    // metrics: data.metrics as Metrics,
+    metrics: data.metrics as Metrics,
     score: data.score as Score,
   };
 }

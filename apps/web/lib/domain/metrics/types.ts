@@ -1,7 +1,9 @@
+import { MetricScore } from "../reputation/types";
+
 export interface Metrics {
   id: string;
   accountId: string;
-  data: OnChainActivity;
+  data: MetricScore[];
   updatedAt: string;
 }
 
