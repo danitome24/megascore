@@ -1,32 +1,21 @@
 import { useState } from "react";
 import { useNftImageGenerator } from "@/hooks/nft/use-nft-image-generator";
 import { useSignScore } from "@/hooks/score/use-sign-score";
-import { MetricScore } from "@/lib/domain/reputation/types";
 import { Address, SignedScore } from "@/lib/domain/shared/types";
-import { updateMetrics as updateMetricsAPI } from "@/lib/external/api/metrics";
-import { updateScore as updateScoreAPI } from "@/lib/external/api/score";
 import { getMegaScoreContract } from "@/lib/external/contracts/megascore-contract";
 import { extractImageFromTokenUri } from "@/lib/utils";
 import { toast } from "sonner";
 import { useAccount, useChainId, usePublicClient, useWriteContract } from "wagmi";
-
-interface UpdateReputationParams {
-  newScore: number;
-  currentScore: number;
-  currentMetrics: MetricScore[];
-  updatedMetrics: MetricScore[];
-  existingUri: string;
-}
 
 export function useUpdateReputationOnChain() {
   // 1. State hooks
   const [isUpdating, setIsUpdating] = useState(false);
 
   // 2. External library hooks
-  const { address: walletAddress } = useAccount();
   const chainId = useChainId();
-  const { writeContractAsync: writeContract } = useWriteContract();
   const publicClient = usePublicClient();
+  const { address: walletAddress } = useAccount();
+  const { writeContractAsync: writeContract } = useWriteContract();
 
   // 3. Contract data
   const { address: contractAddress, abi: contractABI } = getMegaScoreContract(chainId);
@@ -63,7 +52,7 @@ export function useUpdateReputationOnChain() {
     }
   };
 
-  const updateOnChain = async (params: UpdateReputationParams): Promise<void> => {
+  const updateOnChain = async (score: number, existingUri: string): Promise<string> => {
     setIsUpdating(true);
     let toastId: string | number | undefined;
     try {
@@ -71,42 +60,31 @@ export function useUpdateReputationOnChain() {
 
       // Step 1: Generate and upload new NFT metadata with updated score
       toastId = toast.loading("Generating new NFT with updated score...");
-      const storageUri = await generateAndUpload(params.newScore, walletAddress);
+      const storageUri = await generateAndUpload(score, walletAddress);
       if (!storageUri) throw new Error("Failed to generate NFT metadata");
       toast.success("New NFT metadata generated and uploaded!", { id: toastId });
 
       // Step 2: Sign the new score
       toastId = toast.loading("Signing your updated score...");
-      const signedScore = await signScore(params.newScore, walletAddress, chainId, contractAddress as Address);
+      const signedScore = await signScore(score, walletAddress, chainId, contractAddress as Address);
       toast.success("Score signed!", { id: toastId });
 
       // Step 3: Update score on-chain with new NFT metadata
       toastId = toast.loading("Updating your reputation on-chain...");
-      await updateScoreOnChain(signedScore, params.newScore, storageUri);
-      toast.success("Score updated on-chain!", { id: toastId });
+      const receipt = await updateScoreOnChain(signedScore, score, storageUri);
+      toast.success("Reputation updated on-chain!", { id: toastId });
 
-      // Step 4: Update score in API (old score goes to scores_history, new score becomes current)
-      toastId = toast.loading("Persisting score update to database...");
-      await updateScoreAPI(walletAddress, params.newScore, params.currentScore);
-
-      // Step 5: Update metrics in API if both exist (old metrics goes to metrics_history, new metrics becomes current)
-      if (params.currentMetrics && params.updatedMetrics) {
-        await updateMetricsAPI(walletAddress, params.updatedMetrics, params.currentMetrics);
-      }
-
-      toast.success("Reputation updated!", {
-        description: "Your reputation and NFT have been permanently updated",
-        id: toastId,
-      });
+      return receipt.transactionHash;
     } catch (error) {
-      console.error("Error updating reputation:", error);
+      console.error("Error updating reputation on-chain:", error);
       toast.error("Error updating reputation", {
-        description: "An error occurred while updating your reputation. Please try again.",
+        description: "An error occurred while updating your reputation on-chain. Please try again.",
         id: toastId,
       });
       throw error;
     } finally {
-      const extractedUri = extractImageFromTokenUri(params.existingUri);
+      // Clean up old NFT file
+      const extractedUri = extractImageFromTokenUri(existingUri);
       deleteOldNftFile(extractedUri);
       setIsUpdating(false);
     }
