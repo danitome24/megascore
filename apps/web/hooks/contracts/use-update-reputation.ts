@@ -90,9 +90,9 @@ export function useUpdateReputation() {
       await updateScoreAPI(walletAddress, params.newScore, params.currentScore);
 
       // Step 5: Update metrics in API if both exist (old metrics goes to metrics_history, new metrics becomes current)
-      if (params.currentMetrics && params.updatedMetrics) {
-        await updateMetricsAPI(walletAddress, params.updatedMetrics, params.currentMetrics);
-      }
+      // if (params.currentMetrics && params.updatedMetrics) {
+      //   await updateMetricsAPI(walletAddress, params.updatedMetrics, params.currentMetrics);
+      // }
 
       toast.success("Reputation updated!", {
         description: "Your reputation and NFT have been permanently updated",

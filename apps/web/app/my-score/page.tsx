@@ -126,19 +126,7 @@ export default function MyScorePage() {
       await apiCreateScore(newAccountData.id, currentScore);
 
       // 5. Create metrics
-      const metricsData = {
-        transactions: Math.floor(Math.random() * 1000),
-        weeksActive: Math.floor(Math.random() * 52),
-        uniqueContractsInteractedWith: Math.floor(Math.random() * 50),
-        txTypesUsed: Math.floor(Math.random() * 10),
-        hasDeployedContract: Math.random() > 0.5,
-        contractsDeployedCount: Math.floor(Math.random() * 5),
-        nftMintedCount: Math.floor(Math.random() * 10),
-        maxConsecutiveActiveWeeks: Math.floor(Math.random() * 20),
-        weeksSinceFirstTransaction: Math.floor(Math.random() * 52),
-        lastActiveDate: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toISOString(),
-      };
-      await apiCreateMetrics(newAccountData.id, metricsData);
+      // await apiCreateMetrics(newAccountData.id, metricsData);
 
       setHasNFT(true);
       setScoreState("minted");
