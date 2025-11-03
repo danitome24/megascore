@@ -1,37 +1,52 @@
+"use client";
+
+import { createScoreAction, updateScoreAction } from "@/app/actions/score";
 import type { Score } from "@/lib/domain/score/types";
 
+/**
+ * Create score for an account
+ * Uses server action for better security and type safety
+ *
+ * @param accountId - Account ID in database
+ * @param score - Reputation score value
+ * @returns Created score data
+ * @throws Error if score creation fails
+ */
 export async function createScore(accountId: string, score: number): Promise<Score> {
-  const res = await fetch("/api/score", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ accountId, score }),
-  });
+  const result = await createScoreAction(accountId, score);
 
-  if (!res.ok) {
-    const error = await res.json().catch(() => ({}));
-    throw new Error(error?.error || "Failed to store score in database");
+  if (!result.success) {
+    throw new Error(result.error || "Failed to store score in database");
   }
 
-  const data = await res.json();
-  return data.score as Score;
+  return result.score as Score;
 }
 
+/**
+ * Update score for an account
+ * Uses server action for better security and type safety
+ *
+ * Ensures score is monotonic (never decreases).
+ *
+ * @param walletAddress - User's wallet address
+ * @param newScore - New reputation score value
+ * @param oldScore - Previous reputation score
+ * @returns Updated score data and archive status
+ * @throws Error if score update fails
+ */
 export async function updateScore(
   walletAddress: string,
   newScore: number,
   oldScore: number,
 ): Promise<{ score: Score; archived: boolean }> {
-  const res = await fetch("/api/score", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ walletAddress, newScore, oldScore }),
-  });
+  const result = await updateScoreAction(walletAddress, newScore, oldScore);
 
-  if (!res.ok) {
-    const error = await res.json().catch(() => ({}));
-    throw new Error(error?.error || "Failed to update score");
+  if (!result.success) {
+    throw new Error(result.error || "Failed to update score");
   }
 
-  const data = await res.json();
-  return data;
+  return {
+    score: result.score as Score,
+    archived: result.archived ?? false,
+  };
 }

@@ -1,8 +1,8 @@
 import { headers } from "next/headers";
+import { generateReputationScore } from "@/lib/domain/reputation/calculation";
 import { EIP_712_TYPE, getEIP712Domain } from "@/lib/external/contracts/eip-721";
 import { ownerSigner } from "@/lib/external/contracts/owner";
-import { calculate } from "@/lib/score/calculate/score";
-import { metrics } from "@/lib/score/metrics/metrics";
+import { fetchTransactions } from "@/lib/external/sources/transactions";
 import { parseSignature } from "viem";
 
 export async function POST(req: Request) {
@@ -17,8 +17,8 @@ export async function POST(req: Request) {
 
   console.log(`Signing score ${score} for wallet ${wallet}`);
 
-  const metricsData = await metrics(wallet);
-  const calculatedScore = await calculate(metricsData);
+  const onChainActivity = await fetchTransactions(wallet);
+  const reputationScore = generateReputationScore(onChainActivity);
 
   const signature = await ownerSigner.signTypedData({
     domain: getEIP712Domain(chainId, contractAddress),
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     primaryType: "Score",
     message: {
       //@ts-ignore
-      score: calculatedScore,
+      score: reputationScore.totalScore,
       wallet,
     },
   });
