@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNFTOnChain } from "@/hooks/contracts/use-nft-details-on-chain";
-import { useUpdateReputationOnChain } from "@/hooks/contracts/use-update-reputation-on-chain";
 import { useReputation } from "@/hooks/reputation/use-reputation";
 import { useUpdateScore } from "@/hooks/score/use-update-score";
 import { getLevelByScore } from "@/lib/domain/reputation/level";
@@ -14,7 +13,6 @@ import { useAccountStore } from "@/store/account-store";
 import { useMetricsStore } from "@/store/metrics-store";
 import { useScoreStore } from "@/store/score-store";
 import { Eye, Hash, Share2 } from "lucide-react";
-import { useChainId } from "wagmi";
 
 export function NFTDisplaySection() {
   const { account } = useAccountStore();

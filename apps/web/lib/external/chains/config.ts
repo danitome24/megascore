@@ -1,6 +1,6 @@
 import { getDefaultConfig } from "connectkit";
 import { createConfig, http } from "wagmi";
-import { hardhat, megaethTestnet } from "wagmi/chains";
+import { hardhat } from "wagmi/chains";
 
 export const config = createConfig(
   getDefaultConfig({

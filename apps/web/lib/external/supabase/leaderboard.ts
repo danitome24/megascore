@@ -32,7 +32,7 @@ export async function fetchLeaderboardData(): Promise<LeaderboardAccount[]> {
   }
 
   // Map scores to LeaderboardAccount type with rank, address, score, and calculated level
-  return (scores || []).map((row: any, idx: number) => ({
+  return (scores || []).map((row: any, _idx: number) => ({
     address: row.accounts.wallet_address as Address,
     score: row.score as number,
     level: Math.max(1, Math.floor((row.score as number) / 250)),

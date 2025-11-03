@@ -1,7 +1,7 @@
 "use client";
 
 import { createMetricsAction, updateMetricsAction } from "@/app/actions/metrics";
-import type { Metrics, OnChainActivity } from "@/lib/domain/metrics/types";
+import type { Metrics } from "@/lib/domain/metrics/types";
 import { MetricScore } from "@/lib/domain/reputation/types";
 
 /**

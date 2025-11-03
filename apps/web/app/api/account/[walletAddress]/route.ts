@@ -12,7 +12,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ wall
       return new Response(JSON.stringify({ error: "Account not found" }), { status: 404 });
     }
     return new Response(JSON.stringify(accountData), { status: 200 });
-  } catch (e) {
+  } catch {
     return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
   }
 }

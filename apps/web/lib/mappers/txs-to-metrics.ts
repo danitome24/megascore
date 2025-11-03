@@ -2,7 +2,6 @@ import { OnChainActivity } from "../domain/metrics/types";
 import type { TransactionApiResponse, TransactionItem } from "@/lib/external/sources/transactions";
 
 const MS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
-const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
 /**
  * Maps raw blockchain transaction data to OnChainActivity metrics
