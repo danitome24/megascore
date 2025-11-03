@@ -18,8 +18,6 @@ export function ScoreCalculatedDisplay({ score, onMint, isLoading = false }: Sco
   const animatedScore = useCounterAnimation(0, score, 1000, true);
   const levelObj = getLevelByScore(score);
   const level = levelObj.level;
-  const pointsToNext = getPointsToNextLevel(score);
-  const percentile = Math.min(95, Math.floor((score / 1000) * 100) + 50);
 
   return (
     <div className="space-y-6">
@@ -67,21 +65,21 @@ export function ScoreCalculatedDisplay({ score, onMint, isLoading = false }: Sco
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
-              <Badge className="border border-mega-coral/30 bg-mega-coral/20 px-4 py-2 text-mega-coral transition-colors hover:bg-mega-coral/30">
+              {/* <Badge className="border border-mega-coral/30 bg-mega-coral/20 px-4 py-2 text-mega-coral transition-colors hover:bg-mega-coral/30">
                 <Trophy className="mr-2 h-4 w-4" />
                 Level #{1000 - score}
-              </Badge>
+              </Badge> */}
               <Badge className="border border-mega-blue/30 bg-mega-blue/20 px-4 py-2 text-mega-blue transition-colors hover:bg-mega-blue/30">
                 <Crown className="mr-2 h-4 w-4" />
                 Level {level}
-                {pointsToNext !== null && (
+                {/* {pointsToNext !== null && (
                   <span className="ml-2 text-xs text-foreground/60">({pointsToNext} to next)</span>
-                )}
+                )} */}
               </Badge>
-              <Badge className="border border-mega-green/30 bg-mega-green/20 px-4 py-2 text-mega-green transition-colors hover:bg-mega-green/30">
+              {/* <Badge className="border border-mega-green/30 bg-mega-green/20 px-4 py-2 text-mega-green transition-colors hover:bg-mega-green/30">
                 <TrendingUp className="mr-2 h-4 w-4" />
                 {percentile}th Percentile
-              </Badge>
+              </Badge> */}
             </motion.div>
 
             <motion.div
@@ -119,13 +117,13 @@ export function ScoreCalculatedDisplay({ score, onMint, isLoading = false }: Sco
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between rounded-lg border border-mega-pink/20 bg-mega-pink/5 p-4">
+                {/* <div className="flex items-center justify-between rounded-lg border border-mega-pink/20 bg-mega-pink/5 p-4">
                   <div className="space-y-1">
                     <p className="text-xs uppercase tracking-wide text-foreground/50">Cost</p>
                     <p className="text-xl font-bold text-mega-pink">5 USDT</p>
                   </div>
                   <Sparkles className="h-8 w-8 text-mega-pink/40" />
-                </div>
+                </div> */}
 
                 <Button
                   onClick={onMint}

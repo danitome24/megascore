@@ -80,7 +80,7 @@ export function InitialScoreDisplay({ onCalculate, isLoading = false }: InitialS
               <p className="text-sm text-foreground/60">
                 Analyze your on-chain activity and unlock your unique reputation score.
               </p>
-              <p className="text-xs text-foreground/40">Takes about 30 seconds to calculate</p>
+              <p className="text-xs text-foreground/40">Takes a few seconds to calculate</p>
             </motion.div>
           </div>
         </CardContent>

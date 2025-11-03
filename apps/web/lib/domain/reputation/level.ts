@@ -6,14 +6,14 @@ export interface Level {
 }
 
 export const LEVELS: Level[] = [
-  { level: 0, minScore: 0, maxScore: 199, color: "bg-mega-blue" },
-  { level: 1, minScore: 200, maxScore: 499, color: "bg-mega-green" },
-  { level: 2, minScore: 500, maxScore: 999, color: "bg-mega-coral" },
-  { level: 3, minScore: 1000, maxScore: 1999, color: "bg-mega-pink" },
-  { level: 4, minScore: 2000, maxScore: 2999, color: "bg-mega-yellow" },
-  { level: 5, minScore: 3000, maxScore: 4999, color: "bg-mega-purple" },
-  { level: 6, minScore: 5000, maxScore: 9999, color: "bg-mega-orange" },
-  { level: 7, minScore: 10000, maxScore: Infinity, color: "bg-mega-black" },
+  { level: 1, minScore: 0, maxScore: 199, color: "bg-mega-blue" },
+  { level: 2, minScore: 200, maxScore: 499, color: "bg-mega-green" },
+  { level: 3, minScore: 500, maxScore: 999, color: "bg-mega-coral" },
+  { level: 4, minScore: 1000, maxScore: 1999, color: "bg-mega-pink" },
+  { level: 5, minScore: 2000, maxScore: 2999, color: "bg-mega-yellow" },
+  { level: 6, minScore: 3000, maxScore: 4999, color: "bg-mega-purple" },
+  { level: 7, minScore: 5000, maxScore: 9999, color: "bg-mega-orange" },
+  { level: 8, minScore: 10000, maxScore: Infinity, color: "bg-mega-black" },
 ];
 
 export function getLevelByScore(score: number): Level {
