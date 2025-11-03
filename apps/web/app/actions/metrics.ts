@@ -1,6 +1,6 @@
 "use server";
 
-import type { Metrics, OnChainActivity } from "@/lib/domain/metrics/types";
+import type { Metrics } from "@/lib/domain/metrics/types";
 import { MetricScore } from "@/lib/domain/reputation/types";
 import { createMetrics as dbCreateMetrics, updateMetrics as dbUpdateMetrics } from "@/lib/external/supabase/metrics";
 
