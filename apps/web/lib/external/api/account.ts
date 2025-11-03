@@ -1,21 +1,27 @@
+"use client";
+
+import { createAccountAction } from "@/app/actions/account";
 import { Account } from "@/lib/domain/account/types";
 import { Metrics } from "@/lib/domain/metrics/types";
 import { Score } from "@/lib/domain/score/types";
 
-// Call the API to create a new account after minting
+/**
+ * Create a new account after minting NFT
+ * Uses server action for better security and type safety
+ *
+ * @param walletAddress - User's wallet address
+ * @param txHash - Transaction hash of the mint
+ * @returns Created account data
+ * @throws Error if account creation fails
+ */
 export async function createAccount(walletAddress: string, txHash: string): Promise<Account> {
-  const res = await fetch("/api/account", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ walletAddress, txHash }),
-  });
+  const result = await createAccountAction(walletAddress, txHash);
 
-  if (!res.ok) {
-    throw new Error("Failed to create account");
+  if (!result.success) {
+    throw new Error(result.error || "Failed to create account");
   }
 
-  const data = await res.json();
-  return data.account as Account;
+  return result.account as Account;
 }
 
 export async function fetchAccountData(walletAddress: string): Promise<{
