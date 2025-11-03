@@ -1,4 +1,3 @@
-import type { OnChainActivity } from "@/lib/domain/metrics/types";
 import { create } from "zustand";
 
 export type ScoreState = {
@@ -14,10 +13,6 @@ export type ScoreState = {
   // NFT state
   hasNFT: boolean;
 
-  // Metrics state
-  currentMetrics: OnChainActivity | null;
-  updatedMetrics: OnChainActivity | null;
-
   // Actions
   setCurrentScore: (score: number) => void;
   setUpdatedScore: (score: number) => void;
@@ -25,11 +20,6 @@ export type ScoreState = {
   persistScoreToNFT: () => void;
   commitScoreUpdate: () => void;
   reset: () => void;
-
-  setCurrentMetrics: (metrics: OnChainActivity) => void;
-  setUpdatedMetrics: (metrics: OnChainActivity) => void;
-  persistMetricsUpdate: () => void;
-  commitMetricsUpdate: () => void;
 };
 
 export const useScoreStore = create<ScoreState>(set => ({
@@ -40,24 +30,6 @@ export const useScoreStore = create<ScoreState>(set => ({
   scoreIncrease: 0,
   lastUpdatedAt: null,
   hasNFT: false,
-  currentMetrics: null,
-  updatedMetrics: null,
-
-  setCurrentMetrics: (metrics: OnChainActivity) => set({ currentMetrics: metrics }),
-
-  setUpdatedMetrics: (metrics: OnChainActivity) => set({ updatedMetrics: metrics }),
-
-  persistMetricsUpdate: () =>
-    set(state => ({
-      currentMetrics: state.updatedMetrics || state.currentMetrics,
-      updatedMetrics: null,
-    })),
-
-  commitMetricsUpdate: () =>
-    set(state => ({
-      currentMetrics: state.updatedMetrics || state.currentMetrics,
-      updatedMetrics: null,
-    })),
 
   // Set the current score (from database or initial fetch)
   setCurrentScore: (score: number) =>
@@ -102,7 +74,5 @@ export const useScoreStore = create<ScoreState>(set => ({
       scoreIncrease: 0,
       lastUpdatedAt: null,
       hasNFT: false,
-      currentMetrics: null,
-      updatedMetrics: null,
     }),
 }));

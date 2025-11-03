@@ -9,7 +9,7 @@ import { getScoreByAccountId } from "@/lib/external/supabase/score";
 
 export async function getAccountWithDetails(walletAddress: string): Promise<{
   account: Account;
-  metrics: Metrics;
+  // metrics: Metrics;
   score: Score;
 } | null> {
   const account = await getAccountByWallet(walletAddress);
@@ -17,15 +17,15 @@ export async function getAccountWithDetails(walletAddress: string): Promise<{
     console.error("Account not found for wallet address:", walletAddress);
     return null;
   }
-  const [metrics, score] = await Promise.all([
-    getMetricsByAccountId(account.id),
+  const [score] = await Promise.all([
+    // getMetricsByAccountId(account.id),
     getScoreByAccountId(account.id),
     // getReferralByAccountId(account.id),
   ]);
-  if (!metrics || !score) {
+  if (!score) {
     console.error("Missing related data for account id:", account.id);
     return null;
   }
 
-  return { account, metrics, score };
+  return { account, score };
 }

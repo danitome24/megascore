@@ -1,23 +1,15 @@
 import { useCallback, useState } from "react";
+import { useMetricsStore } from "@/store/metrics-store";
 import { useScoreStore } from "@/store/score-store";
 import { toast } from "sonner";
 import { useAccount } from "wagmi";
 
 export function useUpdateScore() {
   const { address } = useAccount();
-  const {
-    currentScore,
-    updatedScore,
-    scoreIncrease,
-    hasNFT,
-    currentMetrics,
-    updatedMetrics,
-    setUpdatedScore,
-    setUpdatedMetrics,
-    commitScoreUpdate,
-    commitMetricsUpdate,
-    persistScoreToNFT,
-  } = useScoreStore();
+  const { currentScore, updatedScore, scoreIncrease, hasNFT, setUpdatedScore, commitScoreUpdate, persistScoreToNFT } =
+    useScoreStore();
+
+  const { setUpdatedMetrics, commitMetricsUpdate } = useMetricsStore();
 
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -39,7 +31,7 @@ export function useUpdateScore() {
       const data = await response.json();
       if (data.status !== 200 || !data.reputation?.totalScore) throw new Error(data.error || "Invalid score response");
       const newScore = data.reputation.totalScore;
-      const newMetrics = data.metrics;
+      const newMetrics = data.reputation.breakdown;
       setUpdatedScore(newScore);
       setUpdatedMetrics(newMetrics);
 
@@ -81,15 +73,12 @@ export function useUpdateScore() {
 
     // Simply update the store: set currentScore to updatedScore and reset updatedScore
     commitScoreUpdate();
-
-    if (currentMetrics && updatedMetrics) {
-      commitMetricsUpdate();
-    }
+    commitMetricsUpdate();
 
     toast.success("Score updated!", {
       description: "Your reputation has been updated",
     });
-  }, [address, updatedScore, commitScoreUpdate, commitMetricsUpdate, currentMetrics, updatedMetrics]);
+  }, [address, updatedScore, commitScoreUpdate, commitMetricsUpdate]);
 
   return {
     isUpdating,

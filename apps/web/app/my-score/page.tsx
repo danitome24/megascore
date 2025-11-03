@@ -10,10 +10,12 @@ import { ScoreCalculatedDisplay } from "@/components/my-score/score-calculated-d
 import { ScoreDisplaySection } from "@/components/my-score/score-display-section";
 import { Loading } from "@/components/ui/loading";
 import { useMintReputation } from "@/hooks/contracts/use-mint-reputation";
+import { MetricScore } from "@/lib/domain/reputation/types";
 import { createAccount as apiCreateAccount, fetchAccountData } from "@/lib/external/api/account";
 import { createMetrics as apiCreateMetrics } from "@/lib/external/api/metrics";
 import { createScore as apiCreateScore } from "@/lib/external/api/score";
 import { useAccountStore } from "@/store/account-store";
+import { useMetricsStore } from "@/store/metrics-store";
 import { useScoreStore } from "@/store/score-store";
 import { useAccount } from "wagmi";
 
@@ -22,7 +24,8 @@ export default function MyScorePage() {
   const [scoreState, setScoreState] = useState<"loading" | "initial" | "calculated" | "minted">("loading");
 
   const { address } = useAccount();
-  const { setCurrentScore, setHasNFT, setCurrentMetrics, currentScore } = useScoreStore();
+  const { setCurrentScore, setHasNFT, currentScore } = useScoreStore();
+  const { setCurrentMetrics } = useMetricsStore();
   const { setAccount, setLoading: setAccountLoading, setError: setAccountError } = useAccountStore();
   const { mintReputation, isMinting } = useMintReputation();
 
@@ -44,7 +47,7 @@ export default function MyScorePage() {
         if (!isMounted) return;
 
         if (data) {
-          const { account, score, metrics } = data;
+          const { account, score } = data;
           const hasNFT = !!account.mintedAt;
           const scoreValue = score?.score ?? 0;
 
@@ -52,9 +55,6 @@ export default function MyScorePage() {
           setAccount(account);
           setCurrentScore(scoreValue);
           setHasNFT(hasNFT);
-          if (metrics?.data) {
-            setCurrentMetrics(metrics.data);
-          }
 
           // Determine state
           setScoreState(hasNFT ? "minted" : scoreValue > 0 ? "calculated" : "initial");
@@ -98,9 +98,12 @@ export default function MyScorePage() {
       }
 
       const data = await response.json();
-      const calculatedScore = data.reputation.totalScore;
+      const calculatedScore = data.reputation.totalScore as number;
+      const breakdownMetrics = data.reputation.breakdown as MetricScore[];
+
       setCurrentScore(calculatedScore);
       setScoreState("calculated");
+      setCurrentMetrics(breakdownMetrics);
     } catch (error) {
       console.error("Error calculating score:", error);
     } finally {
