@@ -6,7 +6,7 @@ import { getMegaScoreContract } from "@/lib/external/contracts/megascore-contrac
 import { toast } from "sonner";
 import { useAccount, useChainId, usePublicClient, useWriteContract } from "wagmi";
 
-export function useMintReputation() {
+export function useMintReputationOnChain() {
   // 1. State hooks
   const [isMinting, setIsMinting] = useState(false);
 
@@ -51,7 +51,7 @@ export function useMintReputation() {
     }
   };
 
-  const mintReputation = async (score: number): Promise<string> => {
+  const mintOnChain = async (score: number): Promise<string> => {
     setIsMinting(true);
     let toastId: string | number | undefined;
     try {
@@ -87,5 +87,5 @@ export function useMintReputation() {
   };
 
   // 6. Return values
-  return { mintReputation, isMinting };
+  return { mintOnChain, isMinting };
 }

@@ -18,7 +18,7 @@ interface UpdateReputationParams {
   existingUri: string;
 }
 
-export function useUpdateReputation() {
+export function useUpdateReputationOnChain() {
   // 1. State hooks
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -63,7 +63,7 @@ export function useUpdateReputation() {
     }
   };
 
-  const updateReputation = async (params: UpdateReputationParams): Promise<void> => {
+  const updateOnChain = async (params: UpdateReputationParams): Promise<void> => {
     setIsUpdating(true);
     let toastId: string | number | undefined;
     try {
@@ -113,5 +113,5 @@ export function useUpdateReputation() {
   };
 
   // 6. Return values
-  return { updateReputation, isUpdating };
+  return { updateOnChain, isUpdating };
 }
