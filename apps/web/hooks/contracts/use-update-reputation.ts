@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNftImageGenerator } from "@/hooks/nft/use-nft-image-generator";
 import { useSignScore } from "@/hooks/score/use-sign-score";
-import { MetricsData } from "@/lib/domain/metrics/types";
+import { OnChainActivity } from "@/lib/domain/metrics/types";
 import { Address, SignedScore } from "@/lib/domain/shared/types";
 import { updateMetrics as updateMetricsAPI } from "@/lib/external/api/metrics";
 import { updateScore as updateScoreAPI } from "@/lib/external/api/score";
@@ -13,8 +13,8 @@ import { useAccount, useChainId, usePublicClient, useWriteContract } from "wagmi
 interface UpdateReputationParams {
   newScore: number;
   currentScore: number;
-  currentMetrics: MetricsData;
-  updatedMetrics: MetricsData;
+  currentMetrics: OnChainActivity;
+  updatedMetrics: OnChainActivity;
   existingUri: string;
 }
 

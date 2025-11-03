@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useNFTDetails } from "@/hooks/contracts/use-nft-details";
 import { useUpdateReputation } from "@/hooks/contracts/use-update-reputation";
 import { useUpdateScore } from "@/hooks/score/use-update-score";
-import { getLevelByScore } from "@/lib/domain/score/level";
+import { getLevelByScore } from "@/lib/domain/reputation/level";
 import { extractImageFromTokenUri } from "@/lib/utils";
 import { useAccountStore } from "@/store/account-store";
 import { useScoreStore } from "@/store/score-store";

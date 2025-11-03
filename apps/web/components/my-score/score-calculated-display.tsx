@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCounterAnimation } from "@/hooks/use-counter-animation";
-import { getLevelByScore, getPointsToNextLevel } from "@/lib/domain/score/level";
+import { getLevelByScore, getPointsToNextLevel } from "@/lib/domain/reputation/level";
 import { motion } from "framer-motion";
 import { CheckCircle2, Crown, Flame, Sparkles, TrendingUp, Trophy } from "lucide-react";
 

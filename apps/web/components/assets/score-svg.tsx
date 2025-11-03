@@ -1,4 +1,4 @@
-import { getLevelByScore } from "@/lib/domain/score/level";
+import { getLevelByScore } from "@/lib/domain/reputation/level";
 import { Address } from "@/lib/domain/shared/types";
 import { formatAddress } from "@/lib/utils";
 

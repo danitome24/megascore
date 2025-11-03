@@ -1,4 +1,18 @@
-export type MetricsData = {
+export interface Metrics {
+  id: string;
+  accountId: string;
+  data: OnChainActivity;
+  updatedAt: string;
+}
+
+export interface MetricsHistory {
+  id: string;
+  accountId: string;
+  data: OnChainActivity;
+  recordedAt: string;
+}
+
+export type OnChainActivity = {
   transactions: number;
   weeksActive: number;
   uniqueContractsInteractedWith: number;
@@ -10,17 +24,3 @@ export type MetricsData = {
   weeksSinceFirstTransaction: number;
   lastActiveDate: string;
 };
-
-export interface Metrics {
-  id: string;
-  accountId: string;
-  data: MetricsData;
-  updatedAt: string;
-}
-
-export interface MetricsHistory {
-  id: string;
-  accountId: string;
-  data: MetricsData;
-  recordedAt: string;
-}

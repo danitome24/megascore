@@ -1,10 +1,10 @@
 "use server";
 
 import { getAccountByWallet } from "./account";
-import type { Metrics, MetricsData } from "@/lib/domain/metrics/types";
+import type { Metrics, OnChainActivity } from "@/lib/domain/metrics/types";
 import { supabaseClient } from "@/lib/external/supabase/client";
 
-export async function createMetrics(accountId: string, data: MetricsData): Promise<Metrics | null> {
+export async function createMetrics(accountId: string, data: OnChainActivity): Promise<Metrics | null> {
   const supabase = await supabaseClient();
 
   const serializableData = {
@@ -22,7 +22,7 @@ export async function createMetrics(accountId: string, data: MetricsData): Promi
   return {
     id: metricsData.id,
     accountId: metricsData.account_id,
-    data: metricsData.data as unknown as MetricsData,
+    data: metricsData.data as unknown as OnChainActivity,
     updatedAt: metricsData.updated_at,
   };
 }
@@ -34,15 +34,15 @@ export async function getMetricsByAccountId(accountId: string): Promise<Metrics 
   return {
     id: data.id,
     accountId: data.account_id,
-    data: data.data as unknown as MetricsData,
+    data: data.data as unknown as OnChainActivity,
     updatedAt: data.updated_at,
   };
 }
 
 export async function updateMetrics(
   walletAddress: string,
-  newData: MetricsData,
-  oldData: MetricsData,
+  newData: OnChainActivity,
+  oldData: OnChainActivity,
 ): Promise<{ metrics: Metrics; archived: boolean } | null> {
   const supabase = await supabaseClient();
 
@@ -82,7 +82,7 @@ export async function updateMetrics(
     metrics: {
       id: data.id,
       accountId: data.account_id,
-      data: data.data as unknown as MetricsData,
+      data: data.data as unknown as OnChainActivity,
       updatedAt: data.updated_at,
     },
     archived: true,

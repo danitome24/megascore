@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { MetricsData } from "@/lib/domain/metrics/types";
+import type { OnChainActivity } from "@/lib/domain/metrics/types";
 import { createMetrics, updateMetrics } from "@/lib/external/supabase/metrics";
 
 export async function POST(req: NextRequest) {
@@ -31,7 +31,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: "walletAddress, newData, and oldData are required" }, { status: 400 });
     }
 
-    const result = await updateMetrics(walletAddress, newData as MetricsData, oldData as MetricsData);
+    const result = await updateMetrics(walletAddress, newData as OnChainActivity, oldData as OnChainActivity);
 
     if (!result) {
       return NextResponse.json({ error: "Failed to update metrics" }, { status: 500 });

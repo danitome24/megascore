@@ -1,4 +1,4 @@
-import type { MetricsData } from "@/lib/domain/metrics/types";
+import type { OnChainActivity } from "@/lib/domain/metrics/types";
 import { create } from "zustand";
 
 export type ScoreState = {
@@ -15,8 +15,8 @@ export type ScoreState = {
   hasNFT: boolean;
 
   // Metrics state
-  currentMetrics: MetricsData | null;
-  updatedMetrics: MetricsData | null;
+  currentMetrics: OnChainActivity | null;
+  updatedMetrics: OnChainActivity | null;
 
   // Actions
   setCurrentScore: (score: number) => void;
@@ -26,8 +26,8 @@ export type ScoreState = {
   commitScoreUpdate: () => void;
   reset: () => void;
 
-  setCurrentMetrics: (metrics: MetricsData) => void;
-  setUpdatedMetrics: (metrics: MetricsData) => void;
+  setCurrentMetrics: (metrics: OnChainActivity) => void;
+  setUpdatedMetrics: (metrics: OnChainActivity) => void;
   persistMetricsUpdate: () => void;
   commitMetricsUpdate: () => void;
 };
@@ -43,9 +43,9 @@ export const useScoreStore = create<ScoreState>(set => ({
   currentMetrics: null,
   updatedMetrics: null,
 
-  setCurrentMetrics: (metrics: MetricsData) => set({ currentMetrics: metrics }),
+  setCurrentMetrics: (metrics: OnChainActivity) => set({ currentMetrics: metrics }),
 
-  setUpdatedMetrics: (metrics: MetricsData) => set({ updatedMetrics: metrics }),
+  setUpdatedMetrics: (metrics: OnChainActivity) => set({ updatedMetrics: metrics }),
 
   persistMetricsUpdate: () =>
     set(state => ({

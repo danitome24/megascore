@@ -1,6 +1,6 @@
-import type { Metrics, MetricsData } from "@/lib/domain/metrics/types";
+import type { Metrics, OnChainActivity } from "@/lib/domain/metrics/types";
 
-export async function createMetrics(accountId: string, data: MetricsData): Promise<Metrics> {
+export async function createMetrics(accountId: string, data: OnChainActivity): Promise<Metrics> {
   const res = await fetch("/api/metrics", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -18,8 +18,8 @@ export async function createMetrics(accountId: string, data: MetricsData): Promi
 
 export async function updateMetrics(
   walletAddress: string,
-  newData: MetricsData,
-  oldData: MetricsData,
+  newData: OnChainActivity,
+  oldData: OnChainActivity,
 ): Promise<{ metrics: Metrics; archived: boolean }> {
   const res = await fetch("/api/metrics", {
     method: "PUT",

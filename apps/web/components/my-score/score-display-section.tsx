@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useCounterAnimation } from "@/hooks/use-counter-animation";
-import { getLevelByScore, getPointsToNextLevel } from "@/lib/domain/score/level";
+import { getLevelByScore, getPointsToNextLevel } from "@/lib/domain/reputation/level";
 import { useScoreStore } from "@/store/score-store";
 import { motion } from "framer-motion";
 import { Trophy } from "lucide-react";

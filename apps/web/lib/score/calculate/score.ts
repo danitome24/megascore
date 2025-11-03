@@ -1,7 +1,7 @@
-import { MetricsData } from "@/lib/domain/metrics/types";
+import { OnChainActivity } from "@/lib/domain/metrics/types";
 import { Score } from "@/lib/domain/score/types";
 
-export const calculate = async (metrics: MetricsData): Promise<number> => {
+export const calculate = async (metrics: OnChainActivity): Promise<number> => {
   // Weighted score using all metrics fields
   const base = 1000;
   const txScore = metrics.transactions * 8;

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { getLevelByScore } from "@/lib/domain/score/level";
+import { getLevelByScore } from "@/lib/domain/reputation/level";
 import { getNFTDataFromContract } from "@/lib/external/contracts/nft-reader";
 import { extractImageFromTokenUri } from "@/lib/utils";
 import { Metadata } from "next";
