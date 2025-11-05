@@ -1,16 +1,32 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { getMegaReputationStats } from "@/lib/external/api/stats";
 import { motion } from "framer-motion";
 import { BarChart3, Users, Wallet, Zap } from "lucide-react";
 
-interface CTASectionClientProps {
-  holders: number;
-}
+export function CTASectionClient() {
+  const [holders, setHolders] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
-export function CTASectionClient({ holders }: CTASectionClientProps) {
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const stats = await getMegaReputationStats();
+        setHolders(stats.holders || 0);
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+        setHolders(0);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}

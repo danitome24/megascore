@@ -53,7 +53,6 @@ apps/contracts/flat/
 # ABI Package
 ############################
 # Ignore bulk, allow required manifest + docs + ABI JSON exports
-packages/shared/addresses/localhost.json
 packages/abi/*
 !packages/abi/README.md
 !packages/abi/package.json

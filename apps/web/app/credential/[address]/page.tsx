@@ -7,9 +7,9 @@ import { extractImageFromTokenUri } from "@/lib/utils";
 import { Metadata } from "next";
 
 interface SharePageProps {
-  params: {
+  params: Promise<{
     address: string;
-  };
+  }>;
 }
 
 // Fetch NFT data directly from smart contract
