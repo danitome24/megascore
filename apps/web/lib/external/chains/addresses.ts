@@ -1,27 +1,33 @@
+import megaethTestnetAddresses from "@/addresses/megaeth-testnet.json";
 import { Address } from "@/lib/domain/shared/types";
 import { getChain } from "@/lib/external/chains/client";
 import { hardhat, megaethTestnet } from "viem/chains";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
-// Conditionally import addresses based on environment
-const localhostAddresses = isDevelopment ? require("@/addresses/localhost.json") : {};
+// Lazy load localhost addresses only in development
+let localhostAddresses: Record<string, Address> | null = null;
 
-const megaethTestnetAddresses = require("@/addresses/megaeth-testnet.json");
+async function getLocalhostAddresses(): Promise<Record<string, Address>> {
+  if (!localhostAddresses && isDevelopment) {
+    try {
+      localhostAddresses = (await import("@/addresses/localhost.json")).default;
+    } catch (error) {
+      console.warn("localhost.json not found in development");
+      localhostAddresses = {};
+    }
+  }
+  return localhostAddresses || {};
+}
 
-const chainIdToAddresses: Record<number, Record<"MegaScore" | "TestToken", Address>> = {
-  [hardhat.id]: localhostAddresses as Record<string, Address>,
-  [megaethTestnet.id]: megaethTestnetAddresses as Record<string, Address>,
-};
-
-export function getAddressesForChain(): Record<"MegaScore" | "TestToken", Address> {
+export async function getAddressesForChain(): Promise<Record<"MegaScore" | "TestToken", Address>> {
   const chainId = getChain().id;
-  const addresses = chainIdToAddresses[chainId];
 
-  if (!addresses) {
-    console.error(`No addresses configured for chainId: ${chainId}`);
-    throw new Error(`No addresses configured for chainId: ${chainId}`);
+  if (chainId === hardhat.id && isDevelopment) {
+    return getLocalhostAddresses();
+  } else if (chainId === megaethTestnet.id) {
+    return megaethTestnetAddresses as Record<string, Address>;
   }
 
-  return addresses;
+  throw new Error(`No addresses configured for chainId: ${chainId}`);
 }
