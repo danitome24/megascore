@@ -36,8 +36,7 @@ export function useReputation() {
       setLoading(true);
 
       // 1. Mint on blockchain
-      // const txHash = await mintOnChain(currentScore);
-      const txHash = "0x0qkjelqkwjelqwje";
+      const txHash = await mintOnChain(currentScore);
 
       // 2. Create account in DB
       const newAccountData = await apiCreateAccount(address, txHash);
