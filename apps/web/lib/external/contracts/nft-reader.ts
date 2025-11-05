@@ -1,6 +1,5 @@
 import { getPublicClient } from "@/lib/external/chains/client";
 import { getMegaScoreContract } from "@/lib/external/contracts/megascore-contract";
-import { hardhat } from "viem/chains";
 
 /**
  * Fetch NFT data from smart contract given an address
@@ -9,7 +8,7 @@ import { hardhat } from "viem/chains";
  */
 export async function getNFTDataFromContract(address: string) {
   try {
-    const contract = getMegaScoreContract(hardhat.id);
+    const contract = getMegaScoreContract();
 
     const client = getPublicClient();
 

@@ -1,5 +1,11 @@
-import { createPublicClient, http } from "viem";
-import { hardhat } from "viem/chains";
+import { Chain, createPublicClient, http } from "viem";
+import { hardhat, megaethTestnet } from "viem/chains";
+
+const isDevelopment = process.env.NODE_ENV === "development";
+
+export function getChain(): Chain {
+  return isDevelopment ? hardhat : megaethTestnet;
+}
 
 /**
  * Create and return a Viem public client for reading blockchain data
@@ -7,7 +13,7 @@ import { hardhat } from "viem/chains";
  */
 export function getPublicClient() {
   return createPublicClient({
-    chain: hardhat,
+    chain: getChain(),
     transport: http("http://localhost:8545"),
   });
 }

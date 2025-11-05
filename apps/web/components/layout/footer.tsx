@@ -7,7 +7,6 @@ import { BLOCKEXPLORER_CONTRACT_URL } from "@/lib/constants";
 import { getAddressesForChain } from "@/lib/external/chains/addresses";
 import { Heart } from "lucide-react";
 import { useAccount } from "wagmi";
-import { useChainId } from "wagmi";
 
 const currentYear = new Date().getFullYear();
 const socialLinks = [
@@ -23,11 +22,10 @@ const socialLinks = [
 ];
 
 export function Footer() {
-  const chainId = useChainId();
   const contracts = [
     {
       name: "MegaScore",
-      address: getAddressesForChain(chainId).MegaScore,
+      address: getAddressesForChain().MegaScore,
     },
   ];
 

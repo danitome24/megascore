@@ -2,9 +2,10 @@ import { useState } from "react";
 import { useNftImageGenerator } from "@/hooks/nft/use-nft-image-generator";
 import { useSignScore } from "@/hooks/score/use-sign-score";
 import { Address, SignedScore } from "@/lib/domain/shared/types";
+import { getChain } from "@/lib/external/chains/client";
 import { getMegaScoreContract } from "@/lib/external/contracts/megascore-contract";
 import { toast } from "sonner";
-import { useAccount, useChainId, usePublicClient, useWriteContract } from "wagmi";
+import { useAccount, usePublicClient, useWriteContract } from "wagmi";
 
 export function useMintReputationOnChain() {
   // 1. State hooks
@@ -12,12 +13,11 @@ export function useMintReputationOnChain() {
 
   // 2. External library hooks
   const { address: walletAddress } = useAccount();
-  const chainId = useChainId();
   const { writeContractAsync: writeMegaScore } = useWriteContract();
   const publicClient = usePublicClient();
 
   // 3. Contract data
-  const { address: contractAddress, abi: contractABI } = getMegaScoreContract(chainId);
+  const { address: contractAddress, abi: contractABI } = getMegaScoreContract();
 
   // 4. Custom hooks
   const { generateAndUpload } = useNftImageGenerator();
@@ -65,7 +65,7 @@ export function useMintReputationOnChain() {
 
       // Step 2: Sign the score for minting
       toastId = toast.loading("Signing your score...");
-      const signedScore = await signScore(score, walletAddress, chainId, contractAddress as Address);
+      const signedScore = await signScore(score, walletAddress, getChain().id, contractAddress as Address);
       toast.success("Score signed!", { id: toastId });
 
       // Step 3: Mint NFT on chain

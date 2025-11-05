@@ -5,20 +5,20 @@ import { Address, SignedScore } from "@/lib/domain/shared/types";
 import { getMegaScoreContract } from "@/lib/external/contracts/megascore-contract";
 import { extractImageFromTokenUri } from "@/lib/utils";
 import { toast } from "sonner";
-import { useAccount, useChainId, usePublicClient, useWriteContract } from "wagmi";
+import { useAccount, usePublicClient, useWriteContract } from "wagmi";
+import { getChain } from "@/lib/external/chains/client";
 
 export function useUpdateReputationOnChain() {
   // 1. State hooks
   const [isUpdating, setIsUpdating] = useState(false);
 
   // 2. External library hooks
-  const chainId = useChainId();
   const publicClient = usePublicClient();
   const { address: walletAddress } = useAccount();
   const { writeContractAsync: writeContract } = useWriteContract();
 
   // 3. Contract data
-  const { address: contractAddress, abi: contractABI } = getMegaScoreContract(chainId);
+  const { address: contractAddress, abi: contractABI } = getMegaScoreContract();
 
   // 4. Custom hooks
   const signScore = useSignScore();
@@ -66,7 +66,7 @@ export function useUpdateReputationOnChain() {
 
       // Step 2: Sign the new score
       toastId = toast.loading("Signing your updated score...");
-      const signedScore = await signScore(score, walletAddress, chainId, contractAddress as Address);
+      const signedScore = await signScore(score, walletAddress, getChain().id, contractAddress as Address);
       toast.success("Score signed!", { id: toastId });
 
       // Step 3: Update score on-chain with new NFT metadata

@@ -13,7 +13,7 @@ export function usePaymentToken(address: Address) {
     isLoading: isTokenLoading,
     refetch: refetchTokenBalance,
   } = useReadContract({
-    ...getPaymentTokenContract(chainId),
+    ...getPaymentTokenContract(),
     functionName: "balanceOf",
     args: [address],
   });
@@ -29,7 +29,7 @@ export function usePaymentToken(address: Address) {
     const toastId = toast.loading("Minting test tokens...");
     try {
       const txHash = await requestTestTokens({
-        ...getPaymentTokenContract(chainId),
+        ...getPaymentTokenContract(),
         functionName: "mint",
         args: [address, BigInt("1000000000000000000")],
       });
